@@ -26,13 +26,13 @@ public class Post {
     private String content;
 
     @Builder.Default
-    private LocalDateTime createdDate = LocalDateTime.now();
+    private LocalDateTime createDate = LocalDateTime.now();
     @Builder.Default
     private long viewCount = 0;
 
 
     @Builder.Default
-    private PostStatus status = PostStatus.ACTIVE;
+    private boolean isDelete = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
