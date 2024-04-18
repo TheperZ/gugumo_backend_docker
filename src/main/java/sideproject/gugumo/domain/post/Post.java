@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import sideproject.gugumo.domain.Member;
+import sideproject.gugumo.request.UpdatePostReq;
 
 import java.time.LocalDateTime;
 
@@ -37,4 +38,16 @@ public class Post {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    public void update(UpdatePostReq updatePostReq) {
+
+        this.title = updatePostReq.getTitle();
+        this.content = updatePostReq.getContent();
+
+
+    }
+
+    public void tempDelete() {
+        this.isDelete = true;
+    }
 }

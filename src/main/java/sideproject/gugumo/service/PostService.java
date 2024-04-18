@@ -12,12 +12,17 @@ import sideproject.gugumo.domain.post.Post;
 import sideproject.gugumo.repository.MeetingRepository;
 import sideproject.gugumo.repository.MemberRepository;
 import sideproject.gugumo.repository.PostRepository;
-import sideproject.gugumo.request.PostReq;
+import sideproject.gugumo.request.CreatePostReq;
+import sideproject.gugumo.request.UpdatePostReq;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+
+/**
+ * 모든 enum 타입은 예외 처리 필요
+ */
 
 @Service
 @RequiredArgsConstructor
@@ -29,28 +34,29 @@ public class PostService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void save(PostReq postReq) {
+    public void save(CreatePostReq createPostReq) {
 
         //토큰에서 꺼내야 할 거 같음
-        Member author = Optional.of(memberRepository.findById(postReq.getAuthorId()).get())
+        Member author = Optional.of(memberRepository.findById(createPostReq.getAuthorId()).get())
                 .orElseThrow(NoSuchElementException::new);
 
+        //post 저장
         Post post = Post.builder()
-                .title(postReq.getTitle())
-                .content(postReq.getContent())
+                .title(createPostReq.getTitle())
+                .content(createPostReq.getContent())
                 .member(author)
                 .build();
 
         postRepository.save(post);
 
-        //meeting 저장 예정
+        //meeting 저장
         Meeting meeting = Meeting.builder()
-                .meetingType(MeetingType.valueOf(postReq.getMeetingType()))
-                .gameType(GameType.valueOf(postReq.getGameType()))
-                .location(postReq.getLocation())
-                .meetingDateTime(mergeDatetime(postReq.getMeetingDate(), postReq.getMeetingTime()))
-                .meetingMemberNum(postReq.getMeetingMemberNum())
-                .openKakao(postReq.getOpenKakao())
+                .meetingType(MeetingType.valueOf(createPostReq.getMeetingType()))
+                .gameType(GameType.valueOf(createPostReq.getGameType()))
+                .location(createPostReq.getLocation())
+                .meetingDateTime(mergeDatetime(createPostReq.getMeetingDate(), createPostReq.getMeetingTime()))
+                .meetingMemberNum(createPostReq.getMeetingMemberNum())
+                .openKakao(createPostReq.getOpenKakao())
                 .member(author)
                 .post(post)
                 .build();
@@ -61,7 +67,7 @@ public class PostService {
     /**
      *
      * @param meetingDate
-     * @param meetingTime: xx시로 간주->추후 수정될 수 있음
+     * @param meetingTime: "xx시"로 간주->추후 협의 후 수정될 수 있음
      * @return
      */
     private LocalDateTime mergeDatetime(LocalDate meetingDate, String meetingTime) {
@@ -69,4 +75,27 @@ public class PostService {
 
     }
 
+    @Transactional
+    public void deletePost(Long postId) {
+        Post targetPost = Optional.of(postRepository.findById(postId).get())
+                .orElseThrow(NoSuchElementException::new);
+
+        //targetPost.isDelete=true
+        targetPost.tempDelete();
+
+    }
+
+    @Transactional
+    public void update(Long postId, UpdatePostReq updatePostReq) {
+        Post targetPost = Optional.of(postRepository.findById(postId).get())
+                .orElseThrow(NoSuchElementException::new);
+
+        targetPost.update(updatePostReq);
+
+        Meeting targetMeeting = Optional.of(meetingRepository.findByPost(targetPost).get())
+                .orElseThrow(NoSuchElementException::new);
+
+        targetMeeting.update(updatePostReq);
+
+    }
 }
