@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- * CreatePostReq와 status 차이
+ * CreatePostReq와 필드 값이 status 하나 차이
  * 중복되는 필드가 많음
  * 그렇다고 한데 묶는게 옳은 선택인가?
  */

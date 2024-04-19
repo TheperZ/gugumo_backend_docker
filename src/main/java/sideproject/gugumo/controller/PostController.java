@@ -3,6 +3,7 @@ package sideproject.gugumo.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sideproject.gugumo.domain.dto.DetailPostDto;
 import sideproject.gugumo.request.CreatePostReq;
 import sideproject.gugumo.request.UpdatePostReq;
 import sideproject.gugumo.service.PostService;
@@ -16,11 +17,18 @@ public class PostController {
 
     private final PostService postService;
 
-    @GetMapping("/new")
+    @PostMapping("/new")
     public ResponseEntity<String> savePost(@RequestBody CreatePostReq createPostReq) {
         postService.save(createPostReq);
 
         return ResponseEntity.status(201).body("글 작성 완료");
+    }
+
+    @GetMapping("/{post_id}")
+    public ResponseEntity<DetailPostDto> findPostDetail(@PathVariable("post_id") Long postId) {
+        DetailPostDto detailPostDto = postService.findDetailPostByPostId(postId);
+
+        return ResponseEntity.ok(detailPostDto);
     }
 
     @PatchMapping("/{post_id}")

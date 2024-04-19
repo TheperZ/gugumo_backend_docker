@@ -1,10 +1,7 @@
 package sideproject.gugumo.domain.post;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import sideproject.gugumo.domain.Member;
 import sideproject.gugumo.request.UpdatePostReq;
 
@@ -14,6 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
+@Getter
 public class Post {
 
     @Id

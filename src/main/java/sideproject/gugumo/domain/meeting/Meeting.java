@@ -1,10 +1,7 @@
 package sideproject.gugumo.domain.meeting;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import sideproject.gugumo.domain.Member;
 import sideproject.gugumo.domain.post.Post;
 import sideproject.gugumo.request.UpdatePostReq;
@@ -18,6 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
+@Getter
 public class Meeting {
 
     @Id
@@ -27,7 +25,7 @@ public class Meeting {
 
     private MeetingType meetingType;
     private GameType gameType;
-    private String location;
+    private Location location;
     private LocalDateTime meetingDateTime;
     private LocalDateTime meetingDeadline;
 
@@ -49,7 +47,7 @@ public class Meeting {
     public void update(UpdatePostReq updatePostReq) {
         this.meetingType = MeetingType.valueOf(updatePostReq.getMeetingType());
         this.gameType = GameType.valueOf(updatePostReq.getGameType());
-        this.location = updatePostReq.getLocation();
+        this.location = Location.valueOf(updatePostReq.getLocation());
         this.meetingDateTime=mergeDatetime(updatePostReq.getMeetingDate(), updatePostReq.getMeetingTime());
         this.meetingDeadline = updatePostReq.getMeetingDeadline();
         this.status = MeetingStatus.valueOf(updatePostReq.getStatus());
@@ -63,7 +61,7 @@ public class Meeting {
     /**
      *
      * @param meetingDate
-     * @param meetingTime: "xx시"로 간주->추후 협의 후 수정될 수 있음
+     * @param meetingTime: "xx시"로 간주->추후 수정될 수 있음
      * @return
      */
     private LocalDateTime mergeDatetime(LocalDate meetingDate, String meetingTime) {

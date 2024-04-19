@@ -4,7 +4,9 @@ package sideproject.gugumo.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sideproject.gugumo.domain.dto.DetailPostDto;
 import sideproject.gugumo.domain.meeting.GameType;
+import sideproject.gugumo.domain.meeting.Location;
 import sideproject.gugumo.domain.meeting.Meeting;
 import sideproject.gugumo.domain.Member;
 import sideproject.gugumo.domain.meeting.MeetingType;
@@ -18,7 +20,7 @@ import sideproject.gugumo.request.UpdatePostReq;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
-import java.util.Optional;
+
 
 /**
  * 모든 enum 타입은 예외 처리 필요
@@ -33,11 +35,19 @@ public class PostService {
     private final MeetingRepository meetingRepository;
     private final MemberRepository memberRepository;
 
+    /**
+     * 단기모집 기준: meetingDate, meetingTime 반영(default)
+     * 장기모집일 경우 meetingDays(요일), meetingTime을 반영해야함
+     * db 수정 후 반영 예정(아마 상속으로 구현하지 않을까)
+     * @param createPostReq
+     */
     @Transactional
     public void save(CreatePostReq createPostReq) {
 
-        //토큰에서 꺼내야 할 거 같음
-        Member author = Optional.of(memberRepository.findById(createPostReq.getAuthorId()).get())
+        /**
+         *  orElse~를 사용하는 경우 null이 아닐 시 Optional의 인자가 반환된다.
+         */
+        Member author =memberRepository.findById(createPostReq.getAuthorId())
                 .orElseThrow(NoSuchElementException::new);
 
         //post 저장
@@ -53,7 +63,7 @@ public class PostService {
         Meeting meeting = Meeting.builder()
                 .meetingType(MeetingType.valueOf(createPostReq.getMeetingType()))
                 .gameType(GameType.valueOf(createPostReq.getGameType()))
-                .location(createPostReq.getLocation())
+                .location(Location.valueOf(createPostReq.getLocation()))
                 .meetingDateTime(mergeDatetime(createPostReq.getMeetingDate(), createPostReq.getMeetingTime()))
                 .meetingMemberNum(createPostReq.getMeetingMemberNum())
                 .openKakao(createPostReq.getOpenKakao())
@@ -72,30 +82,56 @@ public class PostService {
      */
     private LocalDateTime mergeDatetime(LocalDate meetingDate, String meetingTime) {
         return meetingDate.atStartOfDay().plusHours(Integer.parseInt(meetingTime.substring(0, 2)));
-
     }
 
-    @Transactional
-    public void deletePost(Long postId) {
-        Post targetPost = Optional.of(postRepository.findById(postId).get())
+    public DetailPostDto findDetailPostByPostId(Long postId) {
+
+
+        Post targetPost = postRepository.findById(postId)
                 .orElseThrow(NoSuchElementException::new);
 
-        //targetPost.isDelete=true
-        targetPost.tempDelete();
+        Meeting targetMeeting = meetingRepository.findByPost(targetPost)
+                .orElseThrow(NoSuchElementException::new);
+
+        DetailPostDto detailPostDto = DetailPostDto.builder()
+                .meetingType(targetMeeting.getMeetingType())
+                .gameType(targetMeeting.getGameType())
+                .meetingMemberNum(targetMeeting.getMeetingMemberNum())
+                .meetingDateTime(targetMeeting.getMeetingDateTime())
+                .meetingDeadline(targetMeeting.getMeetingDeadline())
+                .openKakao(targetMeeting.getOpenKakao())
+                .location(targetMeeting.getLocation())
+                .title(targetPost.getTitle())
+                .content(targetPost.getContent())
+                .status(targetMeeting.getStatus())
+                .viewCount(targetPost.getViewCount())
+                .build();
+
+        return detailPostDto;
 
     }
 
     @Transactional
     public void update(Long postId, UpdatePostReq updatePostReq) {
-        Post targetPost = Optional.of(postRepository.findById(postId).get())
+        Post targetPost =postRepository.findById(postId)
                 .orElseThrow(NoSuchElementException::new);
 
         targetPost.update(updatePostReq);
 
-        Meeting targetMeeting = Optional.of(meetingRepository.findByPost(targetPost).get())
+        Meeting targetMeeting = meetingRepository.findByPost(targetPost)
                 .orElseThrow(NoSuchElementException::new);
 
         targetMeeting.update(updatePostReq);
+
+    }
+
+    @Transactional
+    public void deletePost(Long postId) {
+        Post targetPost = postRepository.findById(postId)
+                .orElseThrow(NoSuchElementException::new);
+
+        //targetPost.isDelete=true
+        targetPost.tempDelete();
 
     }
 }
