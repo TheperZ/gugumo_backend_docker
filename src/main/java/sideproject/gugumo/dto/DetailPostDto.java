@@ -1,4 +1,4 @@
-package sideproject.gugumo.domain.dto;
+package sideproject.gugumo.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -2,15 +2,16 @@ package sideproject.gugumo.service;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sideproject.gugumo.domain.dto.DetailPostDto;
-import sideproject.gugumo.domain.meeting.GameType;
-import sideproject.gugumo.domain.meeting.Location;
-import sideproject.gugumo.domain.meeting.Meeting;
+import sideproject.gugumo.cond.PostSearchCondition;
+import sideproject.gugumo.domain.meeting.*;
+import sideproject.gugumo.dto.DetailPostDto;
 import sideproject.gugumo.domain.Member;
-import sideproject.gugumo.domain.meeting.MeetingType;
 import sideproject.gugumo.domain.post.Post;
+import sideproject.gugumo.dto.SimplePostDto;
 import sideproject.gugumo.repository.MeetingRepository;
 import sideproject.gugumo.repository.MemberRepository;
 import sideproject.gugumo.repository.PostRepository;
@@ -71,6 +72,8 @@ public class PostService {
                 .post(post)
                 .build();
 
+        meeting.setPost(post);
+
         meetingRepository.save(meeting);
     }
 
@@ -82,6 +85,26 @@ public class PostService {
      */
     private LocalDateTime mergeDatetime(LocalDate meetingDate, String meetingTime) {
         return meetingDate.atStartOfDay().plusHours(Integer.parseInt(meetingTime.substring(0, 2)));
+    }
+
+
+    /**
+     * 동적 쿼리를 이용하여 게시글의 정보를 반환
+     * post.title, meeting.location, meeting.gametype, page번호를 확인해야함
+     * @return page
+     */
+
+    public Page<SimplePostDto> findSimplePost(Pageable pageable, String q,
+                                              String gameType, String location, String meetingStatus) {
+        PostSearchCondition condition = PostSearchCondition.builder()
+                .q(q)
+                .gameType(GameType.valueOf(gameType))
+                .location(Location.valueOf(location))
+                .meetingStatus(MeetingStatus.valueOf(meetingStatus))
+                .build();
+
+        return postRepository.search(condition, pageable);
+
     }
 
     public DetailPostDto findDetailPostByPostId(Long postId) {
@@ -134,4 +157,6 @@ public class PostService {
         targetPost.tempDelete();
 
     }
+
+
 }
