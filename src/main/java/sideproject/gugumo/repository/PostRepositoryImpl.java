@@ -47,7 +47,8 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                 .leftJoin(post.meeting, meeting)
                 .where(
                         queryEq(cond.getQ()), locationEq(cond.getLocation()),
-                        gameTypeEq(cond.getGameType()), meetingStatusEq(cond.getMeetingStatus())
+                        gameTypeEq(cond.getGameType()), meetingStatusEq(cond.getMeetingStatus()),
+                        post.isDelete.isFalse()
                 )
                 .offset(pageable.getOffset()==0? pageable.getOffset(): pageable.getOffset() - 1)       //page는 0부터 세므로
                 .limit(12)      //figma 기준

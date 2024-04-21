@@ -54,7 +54,8 @@ public class PostController {
     }
 
     @PatchMapping("/{post_id}")
-    public ResponseEntity<String> updatePost(@PathVariable("post_id") Long postId, @RequestBody UpdatePostReq updatePostReq) {
+    public ResponseEntity<String> updatePost(@PathVariable("post_id") Long postId,
+                                             @RequestBody UpdatePostReq updatePostReq) {
         postService.update(postId, updatePostReq);
 
         return ResponseEntity.ok("글 갱신 완료");

@@ -21,7 +21,6 @@ public class SimplePostDto {
     //북마크 여부
 
     @QueryProjection
-
     public SimplePostDto(Long postId, MeetingStatus status, GameType gameType, Location location, String title, LocalDateTime meetingDateTime, int meetingMemberNum, LocalDateTime meetingDeadline) {
         this.postId = postId;
         this.status = status;
