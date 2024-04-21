@@ -1,8 +1,6 @@
-package sideproject.gugumo.domain;
+package sideproject.gugumo.domain.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,6 +19,7 @@ public class Member {
     private String password;
     private String nickname;
     private String profileImagePath;
+    @Enumerated(EnumType.STRING)
     MemberStatus status;
 
     @Builder

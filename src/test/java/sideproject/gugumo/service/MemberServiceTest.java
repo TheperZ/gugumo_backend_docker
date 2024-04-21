@@ -6,10 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import sideproject.gugumo.domain.Member;
-import sideproject.gugumo.domain.MemberStatus;
-
-import static org.junit.jupiter.api.Assertions.*;
+import sideproject.gugumo.domain.entity.Member;
+import sideproject.gugumo.domain.entity.MemberStatus;
 
 @SpringBootTest
 @Transactional
