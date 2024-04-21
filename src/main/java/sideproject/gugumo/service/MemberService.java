@@ -1,10 +1,10 @@
 package sideproject.gugumo.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sideproject.gugumo.domain.Member;
+import sideproject.gugumo.domain.entity.Member;
+import sideproject.gugumo.exception.DuplicateEmailException;
 import sideproject.gugumo.repository.MemberRepository;
 
 import java.util.Optional;
@@ -16,6 +16,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
+    @Transactional
     public Long join(Member member) {
         validateDuplicateMember(member);
         memberRepository.save(member);
@@ -23,11 +24,15 @@ public class MemberService {
         return member.getId();
     }
 
+    public Member findOne(Long memberId) {
+        return memberRepository.findOne(memberId);
+    }
+
     private void validateDuplicateMember(Member member) {
         Optional<Member> findMember = memberRepository.findByEmail(member.getEmail());
 
         if(findMember.isPresent()) {
-            throw new IllegalStateException("이미 존재하는 회원입니다.");
+            throw new DuplicateEmailException("이미 존재하는 회원입니다.");
         }
     }
 }
