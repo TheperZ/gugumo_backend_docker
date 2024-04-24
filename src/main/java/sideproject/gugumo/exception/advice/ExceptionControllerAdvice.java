@@ -19,6 +19,7 @@ public class ExceptionControllerAdvice {
         return ApiResponse.createFail(e.getMessage());
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
     public ApiResponse<String> MethodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
         log.error("[exceptionHandler] ex : " + e.getMessage());
