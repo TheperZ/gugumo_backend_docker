@@ -1,10 +1,7 @@
 package sideproject.gugumo.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Objects;
 
@@ -21,13 +18,45 @@ public class Member {
     private String profileImagePath;
     @Enumerated(EnumType.STRING)
     MemberStatus status;
+    @Enumerated(EnumType.STRING)
+    MemberRole role;
 
-    @Builder
-    public Member(String email, String password, String nickname, MemberStatus status) {
+    public Member(String email, String password, String nickname, String profileImagePath, MemberStatus status, MemberRole role) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
+        this.profileImagePath = profileImagePath;
         this.status = status;
+        this.role = role;
+    }
+
+    public static UserBuilder createUserBuilder() {
+        return new UserBuilder();
+    }
+
+    public static class UserBuilder {
+        private String email;
+        private String password;
+        private String nickname;
+
+        public UserBuilder email(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public UserBuilder password(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public UserBuilder nickname(String nickname) {
+            this.nickname = nickname;
+            return this;
+        }
+
+        public Member build() {
+            return new Member(this.email, this.password, this.nickname, "/default", MemberStatus.active, MemberRole.ROLE_USER);
+        }
     }
 
     @Override

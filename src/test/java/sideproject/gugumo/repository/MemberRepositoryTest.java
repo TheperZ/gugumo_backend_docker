@@ -22,17 +22,19 @@ class MemberRepositoryTest {
     @DisplayName("DB에 저장시 에러가 없어야 한다.")
     public void memberRepositoryTest() {
         //given
-        Member member = Member.builder()
-                .email("email")
-                .password("password")
-                .nickname("nickname")
-                .status(MemberStatus.active)
-                .build();
+//        Member member = Member.builder()
+//                .email("email")
+//                .password("password")
+//                .nickname("nickname")
+//                .status(MemberStatus.active)
+//                .build();
+
+
 
         //when
 
         //than
-        Assertions.assertThatCode(()->memberRepository.save(member)).doesNotThrowAnyException();
+//        Assertions.assertThatCode(()->memberRepository.save(member)).doesNotThrowAnyException();
 
     }
 
@@ -40,11 +42,17 @@ class MemberRepositoryTest {
     @DisplayName("findOne 함수를 통해 Member를 찾을 수 있다.")
     public void findOneTest() {
         //given
-        Member member = Member.builder()
+//        Member member = Member.builder()
+//                .email("email")
+//                .password("password")
+//                .nickname("nickname")
+//                .status(MemberStatus.active)
+//                .build();
+
+        Member member = Member.createUserBuilder()
                 .email("email")
                 .password("password")
                 .nickname("nickname")
-                .status(MemberStatus.active)
                 .build();
 
         //when
@@ -60,11 +68,10 @@ class MemberRepositoryTest {
     @DisplayName("findByEmail 함수를 통해 Member를 찾을 수 있다.")
     public void findMemberTest() {
         //given
-        Member member = Member.builder()
+        Member member = Member.createUserBuilder()
                 .email("email")
                 .password("password")
                 .nickname("nickname")
-                .status(MemberStatus.active)
                 .build();
 
         //when

@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import sideproject.gugumo.domain.entity.Member;
 import sideproject.gugumo.domain.entity.MemberStatus;
+import sideproject.gugumo.exception.DuplicateEmailException;
 
 @SpringBootTest
 @Transactional
@@ -20,15 +21,13 @@ class MemberServiceTest {
     @DisplayName("service를 통해 member를 저장할 수 있다.")
     public void memberJoinTest() {
         //given
-        Member member = Member.builder()
+        Member member = Member.createUserBuilder()
                 .email("email")
                 .password("password")
                 .nickname("nickname")
-                .status(MemberStatus.active)
                 .build();
 
         //when
-
 
         //than
         Assertions.assertThatCode(()->memberService.join(member)).doesNotThrowAnyException();
@@ -39,24 +38,22 @@ class MemberServiceTest {
     @DisplayName("중복되는 email로 가입시 IllegalStateException 에러를 발생한다.")
     public void duplicateMemberJoinTest() {
         //given
-        Member member1 = Member.builder()
+        Member member1 = Member.createUserBuilder()
                 .email("email")
                 .password("password")
                 .nickname("nickname")
-                .status(MemberStatus.active)
                 .build();
 
-        Member member2 = Member.builder()
+        Member member2 = Member.createUserBuilder()
                 .email("email")
                 .password("password")
                 .nickname("nickname")
-                .status(MemberStatus.active)
                 .build();
 
         //when
         memberService.join(member1);
 
         //than
-        Assertions.assertThatThrownBy(()->memberService.join(member2)).isInstanceOf(IllegalStateException.class);
+        Assertions.assertThatThrownBy(()->memberService.join(member2)).isInstanceOf(DuplicateEmailException.class);
     }
 }
