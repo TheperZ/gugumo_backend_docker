@@ -3,29 +3,44 @@ package sideproject.gugumo.jwt;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
+@Component
 public class JwtUtil {
 
-    private SecretKey getSigningKey(String secretKey) {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-        return Keys.hmacShaKeyFor(keyBytes);
+    // JWT에서는 String 키를 사용하는 방식에서 SecretKey라는 객체를 키로 사용하는 방식으로 변경됨.
+    private SecretKey secretKey;
+
+    public JwtUtil(@Value("${spring.jwt.secret}") String secret) {
+        secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
     }
 
-    //TODO issuedAt, expiration에서 시간은 외부에서 주입하는 방식으로 변경하는 쪽이 테스트 하기 편할 것 같음.
-    public String createJwt(String username, String secretKey, Long expiredMs) {
+    public String getUsername(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
+    }
 
+    public String getRole(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
+    }
+
+    public Boolean isExpired(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
+    }
+
+    //TODO 시간은 외부에서 주입받도록 수정할 예정
+    public String createJwt(String username, String role, Long expiredMs) {
         return Jwts.builder()
-                .issuer(username)
+                .claim("username", username)
+                .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))
-                .signWith(getSigningKey(secretKey))
+                .signWith(secretKey)
                 .compact();
-    }
-
-    public String parseIssuer(String token, String secretKey) {
-        return Jwts.parser().verifyWith(getSigningKey(secretKey)).build().parseSignedClaims(token).getPayload().getIssuer();
     }
 }
