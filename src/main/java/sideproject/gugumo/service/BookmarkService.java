@@ -2,13 +2,14 @@ package sideproject.gugumo.service;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sideproject.gugumo.domain.Bookmark;
 import sideproject.gugumo.domain.Member;
 import sideproject.gugumo.domain.post.Post;
 import sideproject.gugumo.repository.BookmarkRepository;
-import sideproject.gugumo.repository.MeetingRepository;
 import sideproject.gugumo.repository.MemberRepository;
 import sideproject.gugumo.repository.PostRepository;
 import sideproject.gugumo.request.CreateBookmarkReq;
@@ -40,6 +41,16 @@ public class BookmarkService {
 
         bookmarkRepository.save(bookmark);
 
+    }
+
+    public Page<Bookmark> findBookmarkByMember(Long memberId, Pageable pageable) {
+
+        //나중에 토큰에서 가져와야 할듯
+        Member member = memberRepository.findById(memberId).orElseThrow(NoSuchElementException::new);
+
+
+
+        return bookmarkRepository.findByMember(member, pageable);
     }
 
     @Transactional

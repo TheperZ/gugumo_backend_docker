@@ -1,5 +1,6 @@
 package sideproject.gugumo.controller;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -7,11 +8,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sideproject.gugumo.domain.Member;
 import sideproject.gugumo.domain.meeting.GameType;
 import sideproject.gugumo.domain.meeting.Location;
 import sideproject.gugumo.domain.meeting.MeetingType;
 import sideproject.gugumo.dto.DetailPostDto;
 import sideproject.gugumo.dto.SimplePostDto;
+import sideproject.gugumo.repository.MemberRepository;
 import sideproject.gugumo.request.CreatePostReq;
 import sideproject.gugumo.request.UpdatePostReq;
 import sideproject.gugumo.service.PostService;
@@ -30,11 +33,12 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping("/new")
-    public ResponseEntity<String> savePost(@RequestBody CreatePostReq createPostReq) {
+    public ResponseEntity<String> save(@RequestBody CreatePostReq createPostReq) {
         postService.save(createPostReq);
 
         return ResponseEntity.status(201).body("글 작성 완료");
     }
+
 
     @GetMapping
     public ResponseEntity<Page<SimplePostDto>> findPostSimple(
@@ -72,5 +76,12 @@ public class PostController {
         postService.deletePost(postId);
 
         return ResponseEntity.ok("글 삭제 완료");
+    }
+
+    private final MemberRepository memberRepository;
+
+    @PostConstruct
+    public void init() {
+        memberRepository.save(new Member());        //memberId: 1
     }
 }

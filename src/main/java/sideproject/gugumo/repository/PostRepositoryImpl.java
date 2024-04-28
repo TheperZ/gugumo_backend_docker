@@ -39,7 +39,6 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                         meeting.gameType,
                         meeting.location,
                         post.title,
-                        meeting.meetingDateTime,
                         meeting.meetingMemberNum,
                         meeting.meetingDeadline
                 ))
@@ -50,9 +49,11 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                         gameTypeEq(cond.getGameType()), meetingStatusEq(cond.getMeetingStatus()),
                         post.isDelete.isFalse()
                 )
-                .offset(pageable.getOffset()==0? pageable.getOffset(): pageable.getOffset() - 1)       //page는 0부터 세므로
-                .limit(12)      //figma 기준
+                .offset(pageable.getOffset()==0 ? pageable.getOffset(): pageable.getOffset() - 1)       //page는 0부터 세므로
+                .limit(pageable.getPageSize())
                 .fetch();
+
+        //여기서 단기/장기 처리?: 리스트에 대해 다시 검색해야되면 성능 떨어질 거 같음...
 
         JPAQuery<Long> count = queryFactory.select(post.count())
                 .from(post)

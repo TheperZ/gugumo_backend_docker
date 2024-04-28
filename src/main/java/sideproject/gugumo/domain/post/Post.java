@@ -46,6 +46,10 @@ public class Post {
     @OneToOne(mappedBy = "post")
     private Meeting meeting;
 
+    public void addViewCount() {
+        this.viewCount++;
+    }
+
     public void update(UpdatePostReq updatePostReq) {
 
         this.title = updatePostReq.getTitle();

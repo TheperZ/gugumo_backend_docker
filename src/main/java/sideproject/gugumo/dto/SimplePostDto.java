@@ -5,6 +5,7 @@ import sideproject.gugumo.domain.meeting.GameType;
 import sideproject.gugumo.domain.meeting.Location;
 import sideproject.gugumo.domain.meeting.MeetingStatus;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class SimplePostDto {
@@ -15,19 +16,20 @@ public class SimplePostDto {
     private Location location;
     private String title;
     private LocalDateTime meetingDateTime;
-    //요일: meetingType=LONG
+    private String meetingDays;
     private int meetingMemberNum;
-    private LocalDateTime meetingDeadline;
-    //북마크 여부
+    private LocalDate meetingDeadline;
+    //북마크 여부: 로그인 한 경우
 
     @QueryProjection
-    public SimplePostDto(Long postId, MeetingStatus status, GameType gameType, Location location, String title, LocalDateTime meetingDateTime, int meetingMemberNum, LocalDateTime meetingDeadline) {
+    public SimplePostDto(Long postId, MeetingStatus status, GameType gameType, Location location, String title, int meetingMemberNum, LocalDate meetingDeadline) {
         this.postId = postId;
         this.status = status;
         this.gameType = gameType;
         this.location = location;
         this.title = title;
-        this.meetingDateTime = meetingDateTime;
+/*        this.meetingDateTime = meetingDateTime;
+        this.meetingDays = meetingDays;*/
         this.meetingMemberNum = meetingMemberNum;
         this.meetingDeadline = meetingDeadline;
     }

@@ -7,6 +7,7 @@ import sideproject.gugumo.domain.meeting.Location;
 import sideproject.gugumo.domain.meeting.MeetingStatus;
 import sideproject.gugumo.domain.meeting.MeetingType;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Builder
@@ -17,7 +18,8 @@ public class DetailPostDto {
     private GameType gameType;
     private int meetingMemberNum;
     private LocalDateTime meetingDateTime;
-    private LocalDateTime meetingDeadline;
+    private String meetingDays;
+    private LocalDate meetingDeadline;
     private String openKakao;
     private Location location;
 

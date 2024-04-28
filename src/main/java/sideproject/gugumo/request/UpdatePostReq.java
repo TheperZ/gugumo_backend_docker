@@ -6,11 +6,7 @@ import sideproject.gugumo.domain.meeting.MeetingStatus;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-/**
- * CreatePostReq와 필드 값이 status 하나 차이
- * 중복되는 필드가 많음
- * 그렇다고 한데 묶는게 옳은 선택인가?
- */
+
 
 @Getter
 public class UpdatePostReq {
@@ -21,8 +17,9 @@ public class UpdatePostReq {
     private String gameType;
     private int meetingMemberNum;
     private LocalDate meetingDate;
-    private String meetingTime;
-    private LocalDateTime meetingDeadline;
+    private int meetingTime;
+    private String meetingDays;
+    private LocalDate meetingDeadline;
     private String openKakao;
     private String location;
 

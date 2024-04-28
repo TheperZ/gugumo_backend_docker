@@ -2,6 +2,7 @@ package sideproject.gugumo.domain.meeting;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import sideproject.gugumo.domain.Member;
 import sideproject.gugumo.domain.post.Post;
 import sideproject.gugumo.request.UpdatePostReq;
@@ -13,10 +14,12 @@ import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SuperBuilder
 @AllArgsConstructor
-@Builder
 @Getter
-public class Meeting {
+@DiscriminatorColumn
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+public abstract class Meeting {
 
     @Id
     @GeneratedValue
@@ -29,8 +32,10 @@ public class Meeting {
     private GameType gameType;
     @Enumerated(EnumType.STRING)
     private Location location;
+
     private LocalDateTime meetingDateTime;
-    private LocalDateTime meetingDeadline;
+
+    private LocalDate meetingDeadline;
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
@@ -62,7 +67,9 @@ public class Meeting {
         this.meetingType = MeetingType.valueOf(updatePostReq.getMeetingType());
         this.gameType = GameType.valueOf(updatePostReq.getGameType());
         this.location = Location.valueOf(updatePostReq.getLocation());
-        this.meetingDateTime=mergeDatetime(updatePostReq.getMeetingDate(), updatePostReq.getMeetingTime());
+        //단기
+        this.meetingDateTime = meetingDateTime.toLocalDate().atStartOfDay().plusHours(updatePostReq.getMeetingTime());
+
         this.meetingDeadline = updatePostReq.getMeetingDeadline();
         this.status = MeetingStatus.valueOf(updatePostReq.getStatus());
         this.meetingMemberNum = updatePostReq.getMeetingMemberNum();
@@ -72,14 +79,5 @@ public class Meeting {
     }
 
 
-    /**
-     *
-     * @param meetingDate
-     * @param meetingTime: "xx시"로 간주->추후 수정될 수 있음
-     * @return
-     */
-    private LocalDateTime mergeDatetime(LocalDate meetingDate, String meetingTime) {
-        return meetingDate.atStartOfDay().plusHours(Integer.parseInt(meetingTime.substring(0, 2)));
 
-    }
 }
