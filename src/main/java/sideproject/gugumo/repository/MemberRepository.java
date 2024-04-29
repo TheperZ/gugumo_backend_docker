@@ -24,9 +24,9 @@ public class MemberRepository {
         return em.find(Member.class, id);
     }
 
-    public Optional<Member> findByEmail(String email) {
-        return em.createQuery("select m from Member m where m.email = :email", Member.class)
-                .setParameter("email", email)
+    public Optional<Member> findByUsername(String username) {
+        return em.createQuery("select m from Member m where m.username = :username", Member.class)
+                .setParameter("username", username)
                 .getResultList().stream().findAny();
     }
 }
