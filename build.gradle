@@ -30,6 +30,10 @@ dependencies {
 	//p6spy
 	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
 
+	/**
+	 * java-jwt
+	 * okta-jjwt
+	 */
 	//jwt
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
