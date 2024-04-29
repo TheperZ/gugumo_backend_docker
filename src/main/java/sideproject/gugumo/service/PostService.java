@@ -20,7 +20,6 @@ import sideproject.gugumo.request.UpdatePostReq;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.NoSuchElementException;
 
 
@@ -39,8 +38,7 @@ public class PostService {
 
     /**
      * 단기모집 기준: meetingDate, meetingTime 반영(default)
-     * 장기모집일 경우 meetingDays(요일), meetingTime을 반영해야함
-     * 상속(SINGLE_TABLE)로 구현
+     * 장기모집일 경우 meetingDays(요일), meetingTime(1970/1/1을 쓰레기값으로)을 반영해야함
      * @param createPostReq
      */
     @Transactional
@@ -50,6 +48,10 @@ public class PostService {
          *  orElse~를 사용하는 경우 null이 아닐 시 Optional의 인자가 반환된다.
          */
         //토큰에서
+        /*
+        memberRepository.findByUsername(principal.getUsername())
+        .orElseThrow(해당 회원이 없습니다Exception::new)
+         */
         Member author =memberRepository.findById(createPostReq.getAuthorId())
                 .orElseThrow(NoSuchElementException::new);
 
@@ -65,7 +67,7 @@ public class PostService {
         Meeting meeting;
 
         if(MeetingType.valueOf(createPostReq.getMeetingType())==MeetingType.SHORT){
-            meeting = ShortMeeting.builder()
+            meeting = Meeting.builder()
                     .meetingType(MeetingType.valueOf(createPostReq.getMeetingType()))
                     .gameType(GameType.valueOf(createPostReq.getGameType()))
                     .location(Location.valueOf(createPostReq.getLocation()))
@@ -79,12 +81,13 @@ public class PostService {
             meeting.setPost(post);
             meetingRepository.save(meeting);
         } else if (MeetingType.valueOf(createPostReq.getMeetingType()) == MeetingType.LONG) {
-            meeting = LongMeeting.builder()
+            meeting = Meeting.builder()
                     .meetingType(MeetingType.valueOf(createPostReq.getMeetingType()))
                     .gameType(GameType.valueOf(createPostReq.getGameType()))
                     .location(Location.valueOf(createPostReq.getLocation()))
                     .meetingDateTime(LocalDate.of(1970,1,1).atStartOfDay().plusHours(createPostReq.getMeetingTime()))       //장기모임의 경우 date를 무시
-                    .meetingDays(createPostReq.getMeetingDays())            //이걸 짤라서 처리?(MON;WED;FRI)
+                    .meetingDays(createPostReq.getMeetingDays())
+                    .meetingDeadline(createPostReq.getMeetingDeadline())
                     .meetingMemberNum(createPostReq.getMeetingMemberNum())
                     .openKakao(createPostReq.getOpenKakao())
                     .member(author)
@@ -100,7 +103,7 @@ public class PostService {
     /**
      *
      * @param meetingDate
-     * @param meetingTime: "xx시"로 간주->추후 협의 후 수정될 수 있음
+     * @param meetingTime: int로 간주->추후 협의 후 수정될 수 있음
      * @return
      */
     private LocalDateTime mergeDatetime(LocalDate meetingDate, int meetingTime) {
@@ -127,39 +130,55 @@ public class PostService {
 
     }
 
+
+    //장기, 단기에 따라 dto를 나눠서 전송
+    @Transactional          //viewCount++가 동작하므로 readonly=false
     public DetailPostDto findDetailPostByPostId(Long postId) {
 
 
-        Post targetPost = postRepository.findById(postId)
+        Post targetPost = postRepository.findByIdAndAndIsDeleteFalse(postId)
                 .orElseThrow(NoSuchElementException::new);
+
 
         Meeting targetMeeting = meetingRepository.findByPost(targetPost)
                 .orElseThrow(NoSuchElementException::new);
 
         targetPost.addViewCount();
 
+
         DetailPostDto detailPostDto = DetailPostDto.builder()
+                .author(targetPost.getMember().getNickname())
                 .meetingType(targetMeeting.getMeetingType())
                 .gameType(targetMeeting.getGameType())
                 .meetingMemberNum(targetMeeting.getMeetingMemberNum())
-/*                .meetingDateTime(targetMeeting.getMeetingDateTime())
-                .meetingDays(targetMeeting.getMeetingDays())*/
+                .meetingDateTime(targetMeeting.getMeetingDateTime())        //장기일 경우 1970.1.1/time
+                .meetingDays(targetMeeting.getMeetingDays())        //장기 meeting이 여러개면 붙여야하나?
                 .meetingDeadline(targetMeeting.getMeetingDeadline())
                 .openKakao(targetMeeting.getOpenKakao())
                 .location(targetMeeting.getLocation())
                 .title(targetPost.getTitle())
                 .content(targetPost.getContent())
+                .createdDateTime(targetPost.getCreateDate())
                 .status(targetMeeting.getStatus())
                 .viewCount(targetPost.getViewCount())
+                //.isYours(principal.getUsername().equals(post.getMember().getUsername()))
                 .build();
 
         return detailPostDto;
+
+
 
     }
 
     @Transactional
     public void update(Long postId, UpdatePostReq updatePostReq) {
-        Post targetPost =postRepository.findById(postId)
+        //토큰에서
+        /*
+        memberRepository.findByUsername(principal.getUsername())
+        .orElseThrow(해당 회원이 없습니다Exception::new)
+         */
+
+        Post targetPost =postRepository.findByIdAndAndIsDeleteFalse(postId)
                 .orElseThrow(NoSuchElementException::new);
 
         targetPost.update(updatePostReq);
@@ -173,7 +192,14 @@ public class PostService {
 
     @Transactional
     public void deletePost(Long postId) {
-        Post targetPost = postRepository.findById(postId)
+
+        //토큰에서
+        /*
+        memberRepository.findByUsername(principal.getUsername())
+        .orElseThrow(해당 회원이 없습니다Exception::new)
+         */
+
+        Post targetPost = postRepository.findByIdAndAndIsDeleteFalse(postId)
                 .orElseThrow(NoSuchElementException::new);
 
         //targetPost.isDelete=true

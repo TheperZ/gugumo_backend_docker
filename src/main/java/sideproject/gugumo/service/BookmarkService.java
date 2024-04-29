@@ -30,6 +30,10 @@ public class BookmarkService {
     public void save(CreateBookmarkReq req) {
 
         //나중에 토큰에서 가져와야 할듯
+         /*
+        memberRepository.findByUsername(principal.getUsername())
+        .orElseThrow(해당 회원이 없습니다Exception::new)
+         */
         Member member = memberRepository.findById(req.getMemberId()).orElseThrow(NoSuchElementException::new);
 
         Post post = postRepository.findById(req.getPostId()).orElseThrow(NoSuchElementException::new);

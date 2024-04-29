@@ -65,12 +65,8 @@ public class PostController {
         return ResponseEntity.ok("글 갱신 완료");
     }
 
-    /**
-     * 현재 프로그램은 데이터를 완전히 지우는 것이 아닌 isDelete의 값만 변경하도록 구현
-     * 따라서 DeleteMapping이 아닌 PostMapping을 사용
-     * PatchMapping은 글쎄...
-     */
-    @PostMapping("/{post_id}")
+
+    @DeleteMapping("/{post_id}")
     public ResponseEntity<String> deletePost(@PathVariable("post_id") Long postId) {
 
         postService.deletePost(postId);
@@ -82,6 +78,6 @@ public class PostController {
 
     @PostConstruct
     public void init() {
-        memberRepository.save(new Member());        //memberId: 1
+        memberRepository.save(new Member("testuser", "testnick"));        //memberId: 1
     }
 }

@@ -2,7 +2,6 @@ package sideproject.gugumo.domain.meeting;
 
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 import sideproject.gugumo.domain.Member;
 import sideproject.gugumo.domain.post.Post;
 import sideproject.gugumo.request.UpdatePostReq;
@@ -14,17 +13,17 @@ import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SuperBuilder
+@Builder
 @AllArgsConstructor
 @Getter
-@DiscriminatorColumn
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public abstract class Meeting {
+public class Meeting {
 
     @Id
     @GeneratedValue
     @Column(name = "meeting_id")
     private Long id;
+
+
 
     @Enumerated(EnumType.STRING)
     private MeetingType meetingType;
@@ -34,7 +33,7 @@ public abstract class Meeting {
     private Location location;
 
     private LocalDateTime meetingDateTime;
-
+    private String meetingDays;
     private LocalDate meetingDeadline;
 
     @Builder.Default
@@ -67,11 +66,10 @@ public abstract class Meeting {
         this.meetingType = MeetingType.valueOf(updatePostReq.getMeetingType());
         this.gameType = GameType.valueOf(updatePostReq.getGameType());
         this.location = Location.valueOf(updatePostReq.getLocation());
-        //단기
-        this.meetingDateTime = meetingDateTime.toLocalDate().atStartOfDay().plusHours(updatePostReq.getMeetingTime());
-
+        this.meetingDateTime = updatePostReq.getMeetingDate().atStartOfDay().plusHours(updatePostReq.getMeetingTime());
+        this.meetingDays = updatePostReq.getMeetingDays();
         this.meetingDeadline = updatePostReq.getMeetingDeadline();
-        this.status = MeetingStatus.valueOf(updatePostReq.getStatus());
+        this.status = MeetingStatus.valueOf(updatePostReq.getMeetingStatus());
         this.meetingMemberNum = updatePostReq.getMeetingMemberNum();
         this.openKakao = updatePostReq.getOpenKakao();
 

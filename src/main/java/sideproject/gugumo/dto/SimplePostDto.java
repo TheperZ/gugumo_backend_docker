@@ -1,6 +1,8 @@
 package sideproject.gugumo.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.querydsl.core.annotations.QueryProjection;
+import lombok.Getter;
 import sideproject.gugumo.domain.meeting.GameType;
 import sideproject.gugumo.domain.meeting.Location;
 import sideproject.gugumo.domain.meeting.MeetingStatus;
@@ -8,6 +10,8 @@ import sideproject.gugumo.domain.meeting.MeetingStatus;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+@Getter
+@JsonInclude(JsonInclude.Include.NON_NULL)  //Null인 필드 제외
 public class SimplePostDto {
 
     private Long postId;
@@ -19,7 +23,7 @@ public class SimplePostDto {
     private String meetingDays;
     private int meetingMemberNum;
     private LocalDate meetingDeadline;
-    //북마크 여부: 로그인 한 경우
+    private boolean isBookmarked;
 
     @QueryProjection
     public SimplePostDto(Long postId, MeetingStatus status, GameType gameType, Location location, String title, int meetingMemberNum, LocalDate meetingDeadline) {

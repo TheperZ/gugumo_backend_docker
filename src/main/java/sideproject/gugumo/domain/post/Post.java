@@ -2,12 +2,14 @@ package sideproject.gugumo.domain.post;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import sideproject.gugumo.domain.Member;
 import sideproject.gugumo.domain.meeting.Meeting;
 import sideproject.gugumo.request.UpdatePostReq;
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -46,8 +48,9 @@ public class Post {
     @OneToOne(mappedBy = "post")
     private Meeting meeting;
 
+
     public void addViewCount() {
-        this.viewCount++;
+        this.viewCount += 1;
     }
 
     public void update(UpdatePostReq updatePostReq) {

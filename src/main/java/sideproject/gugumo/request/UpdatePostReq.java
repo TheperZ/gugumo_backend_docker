@@ -1,17 +1,14 @@
 package sideproject.gugumo.request;
 
 import lombok.Getter;
-import sideproject.gugumo.domain.meeting.MeetingStatus;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 
 
 @Getter
 public class UpdatePostReq {
 
-    private Long authorId;              //토큰에서 가져온다면 이건 필요없을듯
+
 
     private String meetingType;
     private String gameType;
@@ -26,6 +23,6 @@ public class UpdatePostReq {
 
     private String title;
     private String content;
-    private String status;
+    private String meetingStatus;
 
 }
