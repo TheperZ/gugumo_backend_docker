@@ -54,7 +54,7 @@ public class ApiResponse<T> {
         return ApiResponse.<T>builder()
                 .status(FAIL_STATUS)
                 .data(null)
-                .message(null)
+                .message(failMessage)
                 .build();
     }
 }
