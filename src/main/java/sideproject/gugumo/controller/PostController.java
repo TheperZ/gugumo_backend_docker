@@ -9,10 +9,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sideproject.gugumo.domain.Member;
-import sideproject.gugumo.domain.meeting.GameType;
-import sideproject.gugumo.domain.meeting.Location;
-import sideproject.gugumo.domain.meeting.MeetingType;
-import sideproject.gugumo.dto.DetailPostDto;
+import sideproject.gugumo.dto.detailpostdto.DetailPostDto;
 import sideproject.gugumo.dto.SimplePostDto;
 import sideproject.gugumo.repository.MemberRepository;
 import sideproject.gugumo.request.CreatePostReq;
@@ -42,19 +39,19 @@ public class PostController {
 
     @GetMapping
     public ResponseEntity<Page<SimplePostDto>> findPostSimple(
-            @PageableDefault(size=12, sort="postId", direction = Sort.Direction.DESC) Pageable pageable,
+            @PageableDefault(size=12, sort="createdDate", direction = Sort.Direction.DESC) Pageable pageable,
             @RequestParam(required = false, value = "q") String q,
             @RequestParam(required = false, value="location") String location,
             @RequestParam(required = false, value="gametype") String gameType,
-            @RequestParam(required = false, value="meetingtype") String meetingType) {
+            @RequestParam(required = false, value="meetingtype", defaultValue = "RECRUIT") String meetingStatus) {
 
-        return ResponseEntity.ok(postService.findSimplePost(pageable, q, location, gameType, meetingType));
+        return ResponseEntity.ok(postService.findSimplePost(pageable, q, location, gameType, meetingStatus));
     }
     @GetMapping("/{post_id}")
-    public ResponseEntity<DetailPostDto> findPostDetail(@PathVariable("post_id") Long postId) {
+    public <T extends DetailPostDto> ResponseEntity<T> findPostDetail(@PathVariable("post_id") Long postId) {
         DetailPostDto detailPostDto = postService.findDetailPostByPostId(postId);
 
-        return ResponseEntity.ok(detailPostDto);
+        return ResponseEntity.ok((T)detailPostDto);
     }
 
     @PatchMapping("/{post_id}")

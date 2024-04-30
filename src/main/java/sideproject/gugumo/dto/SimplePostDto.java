@@ -32,8 +32,8 @@ public class SimplePostDto {
         this.gameType = gameType;
         this.location = location;
         this.title = title;
-/*        this.meetingDateTime = meetingDateTime;
-        this.meetingDays = meetingDays;*/
+        this.meetingDateTime = meetingDateTime;
+        this.meetingDays = meetingDays;
         this.meetingMemberNum = meetingMemberNum;
         this.meetingDeadline = meetingDeadline;
     }

@@ -8,10 +8,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sideproject.gugumo.cond.PostSearchCondition;
 import sideproject.gugumo.domain.meeting.*;
-import sideproject.gugumo.dto.DetailPostDto;
+import sideproject.gugumo.dto.detailpostdto.DetailPostDto;
 import sideproject.gugumo.domain.Member;
 import sideproject.gugumo.domain.post.Post;
 import sideproject.gugumo.dto.SimplePostDto;
+import sideproject.gugumo.dto.detailpostdto.LongDetailPostDto;
+import sideproject.gugumo.dto.detailpostdto.ShortDetailPostDto;
 import sideproject.gugumo.repository.MeetingRepository;
 import sideproject.gugumo.repository.MemberRepository;
 import sideproject.gugumo.repository.PostRepository;
@@ -133,7 +135,7 @@ public class PostService {
 
     //장기, 단기에 따라 dto를 나눠서 전송
     @Transactional          //viewCount++가 동작하므로 readonly=false
-    public DetailPostDto findDetailPostByPostId(Long postId) {
+    public <T extends DetailPostDto> T findDetailPostByPostId(Long postId) {
 
 
         Post targetPost = postRepository.findByIdAndAndIsDeleteFalse(postId)
@@ -145,27 +147,53 @@ public class PostService {
 
         targetPost.addViewCount();
 
+        if (targetMeeting.getMeetingType() == MeetingType.SHORT) {
+            ShortDetailPostDto detailPostDto = ShortDetailPostDto.builder()
+                    .author(targetPost.getMember().getNickname())
+                    .meetingType(targetMeeting.getMeetingType())
+                    .gameType(targetMeeting.getGameType())
+                    .meetingMemberNum(targetMeeting.getMeetingMemberNum())
+                    .meetingDateTime(targetMeeting.getMeetingDateTime())        //장기일 경우 1970.1.1/time
+                    .meetingDeadline(targetMeeting.getMeetingDeadline())
+                    .openKakao(targetMeeting.getOpenKakao())
+                    .location(targetMeeting.getLocation())
+                    .title(targetPost.getTitle())
+                    .content(targetPost.getContent())
+                    .createdDateTime(targetPost.getCreateDate())
+                    .status(targetMeeting.getStatus())
+                    .viewCount(targetPost.getViewCount())
+                    //.isYours(principal.getUsername().equals(post.getMember().getUsername()))
+                    //.bookmarkCount(...카운트 쿼리...)
+                    .build();
 
-        DetailPostDto detailPostDto = DetailPostDto.builder()
-                .author(targetPost.getMember().getNickname())
-                .meetingType(targetMeeting.getMeetingType())
-                .gameType(targetMeeting.getGameType())
-                .meetingMemberNum(targetMeeting.getMeetingMemberNum())
-                .meetingDateTime(targetMeeting.getMeetingDateTime())        //장기일 경우 1970.1.1/time
-                .meetingDays(targetMeeting.getMeetingDays())        //장기 meeting이 여러개면 붙여야하나?
-                .meetingDeadline(targetMeeting.getMeetingDeadline())
-                .openKakao(targetMeeting.getOpenKakao())
-                .location(targetMeeting.getLocation())
-                .title(targetPost.getTitle())
-                .content(targetPost.getContent())
-                .createdDateTime(targetPost.getCreateDate())
-                .status(targetMeeting.getStatus())
-                .viewCount(targetPost.getViewCount())
-                //.isYours(principal.getUsername().equals(post.getMember().getUsername()))
-                .build();
+            return (T) detailPostDto;
 
-        return detailPostDto;
+        } else if (targetMeeting.getMeetingType() == MeetingType.LONG) {
+            LongDetailPostDto detailPostDto = LongDetailPostDto.builder()
+                    .author(targetPost.getMember().getNickname())
+                    .meetingType(targetMeeting.getMeetingType())
+                    .gameType(targetMeeting.getGameType())
+                    .meetingMemberNum(targetMeeting.getMeetingMemberNum())
+                    .meetingTime(targetMeeting.getMeetingDateTime().toLocalTime())        //장기일 경우 1970.1.1/time
+                    .meetingDays(targetMeeting.getMeetingDays())
+                    .meetingDeadline(targetMeeting.getMeetingDeadline())
+                    .openKakao(targetMeeting.getOpenKakao())
+                    .location(targetMeeting.getLocation())
+                    .title(targetPost.getTitle())
+                    .content(targetPost.getContent())
+                    .createdDateTime(targetPost.getCreateDate())
+                    .status(targetMeeting.getStatus())
+                    .viewCount(targetPost.getViewCount())
+                    //.isYours(principal.getUsername().equals(post.getMember().getUsername()))
+                    //.bookmarkCount(...카운트 쿼리...)
+                    .build();
 
+            return (T) detailPostDto;
+        } else {
+            //TODO: 해당 타입의 게시글이 없습니다Exception
+            return null;
+
+        }
 
 
     }
