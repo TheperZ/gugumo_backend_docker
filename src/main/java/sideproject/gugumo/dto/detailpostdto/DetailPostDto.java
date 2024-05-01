@@ -1,6 +1,5 @@
 package sideproject.gugumo.dto.detailpostdto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import sideproject.gugumo.domain.meeting.GameType;
@@ -20,6 +19,7 @@ import java.time.LocalDateTime;
 @Getter
 public abstract class DetailPostDto {
 
+    private Long postId;
     private String author;
 
     private MeetingType meetingType;
@@ -33,7 +33,7 @@ public abstract class DetailPostDto {
     private String content;
     private LocalDateTime createdDateTime;
 
-    private MeetingStatus status;
+    private MeetingStatus meetingStatus;
     private long viewCount;
 
     //북마크 수

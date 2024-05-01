@@ -1,6 +1,9 @@
 package sideproject.gugumo.repository;
 
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -8,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import sideproject.gugumo.cond.PostSearchCondition;
+import sideproject.gugumo.domain.QBookmark;
 import sideproject.gugumo.domain.meeting.GameType;
 import sideproject.gugumo.domain.meeting.Location;
 import sideproject.gugumo.domain.meeting.MeetingStatus;
@@ -16,6 +20,7 @@ import sideproject.gugumo.dto.SimplePostDto;
 
 import java.util.List;
 
+import static sideproject.gugumo.domain.QBookmark.bookmark;
 import static sideproject.gugumo.domain.meeting.QMeeting.meeting;
 import static sideproject.gugumo.domain.post.QPost.*;
 
@@ -32,28 +37,37 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
 
 
     @Override
-    public Page<SimplePostDto> search(PostSearchCondition cond, Pageable pageable) {
+    public Page<SimplePostDto> search(PostSearchCondition cond, Pageable pageable,
+            String sortType/*, CustomUserDetails principal*/) {
+
+        OrderSpecifier orderSpecifier = createOrderSpecifier(sortType);
+
         List<SimplePostDto> result = queryFactory.select(new QSimplePostDto(
                         post.id.as("postId"),
                         meeting.status,
                         meeting.gameType,
                         meeting.location,
                         post.title,
+                        meeting.meetingDateTime,
+                        meeting.meetingDays,
                         meeting.meetingMemberNum,
-                        meeting.meetingDeadline
+                        meeting.meetingDeadline,
+                        bookmark.isNotNull().as("isBookmarked")
                 ))
                 .from(post)
                 .leftJoin(post.meeting, meeting)
+                //북마크 여부 확인하는 코드
+//                .leftJoin(bookmark).on(bookmark.post.eq(post), bookmark.member.eq(principal.getUser())))
                 .where(
                         queryEq(cond.getQ()), locationEq(cond.getLocation()),
                         gameTypeEq(cond.getGameType()), meetingStatusEq(cond.getMeetingStatus()),
                         post.isDelete.isFalse()
                 )
-                .offset(pageable.getOffset()==0 ? pageable.getOffset(): pageable.getOffset() - 1)       //page는 0부터 세므로
+                .orderBy(orderSpecifier, post.id.desc())
+                .offset(pageable.getOffset() == 0 ? pageable.getOffset() : pageable.getOffset() - 1)       //page는 0부터 세므로
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        //여기서 단기/장기 처리?: 리스트에 대해 다시 검색해야되면 성능 떨어질 거 같음...
 
         JPAQuery<Long> count = queryFactory.select(post.count())
                 .from(post)
@@ -64,6 +78,15 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
 
         return PageableExecutionUtils.getPage(result, pageable, count::fetchOne);
 
+    }
+
+    //TODO: 정렬타입을 enum으로 변경할 것
+    private OrderSpecifier createOrderSpecifier(String sortType) {
+        return switch (sortType) {
+            case "old"->new OrderSpecifier<>(Order.ASC, post.createDate);
+            case "like"-> new OrderSpecifier<>(Order.DESC, post.viewCount);
+            default -> new OrderSpecifier<>(Order.DESC, post.createDate);
+        };
     }
 
     private BooleanExpression meetingStatusEq(MeetingStatus meetingStatus) {

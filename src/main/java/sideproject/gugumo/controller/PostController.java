@@ -30,7 +30,7 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping("/new")
-    public ResponseEntity<String> save(@RequestBody CreatePostReq createPostReq) {
+    public ResponseEntity<String> save(/*@AuthenticationPrincipal CustomUserDeatils principal*/ @RequestBody CreatePostReq createPostReq) {
         postService.save(createPostReq);
 
         return ResponseEntity.status(201).body("글 작성 완료");
@@ -39,23 +39,28 @@ public class PostController {
 
     @GetMapping
     public ResponseEntity<Page<SimplePostDto>> findPostSimple(
-            @PageableDefault(size=12, sort="createdDate", direction = Sort.Direction.DESC) Pageable pageable,
+            /*@AuthenticationPrincipal CustomUserDeatils principal*/
+            @PageableDefault(size=12, direction = Sort.Direction.DESC) Pageable pageable,
             @RequestParam(required = false, value = "q") String q,
             @RequestParam(required = false, value="location") String location,
             @RequestParam(required = false, value="gametype") String gameType,
-            @RequestParam(required = false, value="meetingtype", defaultValue = "RECRUIT") String meetingStatus) {
+            @RequestParam(required = false, value="meetingstatus", defaultValue = "recruit") String meetingStatus,
+            @RequestParam(required = false, value = "sorttype", defaultValue = "new") String sortType) {
 
-        return ResponseEntity.ok(postService.findSimplePost(pageable, q, location, gameType, meetingStatus));
+        return ResponseEntity.ok(postService.findSimplePost(pageable, q, location, gameType, meetingStatus, sortType));
     }
     @GetMapping("/{post_id}")
-    public <T extends DetailPostDto> ResponseEntity<T> findPostDetail(@PathVariable("post_id") Long postId) {
+    public <T extends DetailPostDto> ResponseEntity<T> findPostDetail(
+            /*@AuthenticationPrincipal CustomUserDeatils principal*/
+            @PathVariable("post_id") Long postId) {
         DetailPostDto detailPostDto = postService.findDetailPostByPostId(postId);
 
         return ResponseEntity.ok((T)detailPostDto);
     }
 
     @PatchMapping("/{post_id}")
-    public ResponseEntity<String> updatePost(@PathVariable("post_id") Long postId,
+    public ResponseEntity<String> updatePost(/*@AuthenticationPrincipal CustomUserDeatils principal*/
+                                             @PathVariable("post_id") Long postId,
                                              @RequestBody UpdatePostReq updatePostReq) {
         postService.update(postId, updatePostReq);
 
@@ -64,13 +69,18 @@ public class PostController {
 
 
     @DeleteMapping("/{post_id}")
-    public ResponseEntity<String> deletePost(@PathVariable("post_id") Long postId) {
+    public ResponseEntity<String> deletePost(
+            /*@AuthenticationPrincipal CustomUserDeatils principal*/
+            @PathVariable("post_id") Long postId) {
 
         postService.deletePost(postId);
 
         return ResponseEntity.ok("글 삭제 완료");
     }
 
+    /**
+     * 테스트 코드: 추후 반드시 삭제할 것
+     */
     private final MemberRepository memberRepository;
 
     @PostConstruct

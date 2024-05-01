@@ -2,6 +2,8 @@ package sideproject.gugumo.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.querydsl.core.annotations.QueryProjection;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import sideproject.gugumo.domain.meeting.GameType;
 import sideproject.gugumo.domain.meeting.Location;
@@ -11,6 +13,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
+@Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)  //Null인 필드 제외
 public class SimplePostDto {
 
@@ -25,8 +28,9 @@ public class SimplePostDto {
     private LocalDate meetingDeadline;
     private boolean isBookmarked;
 
+
     @QueryProjection
-    public SimplePostDto(Long postId, MeetingStatus status, GameType gameType, Location location, String title, int meetingMemberNum, LocalDate meetingDeadline) {
+    public SimplePostDto(Long postId, MeetingStatus status, GameType gameType, Location location, String title, LocalDateTime meetingDateTime, String meetingDays, int meetingMemberNum, LocalDate meetingDeadline, boolean isBookmarked) {
         this.postId = postId;
         this.status = status;
         this.gameType = gameType;
@@ -36,5 +40,6 @@ public class SimplePostDto {
         this.meetingDays = meetingDays;
         this.meetingMemberNum = meetingMemberNum;
         this.meetingDeadline = meetingDeadline;
+        this.isBookmarked = isBookmarked;
     }
 }

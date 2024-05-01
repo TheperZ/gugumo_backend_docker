@@ -6,5 +6,5 @@ import sideproject.gugumo.cond.PostSearchCondition;
 import sideproject.gugumo.dto.SimplePostDto;
 
 public interface PostRepositoryCustom {
-    Page<SimplePostDto> search(PostSearchCondition cond, Pageable pageable);
+    Page<SimplePostDto> search(PostSearchCondition cond, Pageable pageable, String sortType);
 }

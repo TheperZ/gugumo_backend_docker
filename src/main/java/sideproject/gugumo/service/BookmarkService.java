@@ -15,6 +15,7 @@ import sideproject.gugumo.repository.PostRepository;
 import sideproject.gugumo.request.CreateBookmarkReq;
 
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -36,7 +37,8 @@ public class BookmarkService {
          */
         Member member = memberRepository.findById(req.getMemberId()).orElseThrow(NoSuchElementException::new);
 
-        Post post = postRepository.findById(req.getPostId()).orElseThrow(NoSuchElementException::new);
+        Post post = postRepository.findByIdAndAndIsDeleteFalse(req.getPostId())
+                .orElseThrow(NoSuchElementException::new);
 
         Bookmark bookmark = Bookmark.builder()
                 .member(member)
@@ -47,7 +49,7 @@ public class BookmarkService {
 
     }
 
-    public Page<Bookmark> findBookmarkByMember(Long memberId, Pageable pageable) {
+    public Page<Bookmark> findBookmarkByMember(/*CustomUserDetails principal*/Long memberId, Pageable pageable) {
 
         //나중에 토큰에서 가져와야 할듯
         Member member = memberRepository.findById(memberId).orElseThrow(NoSuchElementException::new);
@@ -58,12 +60,22 @@ public class BookmarkService {
     }
 
     @Transactional
-    public void delete(Long bookmarkId) {
+    public void delete(/*CustomUserDetails principal*/Long postId) {
+
+        //나중에 토큰에서 가져와야 할듯
+         /*
+        memberRepository.findByUsername(principal.getUsername())
+        .orElseThrow(해당 회원이 없습니다Exception::new)
+         */
+
+        Member testuser = memberRepository.findByUsername("testuser").get();
+        Post targetPost = postRepository.findById(postId).orElseThrow(NoSuchElementException::new);
 
         /**
          * deleteById()와 달리 예외 처리를 커스텀할 수 있음
          */
-        Bookmark bookmark = bookmarkRepository.findById(bookmarkId).orElseThrow(NoSuchElementException::new);
+        Bookmark bookmark = bookmarkRepository.findByMemberAndPost(testuser, targetPost)
+                .orElseThrow(NoSuchElementException::new);
 
         bookmarkRepository.delete(bookmark);
     }

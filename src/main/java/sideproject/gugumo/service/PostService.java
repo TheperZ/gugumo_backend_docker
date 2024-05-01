@@ -14,6 +14,7 @@ import sideproject.gugumo.domain.post.Post;
 import sideproject.gugumo.dto.SimplePostDto;
 import sideproject.gugumo.dto.detailpostdto.LongDetailPostDto;
 import sideproject.gugumo.dto.detailpostdto.ShortDetailPostDto;
+import sideproject.gugumo.repository.BookmarkRepository;
 import sideproject.gugumo.repository.MeetingRepository;
 import sideproject.gugumo.repository.MemberRepository;
 import sideproject.gugumo.repository.PostRepository;
@@ -37,6 +38,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final MeetingRepository meetingRepository;
     private final MemberRepository memberRepository;
+    private final BookmarkRepository bookmarkRepository;
 
     /**
      * 단기모집 기준: meetingDate, meetingTime 반영(default)
@@ -44,7 +46,7 @@ public class PostService {
      * @param createPostReq
      */
     @Transactional
-    public void save(CreatePostReq createPostReq) {
+    public void save(/*CustomUserDetails principal*/CreatePostReq createPostReq) {
 
         /**
          *  orElse~를 사용하는 경우 null이 아닐 시 Optional의 인자가 반환된다.
@@ -119,8 +121,8 @@ public class PostService {
      * @return page
      */
 
-    public Page<SimplePostDto> findSimplePost(Pageable pageable, String q,
-                                              String gameType, String location, String meetingStatus) {
+    public Page<SimplePostDto> findSimplePost(/*CustomUserDetails principal*/Pageable pageable, String q,
+                                              String gameType, String location, String meetingStatus, String sortType) {
         PostSearchCondition condition = PostSearchCondition.builder()
                 .q(q)
                 .gameType(GameType.valueOf(gameType))
@@ -128,14 +130,39 @@ public class PostService {
                 .meetingStatus(MeetingStatus.valueOf(meetingStatus))
                 .build();
 
-        return postRepository.search(condition, pageable);
+
+
+        return postRepository.search(condition, pageable, sortType/*, principal*/);
+
+/*        //북마크 여부 처리(진짜 별로같음 필드 하나 넣자고 Dto를 왜 또 만들어)
+        Page<SimplePostDto> result=pageresult.map(m->
+                SimplePostDto.builder()
+                        .postId(m.getPostId())
+                        .status(m.getStatus())
+                        .gameType(m.getGameType())
+                        .location(m.getLocation())
+                        .title(m.getTitle())
+                        .meetingDateTime(m.getMeetingDateTime())
+                        .meetingDays(m.getMeetingDays())
+                        .meetingMemberNum(m.getMeetingMemberNum())
+                        .meetingDeadline(m.getMeetingDeadline())
+*//*                        .isBookmarked(bookmarkRepository.existsByMemberAndPost(
+                                memberRepository.findByUsername(principal.getUsername()),
+                                postRepository.findById(m.getPostId())
+                        ))*//*
+                        .build()
+        );*/
+
+
+
+
 
     }
 
 
     //장기, 단기에 따라 dto를 나눠서 전송
     @Transactional          //viewCount++가 동작하므로 readonly=false
-    public <T extends DetailPostDto> T findDetailPostByPostId(Long postId) {
+    public <T extends DetailPostDto> T findDetailPostByPostId(/*CustomUserDetails principal*/ Long postId) {
 
 
         Post targetPost = postRepository.findByIdAndAndIsDeleteFalse(postId)
@@ -149,6 +176,7 @@ public class PostService {
 
         if (targetMeeting.getMeetingType() == MeetingType.SHORT) {
             ShortDetailPostDto detailPostDto = ShortDetailPostDto.builder()
+                    .postId(targetPost.getId())
                     .author(targetPost.getMember().getNickname())
                     .meetingType(targetMeeting.getMeetingType())
                     .gameType(targetMeeting.getGameType())
@@ -160,16 +188,17 @@ public class PostService {
                     .title(targetPost.getTitle())
                     .content(targetPost.getContent())
                     .createdDateTime(targetPost.getCreateDate())
-                    .status(targetMeeting.getStatus())
+                    .meetingStatus(targetMeeting.getStatus())
                     .viewCount(targetPost.getViewCount())
                     //.isYours(principal.getUsername().equals(post.getMember().getUsername()))
-                    //.bookmarkCount(...카운트 쿼리...)
+                    .bookmarkCount(bookmarkRepository.countByPost(targetPost))
                     .build();
 
             return (T) detailPostDto;
 
         } else if (targetMeeting.getMeetingType() == MeetingType.LONG) {
             LongDetailPostDto detailPostDto = LongDetailPostDto.builder()
+                    .postId(targetPost.getId())
                     .author(targetPost.getMember().getNickname())
                     .meetingType(targetMeeting.getMeetingType())
                     .gameType(targetMeeting.getGameType())
@@ -182,10 +211,10 @@ public class PostService {
                     .title(targetPost.getTitle())
                     .content(targetPost.getContent())
                     .createdDateTime(targetPost.getCreateDate())
-                    .status(targetMeeting.getStatus())
+                    .meetingStatus(targetMeeting.getStatus())
                     .viewCount(targetPost.getViewCount())
                     //.isYours(principal.getUsername().equals(post.getMember().getUsername()))
-                    //.bookmarkCount(...카운트 쿼리...)
+                    .bookmarkCount(bookmarkRepository.countByPost(targetPost))
                     .build();
 
             return (T) detailPostDto;
@@ -199,7 +228,7 @@ public class PostService {
     }
 
     @Transactional
-    public void update(Long postId, UpdatePostReq updatePostReq) {
+    public void update(/*CustomUserDetails principal*/ Long postId, UpdatePostReq updatePostReq) {
         //토큰에서
         /*
         memberRepository.findByUsername(principal.getUsername())
@@ -219,7 +248,7 @@ public class PostService {
     }
 
     @Transactional
-    public void deletePost(Long postId) {
+    public void deletePost(/*CustomUserDetails principal*/ Long postId) {
 
         //토큰에서
         /*
