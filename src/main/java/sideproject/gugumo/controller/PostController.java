@@ -37,15 +37,19 @@ public class PostController {
     }
 
 
+    /**
+     * 정렬(Sort)은 조건이 조금만 복잡해져도 Pageable의 Sort기능을 사용하기 어렵다. 루트 엔티티 범위를 넘어가는(join을 하는 등)
+     * 동적 정렬 기능이 필요하면 스프링 데이터 페이징이 제공하는 Sort를 사용하기 보다는 파라미터를 받아서 직접 처리하는 것을 권장한다.
+     */
     @GetMapping
     public ResponseEntity<Page<SimplePostDto>> findPostSimple(
             /*@AuthenticationPrincipal CustomUserDeatils principal*/
-            @PageableDefault(size=12, direction = Sort.Direction.DESC) Pageable pageable,
+            @PageableDefault(size=12) Pageable pageable,
             @RequestParam(required = false, value = "q") String q,
             @RequestParam(required = false, value="location") String location,
             @RequestParam(required = false, value="gametype") String gameType,
-            @RequestParam(required = false, value="meetingstatus", defaultValue = "recruit") String meetingStatus,
-            @RequestParam(required = false, value = "sorttype", defaultValue = "new") String sortType) {
+            @RequestParam(required = false, value="meetingstatus", defaultValue = "RECRUIT") String meetingStatus,
+            @RequestParam(required = false, value = "sort", defaultValue = "NEW") String sortType) {
 
         return ResponseEntity.ok(postService.findSimplePost(pageable, q, location, gameType, meetingStatus, sortType));
     }

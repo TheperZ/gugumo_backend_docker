@@ -35,7 +35,7 @@ public class BookmarkService {
         memberRepository.findByUsername(principal.getUsername())
         .orElseThrow(해당 회원이 없습니다Exception::new)
          */
-        Member member = memberRepository.findById(req.getMemberId()).orElseThrow(NoSuchElementException::new);
+        Member member = memberRepository.findByUsername("testuser").orElseThrow(NoSuchElementException::new);
 
         Post post = postRepository.findByIdAndAndIsDeleteFalse(req.getPostId())
                 .orElseThrow(NoSuchElementException::new);

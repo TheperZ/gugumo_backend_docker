@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sideproject.gugumo.cond.PostSearchCondition;
+import sideproject.gugumo.cond.SortType;
 import sideproject.gugumo.domain.meeting.*;
 import sideproject.gugumo.dto.detailpostdto.DetailPostDto;
 import sideproject.gugumo.domain.Member;
@@ -125,33 +126,17 @@ public class PostService {
                                               String gameType, String location, String meetingStatus, String sortType) {
         PostSearchCondition condition = PostSearchCondition.builder()
                 .q(q)
-                .gameType(GameType.valueOf(gameType))
-                .location(Location.valueOf(location))
+                .gameType(gameType == null ? null : GameType.valueOf(gameType))
+                .location(location == null ? null : Location.valueOf(location))
                 .meetingStatus(MeetingStatus.valueOf(meetingStatus))
+                .sortType(SortType.valueOf(sortType))
                 .build();
 
 
 
-        return postRepository.search(condition, pageable, sortType/*, principal*/);
+        return postRepository.search(condition, pageable/*, principal*/);
 
-/*        //북마크 여부 처리(진짜 별로같음 필드 하나 넣자고 Dto를 왜 또 만들어)
-        Page<SimplePostDto> result=pageresult.map(m->
-                SimplePostDto.builder()
-                        .postId(m.getPostId())
-                        .status(m.getStatus())
-                        .gameType(m.getGameType())
-                        .location(m.getLocation())
-                        .title(m.getTitle())
-                        .meetingDateTime(m.getMeetingDateTime())
-                        .meetingDays(m.getMeetingDays())
-                        .meetingMemberNum(m.getMeetingMemberNum())
-                        .meetingDeadline(m.getMeetingDeadline())
-*//*                        .isBookmarked(bookmarkRepository.existsByMemberAndPost(
-                                memberRepository.findByUsername(principal.getUsername()),
-                                postRepository.findById(m.getPostId())
-                        ))*//*
-                        .build()
-        );*/
+
 
 
 

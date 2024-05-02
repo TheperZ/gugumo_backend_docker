@@ -3,7 +3,6 @@ package sideproject.gugumo.repository;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -11,7 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import sideproject.gugumo.cond.PostSearchCondition;
-import sideproject.gugumo.domain.QBookmark;
+import sideproject.gugumo.cond.SortType;
 import sideproject.gugumo.domain.meeting.GameType;
 import sideproject.gugumo.domain.meeting.Location;
 import sideproject.gugumo.domain.meeting.MeetingStatus;
@@ -29,18 +28,24 @@ import static sideproject.gugumo.domain.post.QPost.*;
  */
 public class PostRepositoryImpl implements PostRepositoryCustom{
 
-    private final JPAQueryFactory queryFactory;
 
-    public PostRepositoryImpl(EntityManager em) {
+    private final JPAQueryFactory queryFactory;
+    //temp 코드 병합 시 지울것
+    private final MemberRepository memberRepository;
+
+
+    public PostRepositoryImpl(EntityManager em, MemberRepository memberRepository) {
         this.queryFactory = new JPAQueryFactory(em);
+        this.memberRepository = memberRepository;
     }
 
 
     @Override
-    public Page<SimplePostDto> search(PostSearchCondition cond, Pageable pageable,
-            String sortType/*, CustomUserDetails principal*/) {
+    public Page<SimplePostDto> search(PostSearchCondition cond, Pageable pageable
+            /*, CustomUserDetails principal*/) {
 
-        OrderSpecifier orderSpecifier = createOrderSpecifier(sortType);
+
+        OrderSpecifier orderSpecifier = createOrderSpecifier(cond.getSortType());
 
         List<SimplePostDto> result = queryFactory.select(new QSimplePostDto(
                         post.id.as("postId"),
@@ -56,8 +61,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                 ))
                 .from(post)
                 .leftJoin(post.meeting, meeting)
-                //북마크 여부 확인하는 코드
-//                .leftJoin(bookmark).on(bookmark.post.eq(post), bookmark.member.eq(principal.getUser())))
+                .leftJoin(bookmark).on(bookmark.post.eq(post), bookmark.member.eq(memberRepository.findByUsername("testuser").get()/*principal.getUser()*/))
                 .where(
                         queryEq(cond.getQ()), locationEq(cond.getLocation()),
                         gameTypeEq(cond.getGameType()), meetingStatusEq(cond.getMeetingStatus()),
@@ -80,11 +84,11 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
 
     }
 
-    //TODO: 정렬타입을 enum으로 변경할 것
-    private OrderSpecifier createOrderSpecifier(String sortType) {
+
+    private OrderSpecifier createOrderSpecifier(SortType sortType) {
         return switch (sortType) {
-            case "old"->new OrderSpecifier<>(Order.ASC, post.createDate);
-            case "like"-> new OrderSpecifier<>(Order.DESC, post.viewCount);
+            case OLD->new OrderSpecifier<>(Order.ASC, post.createDate);
+            case LIKE-> new OrderSpecifier<>(Order.DESC, post.viewCount);
             default -> new OrderSpecifier<>(Order.DESC, post.createDate);
         };
     }

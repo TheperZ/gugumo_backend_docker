@@ -18,4 +18,5 @@ public class PostSearchCondition {
     private Location location;
     private GameType gameType;
     private MeetingStatus meetingStatus;
+    private SortType sortType;
 }
