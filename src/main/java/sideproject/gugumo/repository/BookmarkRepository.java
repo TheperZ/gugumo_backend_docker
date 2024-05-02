@@ -8,11 +8,12 @@ import sideproject.gugumo.domain.Bookmark;
 import sideproject.gugumo.domain.Member;
 import sideproject.gugumo.domain.post.Post;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
-    public Page<Bookmark> findByMember(Member member, Pageable pageable);
+    public List<Bookmark> findByMember(Member member);
 
     public Optional<Bookmark> findByMemberAndPost(Member member, Post post);
 

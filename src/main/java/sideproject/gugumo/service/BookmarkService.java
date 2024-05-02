@@ -8,14 +8,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sideproject.gugumo.domain.Bookmark;
 import sideproject.gugumo.domain.Member;
+import sideproject.gugumo.domain.meeting.Meeting;
 import sideproject.gugumo.domain.post.Post;
+import sideproject.gugumo.dto.BookmarkPostDto;
+import sideproject.gugumo.dto.SimplePostDto;
+import sideproject.gugumo.page.PageCustom;
 import sideproject.gugumo.repository.BookmarkRepository;
+import sideproject.gugumo.repository.MeetingRepository;
 import sideproject.gugumo.repository.MemberRepository;
 import sideproject.gugumo.repository.PostRepository;
 import sideproject.gugumo.request.CreateBookmarkReq;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -26,6 +33,7 @@ public class BookmarkService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final BookmarkRepository bookmarkRepository;
+    private final MeetingRepository meetingRepository;
 
     @Transactional
     public void save(CreateBookmarkReq req) {
@@ -49,14 +57,47 @@ public class BookmarkService {
 
     }
 
-    public Page<Bookmark> findBookmarkByMember(/*CustomUserDetails principal*/Long memberId, Pageable pageable) {
+    public PageCustom<BookmarkPostDto> findBookmarkByMember(/*CustomUserDetails principal*/Pageable pageable) {
 
         //나중에 토큰에서 가져와야 할듯
-        Member member = memberRepository.findById(memberId).orElseThrow(NoSuchElementException::new);
+         /*
+        memberRepository.findByUsername(principal.getUsername())
+        .orElseThrow(해당 회원이 없습니다Exception::new)
+         */
+        Member member = memberRepository.findByUsername("testuser").get();
 
 
+        List<Bookmark> bookmarkList = bookmarkRepository.findByMember(member);
 
-        return bookmarkRepository.findByMember(member, pageable);
+
+        List<BookmarkPostDto> result = bookmarkList.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+
+        return new PageCustom<BookmarkPostDto>(result, pageable, result.size());
+
+    }
+
+    private BookmarkPostDto convertToDto(Bookmark bookmark/*CustomUserDetails principal*/) {
+
+        Post post = bookmark.getPost();
+        Meeting meeting = meetingRepository.findByPost(post)
+                .orElseThrow(NoSuchElementException::new);
+
+
+        BookmarkPostDto result = BookmarkPostDto.builder()
+                .postId(post.getId())
+                .status(meeting.getStatus())
+                .gameType(meeting.getGameType())
+                .location(meeting.getLocation())
+                .title(post.getTitle())
+                .meetingDateTime(meeting.getMeetingDateTime())
+                .meetingDays(meeting.getMeetingDays())
+                .meetingMemberNum(meeting.getMeetingMemberNum())
+                .meetingDeadline(meeting.getMeetingDeadline())
+                .build();
+
+        return result;
     }
 
     @Transactional

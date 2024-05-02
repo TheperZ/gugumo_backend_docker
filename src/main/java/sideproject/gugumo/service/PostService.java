@@ -199,6 +199,7 @@ public class PostService {
                     .meetingStatus(targetMeeting.getStatus())
                     .viewCount(targetPost.getViewCount())
                     //.isYours(principal.getUsername().equals(post.getMember().getUsername()))
+                    .isYours(targetPost.getMember().getUsername().equals("testuser"))
                     .bookmarkCount(bookmarkRepository.countByPost(targetPost))
                     .build();
 
