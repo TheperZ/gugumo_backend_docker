@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import sideproject.gugumo.domain.Member;
 import sideproject.gugumo.dto.detailpostdto.DetailPostDto;
 import sideproject.gugumo.dto.SimplePostDto;
+import sideproject.gugumo.page.PageCustom;
 import sideproject.gugumo.repository.MemberRepository;
 import sideproject.gugumo.request.CreatePostReq;
 import sideproject.gugumo.request.UpdatePostReq;
@@ -42,7 +43,7 @@ public class PostController {
      * 동적 정렬 기능이 필요하면 스프링 데이터 페이징이 제공하는 Sort를 사용하기 보다는 파라미터를 받아서 직접 처리하는 것을 권장한다.
      */
     @GetMapping
-    public ResponseEntity<Page<SimplePostDto>> findPostSimple(
+    public ResponseEntity<PageCustom<SimplePostDto>> findPostSimple(
             /*@AuthenticationPrincipal CustomUserDeatils principal*/
             @PageableDefault(size=12) Pageable pageable,
             @RequestParam(required = false, value = "q") String q,
@@ -51,7 +52,9 @@ public class PostController {
             @RequestParam(required = false, value="meetingstatus", defaultValue = "RECRUIT") String meetingStatus,
             @RequestParam(required = false, value = "sort", defaultValue = "NEW") String sortType) {
 
-        return ResponseEntity.ok(postService.findSimplePost(pageable, q, location, gameType, meetingStatus, sortType));
+
+        Page<SimplePostDto> result = postService.findSimplePost(pageable, q, location, gameType, meetingStatus, sortType);
+        return ResponseEntity.ok(new PageCustom<SimplePostDto>(result.getContent(), result.getPageable(), result.getTotalElements()));
     }
     @GetMapping("/{post_id}")
     public <T extends DetailPostDto> ResponseEntity<T> findPostDetail(

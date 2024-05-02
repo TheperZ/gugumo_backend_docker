@@ -19,3 +19,7 @@ spring:
     level:
       org.hibernate.SQL: debug
       org.hibernate.type: trace
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true

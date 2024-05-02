@@ -68,7 +68,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                         post.isDelete.isFalse()
                 )
                 .orderBy(orderSpecifier, post.id.desc())
-                .offset(pageable.getOffset() == 0 ? pageable.getOffset() : pageable.getOffset() - 1)       //page는 0부터 세므로
+                .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
