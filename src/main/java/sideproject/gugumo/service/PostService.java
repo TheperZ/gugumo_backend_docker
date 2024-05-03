@@ -15,8 +15,8 @@ import sideproject.gugumo.domain.post.Post;
 import sideproject.gugumo.dto.SimplePostDto;
 import sideproject.gugumo.dto.detailpostdto.LongDetailPostDto;
 import sideproject.gugumo.dto.detailpostdto.ShortDetailPostDto;
-import sideproject.gugumo.exception.exception.NoSuchMeetingException;
-import sideproject.gugumo.exception.exception.NoSuchPostException;
+import sideproject.gugumo.exception.exception.meetingNotFoundException;
+import sideproject.gugumo.exception.exception.PostNotFoundException;
 import sideproject.gugumo.repository.BookmarkRepository;
 import sideproject.gugumo.repository.MeetingRepository;
 import sideproject.gugumo.repository.MemberRepository;
@@ -153,11 +153,11 @@ public class PostService {
 
 
         Post targetPost = postRepository.findByIdAndAndIsDeleteFalse(postId)
-                .orElseThrow(()->new NoSuchPostException("해당 게시글이 존재하지 않습니다."));
+                .orElseThrow(()->new PostNotFoundException("해당 게시글이 존재하지 않습니다."));
 
 
         Meeting targetMeeting = meetingRepository.findByPost(targetPost)
-                .orElseThrow(()->new NoSuchMeetingException("게시글에 해당하는 모임 정보가 존재하지 않습니다."));
+                .orElseThrow(()->new meetingNotFoundException("게시글에 해당하는 모임 정보가 존재하지 않습니다."));
 
         targetPost.addViewCount();
 
@@ -224,12 +224,12 @@ public class PostService {
          */
 
         Post targetPost =postRepository.findByIdAndAndIsDeleteFalse(postId)
-                .orElseThrow(()->new NoSuchPostException("해당 게시글이 존재하지 않습니다."));
+                .orElseThrow(()->new PostNotFoundException("해당 게시글이 존재하지 않습니다."));
 
         targetPost.update(updatePostReq);
 
         Meeting targetMeeting = meetingRepository.findByPost(targetPost)
-                .orElseThrow(()->new NoSuchMeetingException("게시글에 해당하는 모임 정보가 존재하지 않습니다."));
+                .orElseThrow(()->new meetingNotFoundException("게시글에 해당하는 모임 정보가 존재하지 않습니다."));
 
         targetMeeting.update(updatePostReq);
 
@@ -245,7 +245,7 @@ public class PostService {
          */
 
         Post targetPost = postRepository.findByIdAndAndIsDeleteFalse(postId)
-                .orElseThrow(()->new NoSuchPostException("해당 게시글이 존재하지 않습니다."));
+                .orElseThrow(()->new PostNotFoundException("해당 게시글이 존재하지 않습니다."));
 
         //targetPost.isDelete=true
         targetPost.tempDelete();

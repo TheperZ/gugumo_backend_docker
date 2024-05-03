@@ -2,7 +2,6 @@ package sideproject.gugumo.service;
 
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,9 +10,8 @@ import sideproject.gugumo.domain.Member;
 import sideproject.gugumo.domain.meeting.Meeting;
 import sideproject.gugumo.domain.post.Post;
 import sideproject.gugumo.dto.BookmarkPostDto;
-import sideproject.gugumo.dto.SimplePostDto;
-import sideproject.gugumo.exception.exception.NoSuchBookmarkException;
-import sideproject.gugumo.exception.exception.NoSuchPostException;
+import sideproject.gugumo.exception.exception.BookmarkNotFoundException;
+import sideproject.gugumo.exception.exception.PostNotFoundException;
 import sideproject.gugumo.page.PageCustom;
 import sideproject.gugumo.repository.BookmarkRepository;
 import sideproject.gugumo.repository.MeetingRepository;
@@ -23,7 +21,6 @@ import sideproject.gugumo.request.CreateBookmarkReq;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,7 +46,7 @@ public class BookmarkService {
                 .orElseThrow(NoSuchElementException::new);
 
         Post post = postRepository.findByIdAndAndIsDeleteFalse(req.getPostId())
-                .orElseThrow(()->new NoSuchPostException("해당 게시글이 존재하지 않습니다."));
+                .orElseThrow(()->new PostNotFoundException("해당 게시글이 존재하지 않습니다."));
 
         Bookmark bookmark = Bookmark.builder()
                 .member(member)
@@ -114,13 +111,13 @@ public class BookmarkService {
 
         Member testuser = memberRepository.findByUsername("testuser").get();
         Post targetPost = postRepository.findById(postId)
-                .orElseThrow(()->new NoSuchPostException("해당 게시글이 존재하지 않습니다."));
+                .orElseThrow(()->new PostNotFoundException("해당 게시글이 존재하지 않습니다."));
 
         /**
          * deleteById()와 달리 예외 처리를 커스텀할 수 있음
          */
         Bookmark bookmark = bookmarkRepository.findByMemberAndPost(testuser, targetPost)
-                .orElseThrow(()->new NoSuchBookmarkException("해당 북마크가 존재하지 않습니다."));
+                .orElseThrow(()->new BookmarkNotFoundException("해당 북마크가 존재하지 않습니다."));
 
         bookmarkRepository.delete(bookmark);
     }

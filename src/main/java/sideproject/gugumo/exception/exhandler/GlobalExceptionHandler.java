@@ -4,9 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import sideproject.gugumo.exception.exception.NoSuchBookmarkException;
-import sideproject.gugumo.exception.exception.NoSuchMeetingException;
-import sideproject.gugumo.exception.exception.NoSuchPostException;
+import sideproject.gugumo.exception.exception.BookmarkNotFoundException;
+import sideproject.gugumo.exception.exception.meetingNotFoundException;
+import sideproject.gugumo.exception.exception.PostNotFoundException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,28 +15,28 @@ import java.util.Map;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(value = {NoSuchPostException.class})
-    public ResponseEntity noSuchPostExceptionHandler(NoSuchPostException e) {
+    @ExceptionHandler(value = {PostNotFoundException.class})
+    public ResponseEntity postNotFoundExceptionHandler(PostNotFoundException e) {
         Map<String, String> result = new HashMap<>();
         result.put("ErrorMessage", e.getMessage());
-        log.error("[noSuchPostExceptionHandler] ex : " + e.getMessage());
+        log.error("[postNotFoundExceptionHandler] ex : " + e.getMessage());
         return ResponseEntity.status(404).body(result);
     }
 
-    @ExceptionHandler(value = {NoSuchMeetingException.class})
-    public ResponseEntity noSuchMeetingExceptionHandler(NoSuchMeetingException e) {
+    @ExceptionHandler(value = {meetingNotFoundException.class})
+    public ResponseEntity meetingNotFoundExceptionHandler(meetingNotFoundException e) {
         Map<String, String> result = new HashMap<>();
         result.put("ErrorMessage", e.getMessage());
-        log.error("[noSuchMeetingExceptionHandler] ex : " + e.getMessage());
+        log.error("[meetingNotFoundExceptionHandler] ex : " + e.getMessage());
         return ResponseEntity.status(404).body(result);
     }
 
 
-    @ExceptionHandler(value = {NoSuchBookmarkException.class})
-    public ResponseEntity noSuchBookmarkExceptionHandler(NoSuchBookmarkException e) {
+    @ExceptionHandler(value = {BookmarkNotFoundException.class})
+    public ResponseEntity bookmarkNotFoundExceptionHandler(BookmarkNotFoundException e) {
         Map<String, String> result = new HashMap<>();
         result.put("ErrorMessage", e.getMessage());
-        log.error("[noSuchBookmarkExceptionHandler] ex : " + e.getMessage());
+        log.error("[bookmarkNotFoundExceptionHandler] ex : " + e.getMessage());
         return ResponseEntity.status(404).body(result);
     }
 }

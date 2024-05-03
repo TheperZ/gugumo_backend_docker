@@ -93,5 +93,7 @@ public class PostController {
     @PostConstruct
     public void init() {
         memberRepository.save(new Member("testuser", "testnick"));        //memberId: 1
+        memberRepository.save(new Member("testuser2", "testnick2"));        //memberId: 2
     }
+
 }
