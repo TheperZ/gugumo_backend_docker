@@ -15,6 +15,8 @@ import sideproject.gugumo.domain.post.Post;
 import sideproject.gugumo.dto.SimplePostDto;
 import sideproject.gugumo.dto.detailpostdto.LongDetailPostDto;
 import sideproject.gugumo.dto.detailpostdto.ShortDetailPostDto;
+import sideproject.gugumo.exception.exception.NoSuchMeetingException;
+import sideproject.gugumo.exception.exception.NoSuchPostException;
 import sideproject.gugumo.repository.BookmarkRepository;
 import sideproject.gugumo.repository.MeetingRepository;
 import sideproject.gugumo.repository.MemberRepository;
@@ -128,7 +130,7 @@ public class PostService {
                 .q(q)
                 .gameType(gameType == null ? null : GameType.valueOf(gameType))
                 .location(location == null ? null : Location.valueOf(location))
-                .meetingStatus(MeetingStatus.valueOf(meetingStatus))
+                .meetingStatus(meetingStatus.equals("ALL") ? null : MeetingStatus.valueOf(meetingStatus))
                 .sortType(SortType.valueOf(sortType))
                 .build();
 
@@ -151,11 +153,11 @@ public class PostService {
 
 
         Post targetPost = postRepository.findByIdAndAndIsDeleteFalse(postId)
-                .orElseThrow(NoSuchElementException::new);
+                .orElseThrow(()->new NoSuchPostException("해당 게시글이 존재하지 않습니다."));
 
 
         Meeting targetMeeting = meetingRepository.findByPost(targetPost)
-                .orElseThrow(NoSuchElementException::new);
+                .orElseThrow(()->new NoSuchMeetingException("게시글에 해당하는 모임 정보가 존재하지 않습니다."));
 
         targetPost.addViewCount();
 
@@ -222,12 +224,12 @@ public class PostService {
          */
 
         Post targetPost =postRepository.findByIdAndAndIsDeleteFalse(postId)
-                .orElseThrow(NoSuchElementException::new);
+                .orElseThrow(()->new NoSuchPostException("해당 게시글이 존재하지 않습니다."));
 
         targetPost.update(updatePostReq);
 
         Meeting targetMeeting = meetingRepository.findByPost(targetPost)
-                .orElseThrow(NoSuchElementException::new);
+                .orElseThrow(()->new NoSuchMeetingException("게시글에 해당하는 모임 정보가 존재하지 않습니다."));
 
         targetMeeting.update(updatePostReq);
 
@@ -243,7 +245,7 @@ public class PostService {
          */
 
         Post targetPost = postRepository.findByIdAndAndIsDeleteFalse(postId)
-                .orElseThrow(NoSuchElementException::new);
+                .orElseThrow(()->new NoSuchPostException("해당 게시글이 존재하지 않습니다."));
 
         //targetPost.isDelete=true
         targetPost.tempDelete();
