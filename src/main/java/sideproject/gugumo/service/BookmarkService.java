@@ -110,14 +110,14 @@ public class BookmarkService {
          */
 
         Member testuser = memberRepository.findByUsername("testuser").get();
-        Post targetPost = postRepository.findById(postId)
-                .orElseThrow(()->new PostNotFoundException("해당 게시글이 존재하지 않습니다."));
+        Post targetPost = postRepository.findByIdAndAndIsDeleteFalse(postId)
+                .orElseThrow(()->new PostNotFoundException("북마크 삭제 실패: 해당 게시글이 존재하지 않습니다."));
 
         /**
          * deleteById()와 달리 예외 처리를 커스텀할 수 있음
          */
         Bookmark bookmark = bookmarkRepository.findByMemberAndPost(testuser, targetPost)
-                .orElseThrow(()->new BookmarkNotFoundException("해당 북마크가 존재하지 않습니다."));
+                .orElseThrow(()->new BookmarkNotFoundException("북마크 삭제 실패: 해당 북마크가 존재하지 않습니다."));
 
         bookmarkRepository.delete(bookmark);
     }

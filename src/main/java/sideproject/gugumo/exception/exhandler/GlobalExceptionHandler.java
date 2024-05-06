@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import sideproject.gugumo.exception.NoAuthorizationException;
 import sideproject.gugumo.exception.exception.BookmarkNotFoundException;
 import sideproject.gugumo.exception.exception.meetingNotFoundException;
 import sideproject.gugumo.exception.exception.PostNotFoundException;
@@ -38,5 +39,13 @@ public class GlobalExceptionHandler {
         result.put("ErrorMessage", e.getMessage());
         log.error("[bookmarkNotFoundExceptionHandler] ex : " + e.getMessage());
         return ResponseEntity.status(404).body(result);
+    }
+
+    @ExceptionHandler(value = {NoAuthorizationException.class})
+    public ResponseEntity noAuthorizationExceptionHandler(NoAuthorizationException e) {
+        Map<String, String> result = new HashMap<>();
+        result.put("ErrorMessage", e.getMessage());
+        log.error("[noAuthorizationExceptionHandler] ex : " + e.getMessage());
+        return ResponseEntity.status(401).body(result);
     }
 }

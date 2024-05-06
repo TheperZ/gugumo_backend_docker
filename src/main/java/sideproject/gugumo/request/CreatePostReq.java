@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 @Getter
 public class CreatePostReq {
 
-    private Long authorId;              //토큰에서 가져온다면 이건 필요없을듯
 
     private String meetingType;     //단기, 장기
     private String gameType;

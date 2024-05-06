@@ -2,6 +2,7 @@ package sideproject.gugumo.service;
 
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -9,12 +10,14 @@ import org.springframework.transaction.annotation.Transactional;
 import sideproject.gugumo.cond.PostSearchCondition;
 import sideproject.gugumo.cond.SortType;
 import sideproject.gugumo.domain.meeting.*;
+import sideproject.gugumo.dto.CustomUserDetails;
 import sideproject.gugumo.dto.detailpostdto.DetailPostDto;
 import sideproject.gugumo.domain.Member;
 import sideproject.gugumo.domain.post.Post;
 import sideproject.gugumo.dto.SimplePostDto;
 import sideproject.gugumo.dto.detailpostdto.LongDetailPostDto;
 import sideproject.gugumo.dto.detailpostdto.ShortDetailPostDto;
+import sideproject.gugumo.exception.NoAuthorizationException;
 import sideproject.gugumo.exception.exception.meetingNotFoundException;
 import sideproject.gugumo.exception.exception.PostNotFoundException;
 import sideproject.gugumo.repository.BookmarkRepository;
@@ -36,6 +39,7 @@ import java.util.NoSuchElementException;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class PostService {
 
     private final PostRepository postRepository;
@@ -49,18 +53,23 @@ public class PostService {
      * @param createPostReq
      */
     @Transactional
-    public void save(/*CustomUserDetails principal*/CreatePostReq createPostReq) {
+    public void save(CustomUserDetails principal, CreatePostReq createPostReq) {
 
         /**
          *  orElse~를 사용하는 경우 null이 아닐 시 Optional의 인자가 반환된다.
          */
+
+        //if principal==null->로그인을 하지 않아 principal 이 없음->권한이 없습니다 exception
+        if (principal == null) {
+            throw new NoAuthorizationException("저장 실패: 게시글 저장 권한이 없습니다.");
+        }
+
         //토큰에서
-        /*
-        memberRepository.findByUsername(principal.getUsername())
-        .orElseThrow(해당 회원이 없습니다Exception::new)
-         */
-        Member author =memberRepository.findById(createPostReq.getAuthorId())
-                .orElseThrow(NoSuchElementException::new);
+        Member author=memberRepository.findByUsername(principal.getUsername())
+                .orElseThrow(()->
+                        new NoAuthorizationException("저장 실패: 게시글 저장 권한이 없습니다.")
+                );
+
 
         //post 저장
         Post post = Post.builder()
@@ -124,7 +133,7 @@ public class PostService {
      * @return page
      */
 
-    public Page<SimplePostDto> findSimplePost(/*CustomUserDetails principal*/Pageable pageable, String q,
+    public Page<SimplePostDto> findSimplePost(/*CustomUserDetails principal, */Pageable pageable, String q,
                                               String gameType, String location, String meetingStatus, String sortType) {
         PostSearchCondition condition = PostSearchCondition.builder()
                 .q(q)
@@ -149,7 +158,7 @@ public class PostService {
 
     //장기, 단기에 따라 dto를 나눠서 전송
     @Transactional          //viewCount++가 동작하므로 readonly=false
-    public <T extends DetailPostDto> T findDetailPostByPostId(/*CustomUserDetails principal*/ Long postId) {
+    public <T extends DetailPostDto> T findDetailPostByPostId(CustomUserDetails principal, Long postId) {
 
 
         Post targetPost = postRepository.findByIdAndAndIsDeleteFalse(postId)
@@ -160,6 +169,8 @@ public class PostService {
                 .orElseThrow(()->new meetingNotFoundException("게시글에 해당하는 모임 정보가 존재하지 않습니다."));
 
         targetPost.addViewCount();
+
+        log.info("principal={}", principal);
 
         if (targetMeeting.getMeetingType() == MeetingType.SHORT) {
             ShortDetailPostDto detailPostDto = ShortDetailPostDto.builder()
@@ -177,7 +188,9 @@ public class PostService {
                     .createdDateTime(targetPost.getCreateDate())
                     .meetingStatus(targetMeeting.getStatus())
                     .viewCount(targetPost.getViewCount())
-                    //.isYours(principal.getUsername().equals(post.getMember().getUsername()))
+                    .isYours(
+                            principal != null && principal.getUsername().equals(targetPost.getMember().getUsername())
+                    )
                     .bookmarkCount(bookmarkRepository.countByPost(targetPost))
                     .build();
 
@@ -200,8 +213,8 @@ public class PostService {
                     .createdDateTime(targetPost.getCreateDate())
                     .meetingStatus(targetMeeting.getStatus())
                     .viewCount(targetPost.getViewCount())
-                    //.isYours(principal.getUsername().equals(post.getMember().getUsername()))
-                    .isYours(targetPost.getMember().getUsername().equals("testuser"))
+                    .isYours(
+                            principal != null && principal.getUsername().equals(targetPost.getMember().getUsername()))
                     .bookmarkCount(bookmarkRepository.countByPost(targetPost))
                     .build();
 
@@ -224,12 +237,12 @@ public class PostService {
          */
 
         Post targetPost =postRepository.findByIdAndAndIsDeleteFalse(postId)
-                .orElseThrow(()->new PostNotFoundException("해당 게시글이 존재하지 않습니다."));
+                .orElseThrow(()->new PostNotFoundException("수정 실패: 해당 게시글이 존재하지 않습니다."));
 
         targetPost.update(updatePostReq);
 
         Meeting targetMeeting = meetingRepository.findByPost(targetPost)
-                .orElseThrow(()->new meetingNotFoundException("게시글에 해당하는 모임 정보가 존재하지 않습니다."));
+                .orElseThrow(()->new meetingNotFoundException("수정 실패: 게시글에 해당하는 모임 정보가 존재하지 않습니다."));
 
         targetMeeting.update(updatePostReq);
 
