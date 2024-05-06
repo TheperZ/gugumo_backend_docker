@@ -45,7 +45,7 @@ public class BookmarkService {
         Member member = memberRepository.findByUsername("testuser")
                 .orElseThrow(NoSuchElementException::new);
 
-        Post post = postRepository.findByIdAndAndIsDeleteFalse(req.getPostId())
+        Post post = postRepository.findByIdAndIsDeleteFalse(req.getPostId())
                 .orElseThrow(()->new PostNotFoundException("해당 게시글이 존재하지 않습니다."));
 
         Bookmark bookmark = Bookmark.builder()
@@ -110,7 +110,7 @@ public class BookmarkService {
          */
 
         Member testuser = memberRepository.findByUsername("testuser").get();
-        Post targetPost = postRepository.findByIdAndAndIsDeleteFalse(postId)
+        Post targetPost = postRepository.findByIdAndIsDeleteFalse(postId)
                 .orElseThrow(()->new PostNotFoundException("북마크 삭제 실패: 해당 게시글이 존재하지 않습니다."));
 
         /**

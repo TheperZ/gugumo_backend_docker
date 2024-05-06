@@ -3,6 +3,7 @@ package sideproject.gugumo.repository;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -11,13 +12,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import sideproject.gugumo.cond.PostSearchCondition;
 import sideproject.gugumo.cond.SortType;
+import sideproject.gugumo.domain.Member;
 import sideproject.gugumo.domain.meeting.GameType;
 import sideproject.gugumo.domain.meeting.Location;
 import sideproject.gugumo.domain.meeting.MeetingStatus;
+import sideproject.gugumo.dto.CustomUserDetails;
 import sideproject.gugumo.dto.QSimplePostDto;
 import sideproject.gugumo.dto.SimplePostDto;
 
 import java.util.List;
+import java.util.Optional;
 
 import static sideproject.gugumo.domain.QBookmark.bookmark;
 import static sideproject.gugumo.domain.meeting.QMeeting.meeting;
@@ -30,7 +34,6 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
 
 
     private final JPAQueryFactory queryFactory;
-    //temp 코드 병합 시 지울것
     private final MemberRepository memberRepository;
 
 
@@ -42,8 +45,11 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
 
     @Override
     public Page<SimplePostDto> search(PostSearchCondition cond, Pageable pageable
-            /*, CustomUserDetails principal*/) {
+            , CustomUserDetails principal) {
 
+        Member member =
+                principal == null ?
+                        null : memberRepository.findByUsername(principal.getUsername()).get();
 
         OrderSpecifier orderSpecifier = createOrderSpecifier(cond.getSortType());
 
@@ -61,7 +67,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                 ))
                 .from(post)
                 .leftJoin(post.meeting, meeting)
-                .leftJoin(bookmark).on(bookmark.post.eq(post), bookmark.member.eq(memberRepository.findByUsername("testuser").get()/*principal.getUser()*/))
+                .leftJoin(bookmark).on(bookmark.post.eq(post), hasMember(member))
                 .where(
                         queryEq(cond.getQ()), locationEq(cond.getLocation()),
                         gameTypeEq(cond.getGameType()), meetingStatusEq(cond.getMeetingStatus()),
@@ -91,6 +97,10 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
             case LIKE-> new OrderSpecifier<>(Order.DESC, post.viewCount);
             default -> new OrderSpecifier<>(Order.DESC, post.createDate);
         };
+    }
+
+    private BooleanExpression hasMember(Member member) {
+        return member != null ? bookmark.member.eq(member) : Expressions.TRUE;
     }
 
     private BooleanExpression meetingStatusEq(MeetingStatus meetingStatus) {

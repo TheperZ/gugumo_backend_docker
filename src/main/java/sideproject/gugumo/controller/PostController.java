@@ -47,7 +47,7 @@ public class PostController {
      */
     @GetMapping
     public ResponseEntity<PageCustom<SimplePostDto>> findPostSimple(
-            /*@AuthenticationPrincipal CustomUserDeatils principal*/
+            @AuthenticationPrincipal CustomUserDetails principal,
             @PageableDefault(size=12) Pageable pageable,
             @RequestParam(required = false, value = "q") String q,
             @RequestParam(required = false, value="location") String location,
@@ -56,8 +56,8 @@ public class PostController {
             @RequestParam(required = false, value = "sort", defaultValue = "NEW") String sortType) {
 
 
-        Page<SimplePostDto> result = postService.findSimplePost(pageable, q, location, gameType, meetingStatus, sortType);
-        return ResponseEntity.ok(new PageCustom<SimplePostDto>(result.getContent(), result.getPageable(), result.getTotalElements()));
+        Page<SimplePostDto> result = postService.findSimplePost(principal, pageable, q, location, gameType, meetingStatus, sortType);
+        return ResponseEntity.ok(new PageCustom<>(result.getContent(), result.getPageable(), result.getTotalElements()));
     }
     @GetMapping("/{post_id}")
     public <T extends DetailPostDto> ResponseEntity<T> findPostDetail(
@@ -69,10 +69,10 @@ public class PostController {
     }
 
     @PatchMapping("/{post_id}")
-    public ResponseEntity<String> updatePost(/*@AuthenticationPrincipal CustomUserDeatils principal*/
+    public ResponseEntity<String> updatePost(@AuthenticationPrincipal CustomUserDetails principal,
                                              @PathVariable("post_id") Long postId,
                                              @RequestBody UpdatePostReq updatePostReq) {
-        postService.update(postId, updatePostReq);
+        postService.update(principal, postId, updatePostReq);
 
         return ResponseEntity.ok("글 갱신 완료");
     }
@@ -80,10 +80,10 @@ public class PostController {
 
     @DeleteMapping("/{post_id}")
     public ResponseEntity<String> deletePost(
-            /*@AuthenticationPrincipal CustomUserDeatils principal*/
+            @AuthenticationPrincipal CustomUserDetails principal,
             @PathVariable("post_id") Long postId) {
 
-        postService.deletePost(postId);
+        postService.deletePost(principal, postId);
 
         return ResponseEntity.ok("글 삭제 완료");
     }

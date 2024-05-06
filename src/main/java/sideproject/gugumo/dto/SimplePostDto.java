@@ -2,7 +2,6 @@ package sideproject.gugumo.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.querydsl.core.annotations.QueryProjection;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import sideproject.gugumo.domain.meeting.GameType;

@@ -29,7 +29,6 @@ import sideproject.gugumo.request.UpdatePostReq;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.NoSuchElementException;
 
 
 /**
@@ -133,7 +132,7 @@ public class PostService {
      * @return page
      */
 
-    public Page<SimplePostDto> findSimplePost(/*CustomUserDetails principal, */Pageable pageable, String q,
+    public Page<SimplePostDto> findSimplePost(CustomUserDetails principal, Pageable pageable, String q,
                                               String gameType, String location, String meetingStatus, String sortType) {
         PostSearchCondition condition = PostSearchCondition.builder()
                 .q(q)
@@ -145,7 +144,7 @@ public class PostService {
 
 
 
-        return postRepository.search(condition, pageable/*, principal*/);
+        return postRepository.search(condition, pageable, principal);
 
 
 
@@ -161,7 +160,7 @@ public class PostService {
     public <T extends DetailPostDto> T findDetailPostByPostId(CustomUserDetails principal, Long postId) {
 
 
-        Post targetPost = postRepository.findByIdAndAndIsDeleteFalse(postId)
+        Post targetPost = postRepository.findByIdAndIsDeleteFalse(postId)
                 .orElseThrow(()->new PostNotFoundException("해당 게시글이 존재하지 않습니다."));
 
 
@@ -229,15 +228,24 @@ public class PostService {
     }
 
     @Transactional
-    public void update(/*CustomUserDetails principal*/ Long postId, UpdatePostReq updatePostReq) {
+    public void update(CustomUserDetails principal, Long postId, UpdatePostReq updatePostReq) {
         //토큰에서
-        /*
-        memberRepository.findByUsername(principal.getUsername())
-        .orElseThrow(해당 회원이 없습니다Exception::new)
-         */
+        if (principal == null) {
+            throw new NoAuthorizationException("수정 실패: 게시글 수정 권한이 없습니다.");
+        }
 
-        Post targetPost =postRepository.findByIdAndAndIsDeleteFalse(postId)
+        Member member=memberRepository.findByUsername(principal.getUsername())
+                .orElseThrow(()->
+                        new NoAuthorizationException("수정 실패: 게시글 수정 권한이 없습니다.")
+                );
+
+        Post targetPost =postRepository.findByIdAndIsDeleteFalse(postId)
                 .orElseThrow(()->new PostNotFoundException("수정 실패: 해당 게시글이 존재하지 않습니다."));
+
+        //post의 member 동일인 여부 확인
+        if (!targetPost.getMember().equals(member)) {
+            throw new NoAuthorizationException("수정 실패: 게시글 수정 권한이 없습니다.");
+        }
 
         targetPost.update(updatePostReq);
 
@@ -249,16 +257,26 @@ public class PostService {
     }
 
     @Transactional
-    public void deletePost(/*CustomUserDetails principal*/ Long postId) {
+    public void deletePost(CustomUserDetails principal, Long postId) {
 
         //토큰에서
-        /*
-        memberRepository.findByUsername(principal.getUsername())
-        .orElseThrow(해당 회원이 없습니다Exception::new)
-         */
+        if (principal == null) {
+            throw new NoAuthorizationException("삭제 실패: 게시글 삭제 권한이 없습니다.");
+        }
 
-        Post targetPost = postRepository.findByIdAndAndIsDeleteFalse(postId)
-                .orElseThrow(()->new PostNotFoundException("해당 게시글이 존재하지 않습니다."));
+        Member member=memberRepository.findByUsername(principal.getUsername())
+                .orElseThrow(()->
+                        new NoAuthorizationException("삭제 실패: 게시글 삭제 권한이 없습니다.")
+                );
+
+
+        Post targetPost = postRepository.findByIdAndIsDeleteFalse(postId)
+                .orElseThrow(()->new PostNotFoundException("삭제 실패: 해당 게시글이 존재하지 않습니다."));
+
+        //post의 member 동일인 여부 확인
+        if (!targetPost.getMember().equals(member)) {
+            throw new NoAuthorizationException("삭제 실패: 게시글 삭제 권한이 없습니다.");
+        }
 
         //targetPost.isDelete=true
         targetPost.tempDelete();
