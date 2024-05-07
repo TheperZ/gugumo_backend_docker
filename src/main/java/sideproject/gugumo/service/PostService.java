@@ -14,12 +14,15 @@ import sideproject.gugumo.dto.CustomUserDetails;
 import sideproject.gugumo.dto.detailpostdto.DetailPostDto;
 import sideproject.gugumo.domain.Member;
 import sideproject.gugumo.domain.post.Post;
-import sideproject.gugumo.dto.SimplePostDto;
+import sideproject.gugumo.dto.simplepostdto.SimplePostDto;
 import sideproject.gugumo.dto.detailpostdto.LongDetailPostDto;
 import sideproject.gugumo.dto.detailpostdto.ShortDetailPostDto;
+import sideproject.gugumo.dto.simplepostdto.SimpleTransLongDto;
+import sideproject.gugumo.dto.simplepostdto.SimpleTransPostDto;
+import sideproject.gugumo.dto.simplepostdto.SimpleTransShortDto;
 import sideproject.gugumo.exception.NoAuthorizationException;
-import sideproject.gugumo.exception.exception.meetingNotFoundException;
 import sideproject.gugumo.exception.exception.PostNotFoundException;
+import sideproject.gugumo.page.PageCustom;
 import sideproject.gugumo.repository.BookmarkRepository;
 import sideproject.gugumo.repository.MeetingRepository;
 import sideproject.gugumo.repository.MemberRepository;
@@ -29,6 +32,8 @@ import sideproject.gugumo.request.UpdatePostReq;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -147,7 +152,7 @@ public class PostService {
         return postRepository.search(condition, pageable, principal);
 
 
-
+        //이걸 한번 더 가공해서(DetailPostDto처럼, 단기모임에서는 meetingDatetime을, 장기모임에서는 meetingTime, meetingDays) 줄까?
 
 
 
@@ -164,12 +169,10 @@ public class PostService {
                 .orElseThrow(()->new PostNotFoundException("해당 게시글이 존재하지 않습니다."));
 
 
-        Meeting targetMeeting = meetingRepository.findByPost(targetPost)
-                .orElseThrow(()->new meetingNotFoundException("게시글에 해당하는 모임 정보가 존재하지 않습니다."));
+        Meeting targetMeeting = targetPost.getMeeting();
 
         targetPost.addViewCount();
 
-        log.info("principal={}", principal);
 
         if (targetMeeting.getMeetingType() == MeetingType.SHORT) {
             ShortDetailPostDto detailPostDto = ShortDetailPostDto.builder()
@@ -249,8 +252,7 @@ public class PostService {
 
         targetPost.update(updatePostReq);
 
-        Meeting targetMeeting = meetingRepository.findByPost(targetPost)
-                .orElseThrow(()->new meetingNotFoundException("수정 실패: 게시글에 해당하는 모임 정보가 존재하지 않습니다."));
+        Meeting targetMeeting = targetPost.getMeeting();
 
         targetMeeting.update(updatePostReq);
 
@@ -280,6 +282,73 @@ public class PostService {
 
         //targetPost.isDelete=true
         targetPost.tempDelete();
+
+    }
+
+    public PageCustom<Object> findMyPost(CustomUserDetails principal, Pageable pageable) {
+
+        //토큰에서
+        if (principal == null) {
+            throw new NoAuthorizationException("접근 권한이 없습니다.");
+        }
+
+        Member member=memberRepository.findByUsername(principal.getUsername())
+                .orElseThrow(()->
+                        new NoAuthorizationException("접근 권한이 없습니다.")
+                );
+
+        Page<Post> page = postRepository.findByMemberAndIsDeleteFalse(pageable, member);
+
+        List<Object> result = page.stream()
+                .map(p -> convertToTransDto(p, member))
+                .collect(Collectors.toList());
+
+        return new PageCustom<>(result, pageable, page.getTotalElements());
+
+    }
+
+    private <T extends SimpleTransPostDto> T convertToTransDto(Post post, Member member) {
+
+        Meeting meeting = post.getMeeting();
+
+
+        if (post.getMeeting().getMeetingType() == MeetingType.SHORT) {
+            SimpleTransShortDto result = SimpleTransShortDto.builder()
+                    .postId(post.getId())
+                    .meetingStatus(meeting.getStatus())
+                    .gameType(meeting.getGameType())
+                    .location(meeting.getLocation())
+                    .title(post.getTitle())
+                    .meetingMemberNum(meeting.getMeetingMemberNum())
+                    .meetingDeadline(meeting.getMeetingDeadline())
+                    .isBookmarked(bookmarkRepository.existsByMemberAndPost(member, post))
+                    .meetingDateTime(meeting.getMeetingDateTime())
+                    .build();
+            return (T)result;
+
+
+        } else if (post.getMeeting().getMeetingType() == MeetingType.LONG) {
+            SimpleTransLongDto result = SimpleTransLongDto.builder()
+                    .postId(post.getId())
+                    .meetingStatus(meeting.getStatus())
+                    .gameType(meeting.getGameType())
+                    .location(meeting.getLocation())
+                    .title(post.getTitle())
+                    .meetingMemberNum(meeting.getMeetingMemberNum())
+                    .meetingDeadline(meeting.getMeetingDeadline())
+                    .isBookmarked(bookmarkRepository.existsByMemberAndPost(member, post))
+                    .meetingTime(meeting.getMeetingDateTime().toLocalTime())
+                    .meetingDays(meeting.getMeetingDays())
+                    .build();
+
+            return (T) result;
+
+
+        } else {
+            //TODO: 해당 타입의 게시글이 없습니다Exception
+            return null;
+        }
+
 
     }
 

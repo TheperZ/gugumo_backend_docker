@@ -2,14 +2,11 @@ package sideproject.gugumo.controller;
 
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sideproject.gugumo.domain.Bookmark;
 import sideproject.gugumo.dto.BookmarkPostDto;
-import sideproject.gugumo.dto.SimplePostDto;
 import sideproject.gugumo.page.PageCustom;
 import sideproject.gugumo.request.CreateBookmarkReq;
 import sideproject.gugumo.service.BookmarkService;

@@ -3,12 +3,9 @@ package sideproject.gugumo.cond;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.data.domain.Page;
 import sideproject.gugumo.domain.meeting.GameType;
 import sideproject.gugumo.domain.meeting.Location;
 import sideproject.gugumo.domain.meeting.MeetingStatus;
-import sideproject.gugumo.domain.meeting.MeetingType;
-import sideproject.gugumo.dto.SimplePostDto;
 
 @AllArgsConstructor
 @Builder

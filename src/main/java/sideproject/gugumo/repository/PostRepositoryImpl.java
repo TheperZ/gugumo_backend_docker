@@ -17,11 +17,10 @@ import sideproject.gugumo.domain.meeting.GameType;
 import sideproject.gugumo.domain.meeting.Location;
 import sideproject.gugumo.domain.meeting.MeetingStatus;
 import sideproject.gugumo.dto.CustomUserDetails;
-import sideproject.gugumo.dto.QSimplePostDto;
-import sideproject.gugumo.dto.SimplePostDto;
+import sideproject.gugumo.dto.simplepostdto.QSimplePostDto;
+import sideproject.gugumo.dto.simplepostdto.SimplePostDto;
 
 import java.util.List;
-import java.util.Optional;
 
 import static sideproject.gugumo.domain.QBookmark.bookmark;
 import static sideproject.gugumo.domain.meeting.QMeeting.meeting;

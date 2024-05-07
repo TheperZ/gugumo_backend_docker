@@ -1,4 +1,4 @@
-package sideproject.gugumo.dto;
+package sideproject.gugumo.dto.simplepostdto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.querydsl.core.annotations.QueryProjection;

@@ -4,6 +4,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -13,7 +14,8 @@ import sideproject.gugumo.domain.Member;
 import sideproject.gugumo.domain.MemberRole;
 import sideproject.gugumo.dto.CustomUserDetails;
 import sideproject.gugumo.dto.detailpostdto.DetailPostDto;
-import sideproject.gugumo.dto.SimplePostDto;
+import sideproject.gugumo.dto.simplepostdto.SimplePostDto;
+import sideproject.gugumo.dto.simplepostdto.SimpleTransPostDto;
 import sideproject.gugumo.page.PageCustom;
 import sideproject.gugumo.repository.MemberRepository;
 import sideproject.gugumo.request.CreatePostReq;
@@ -87,6 +89,17 @@ public class PostController {
 
         return ResponseEntity.ok("글 삭제 완료");
     }
+
+
+    @GetMapping("/my")
+    public ResponseEntity<PageCustom<Object>> findMyPost(
+            @AuthenticationPrincipal CustomUserDetails principal,
+            @PageableDefault(size=12, sort="postId", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(postService.findMyPost(principal, pageable));
+
+    }
+
+
 
     /**
      * 테스트 코드: 추후 반드시 삭제할 것
