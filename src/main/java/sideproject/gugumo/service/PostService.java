@@ -137,7 +137,7 @@ public class PostService {
      * @return page
      */
 
-    public Page<SimplePostDto> findSimplePost(CustomUserDetails principal, Pageable pageable, String q,
+    public <T extends SimpleTransPostDto> PageCustom<T> findSimplePost(CustomUserDetails principal, Pageable pageable, String q,
                                               String gameType, String location, String meetingStatus, String sortType) {
         PostSearchCondition condition = PostSearchCondition.builder()
                 .q(q)
@@ -148,15 +148,59 @@ public class PostService {
                 .build();
 
 
-
-        return postRepository.search(condition, pageable, principal);
-
-
-        //이걸 한번 더 가공해서(DetailPostDto처럼, 단기모임에서는 meetingDatetime을, 장기모임에서는 meetingTime, meetingDays) 줄까?
+        Page<SimplePostDto> page = postRepository.search(condition, pageable, principal);
 
 
+        //이걸 한번 더 가공해서(DetailPostDto처럼, 단기모임에서는 meetingDatetime을, 장기모임에서는 meetingTime, meetingDays)
+        List<T> result = page.stream()
+                .map(p -> convertToTransDto(p))
+                .map(r -> (T) r)
+                .collect(Collectors.toList());
 
 
+        return new PageCustom<>(result, page.getPageable(), page.getTotalElements());
+
+
+    }
+
+    private <T extends SimpleTransPostDto> T convertToTransDto(SimplePostDto s) {
+
+        if (s.getMeetingType() == MeetingType.SHORT) {
+            SimpleTransShortDto result = SimpleTransShortDto.builder()
+                    .postId(s.getPostId())
+                    .meetingStatus(s.getStatus())
+                    .gameType(s.getGameType())
+                    .location(s.getLocation())
+                    .title(s.getTitle())
+                    .meetingMemberNum(s.getMeetingMemberNum())
+                    .meetingDeadline(s.getMeetingDeadline())
+                    .isBookmarked(s.isBookmarked())
+                    .meetingDateTime(s.getMeetingDateTime())
+                    .build();
+            return (T)result;
+
+
+        } else if (s.getMeetingType() == MeetingType.LONG) {
+            SimpleTransLongDto result = SimpleTransLongDto.builder()
+                    .postId(s.getPostId())
+                    .meetingStatus(s.getStatus())
+                    .gameType(s.getGameType())
+                    .location(s.getLocation())
+                    .title(s.getTitle())
+                    .meetingMemberNum(s.getMeetingMemberNum())
+                    .meetingDeadline(s.getMeetingDeadline())
+                    .isBookmarked(s.isBookmarked())
+                    .meetingTime(s.getMeetingDateTime().toLocalTime())
+                    .meetingDays(s.getMeetingDays())
+                    .build();
+
+            return (T) result;
+
+
+        } else {
+            //TODO: 해당 타입의 게시글이 없습니다Exception
+            return null;
+        }
     }
 
 
@@ -285,7 +329,7 @@ public class PostService {
 
     }
 
-    public PageCustom<Object> findMyPost(CustomUserDetails principal, Pageable pageable) {
+    public <T extends SimpleTransPostDto> PageCustom<T> findMyPost(CustomUserDetails principal, Pageable pageable) {
 
         //토큰에서
         if (principal == null) {
@@ -299,11 +343,12 @@ public class PostService {
 
         Page<Post> page = postRepository.findByMemberAndIsDeleteFalse(pageable, member);
 
-        List<Object> result = page.stream()
+        List<T> result = page.stream()
                 .map(p -> convertToTransDto(p, member))
+                .map(r->(T)r)
                 .collect(Collectors.toList());
 
-        return new PageCustom<>(result, pageable, page.getTotalElements());
+        return new PageCustom<>(result, page.getPageable(), page.getTotalElements());
 
     }
 

@@ -7,16 +7,17 @@ import lombok.Getter;
 import sideproject.gugumo.domain.meeting.GameType;
 import sideproject.gugumo.domain.meeting.Location;
 import sideproject.gugumo.domain.meeting.MeetingStatus;
+import sideproject.gugumo.domain.meeting.MeetingType;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
 @Builder
-@JsonInclude(JsonInclude.Include.NON_NULL)  //Null인 필드 제외
 public class SimplePostDto {
 
     private Long postId;
+    private MeetingType meetingType;
     private MeetingStatus status;
     private GameType gameType;
     private Location location;
@@ -29,8 +30,9 @@ public class SimplePostDto {
 
 
     @QueryProjection
-    public SimplePostDto(Long postId, MeetingStatus status, GameType gameType, Location location, String title, LocalDateTime meetingDateTime, String meetingDays, int meetingMemberNum, LocalDate meetingDeadline, boolean isBookmarked) {
+    public SimplePostDto(Long postId, MeetingType meetingType, MeetingStatus status, GameType gameType, Location location, String title, LocalDateTime meetingDateTime, String meetingDays, int meetingMemberNum, LocalDate meetingDeadline, boolean isBookmarked) {
         this.postId = postId;
+        this.meetingType = meetingType;
         this.status = status;
         this.gameType = gameType;
         this.location = location;

@@ -54,6 +54,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
 
         List<SimplePostDto> result = queryFactory.select(new QSimplePostDto(
                         post.id.as("postId"),
+                        meeting.meetingType,
                         meeting.status,
                         meeting.gameType,
                         meeting.location,

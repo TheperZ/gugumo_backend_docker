@@ -48,7 +48,7 @@ public class PostController {
      * 동적 정렬 기능이 필요하면 스프링 데이터 페이징이 제공하는 Sort를 사용하기 보다는 파라미터를 받아서 직접 처리하는 것을 권장한다.
      */
     @GetMapping
-    public ResponseEntity<PageCustom<SimplePostDto>> findPostSimple(
+    public <T extends SimpleTransPostDto> ResponseEntity<PageCustom<T>> findPostSimple(
             @AuthenticationPrincipal CustomUserDetails principal,
             @PageableDefault(size=12) Pageable pageable,
             @RequestParam(required = false, value = "q") String q,
@@ -58,8 +58,8 @@ public class PostController {
             @RequestParam(required = false, value = "sort", defaultValue = "NEW") String sortType) {
 
 
-        Page<SimplePostDto> result = postService.findSimplePost(principal, pageable, q, location, gameType, meetingStatus, sortType);
-        return ResponseEntity.ok(new PageCustom<>(result.getContent(), result.getPageable(), result.getTotalElements()));
+
+        return ResponseEntity.ok(postService.findSimplePost(principal, pageable, q, location, gameType, meetingStatus, sortType));
     }
     @GetMapping("/{post_id}")
     public <T extends DetailPostDto> ResponseEntity<T> findPostDetail(
@@ -92,9 +92,9 @@ public class PostController {
 
 
     @GetMapping("/my")
-    public ResponseEntity<PageCustom<Object>> findMyPost(
+    public <T extends SimpleTransPostDto> ResponseEntity<PageCustom<T>> findMyPost(
             @AuthenticationPrincipal CustomUserDetails principal,
-            @PageableDefault(size=12, sort="postId", direction = Sort.Direction.DESC) Pageable pageable) {
+            @PageableDefault(size=12, sort="createDate", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(postService.findMyPost(principal, pageable));
 
     }
