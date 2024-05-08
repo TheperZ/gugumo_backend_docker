@@ -65,7 +65,7 @@ public class PostService {
 
         //if principal==null->로그인을 하지 않아 principal 이 없음->권한이 없습니다 exception
         if (principal == null) {
-            throw new NoAuthorizationException("저장 실패: 게시글 저장 권한이 없습니다.");
+            throw new NoAuthorizationException("저장 실패: 비로그인 사용자입니다.");
         }
 
         //토큰에서
@@ -210,7 +210,7 @@ public class PostService {
 
 
         Post targetPost = postRepository.findByIdAndIsDeleteFalse(postId)
-                .orElseThrow(()->new PostNotFoundException("해당 게시글이 존재하지 않습니다."));
+                .orElseThrow(()->new PostNotFoundException("조회 실패: 해당 게시글이 존재하지 않습니다."));
 
 
         Meeting targetMeeting = targetPost.getMeeting();
@@ -278,7 +278,7 @@ public class PostService {
     public void update(CustomUserDetails principal, Long postId, UpdatePostReq updatePostReq) {
         //토큰에서
         if (principal == null) {
-            throw new NoAuthorizationException("수정 실패: 게시글 수정 권한이 없습니다.");
+            throw new NoAuthorizationException("수정 실패: 비로그인 사용자입니다.");
         }
 
         Member member=memberRepository.findByUsername(principal.getUsername())
@@ -307,7 +307,7 @@ public class PostService {
 
         //토큰에서
         if (principal == null) {
-            throw new NoAuthorizationException("삭제 실패: 게시글 삭제 권한이 없습니다.");
+            throw new NoAuthorizationException("삭제 실패: 비로그인 사용자입니다.");
         }
 
         Member member=memberRepository.findByUsername(principal.getUsername())
@@ -333,12 +333,12 @@ public class PostService {
 
         //토큰에서
         if (principal == null) {
-            throw new NoAuthorizationException("접근 권한이 없습니다.");
+            throw new NoAuthorizationException("내 글 조회 실패: 비로그인 사용자입니다.");
         }
 
         Member member=memberRepository.findByUsername(principal.getUsername())
                 .orElseThrow(()->
-                        new NoAuthorizationException("접근 권한이 없습니다.")
+                        new NoAuthorizationException("내 글 조회 실패: 접근 권한이 없습니다.")
                 );
 
         Page<Post> page = postRepository.findByMemberAndIsDeleteFalse(pageable, member);

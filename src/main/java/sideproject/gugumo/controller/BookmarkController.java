@@ -6,8 +6,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import sideproject.gugumo.dto.BookmarkPostDto;
+import sideproject.gugumo.dto.CustomUserDetails;
 import sideproject.gugumo.page.PageCustom;
 import sideproject.gugumo.request.CreateBookmarkReq;
 import sideproject.gugumo.service.BookmarkService;
@@ -21,24 +23,28 @@ public class BookmarkController {
 
 
     @PostMapping("/new")
-    public ResponseEntity<String> saveBookmark(@RequestBody CreateBookmarkReq createBookmarkReq) {
+    public ResponseEntity<String> saveBookmark(
+            @AuthenticationPrincipal CustomUserDetails principal,
+            @RequestBody CreateBookmarkReq createBookmarkReq) {
 
-        bookmarkService.save(createBookmarkReq);
+        bookmarkService.save(principal, createBookmarkReq);
 
         return ResponseEntity.status(201).body("북마크 생성 완료");
     }
 
     @GetMapping
     public PageCustom<BookmarkPostDto> findBookmark(
-            /*@AuthenticationPrincipal CustomUserDeatils principal*/
+            /*@AuthenticationPrincipal CustomUserDetails principal*/
             @PageableDefault(size = 12) Pageable pageable) {
 
         return bookmarkService.findBookmarkByMember(pageable);
     }
 
     @DeleteMapping("/{bookmark_id}")
-    public ResponseEntity<String> deleteBookmark(@PathVariable("bookmark_id") Long bookmarkId) {
-        bookmarkService.delete(bookmarkId);
+    public ResponseEntity<String> deleteBookmark(
+            @AuthenticationPrincipal CustomUserDetails principal,
+            @PathVariable("bookmark_id") Long bookmarkId) {
+        bookmarkService.delete(principal, bookmarkId);
 
         return ResponseEntity.ok("북마크 삭제 완료");
     }
