@@ -10,6 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import sideproject.gugumo.dto.BookmarkPostDto;
 import sideproject.gugumo.dto.CustomUserDetails;
+import sideproject.gugumo.dto.simplepostdto.SimpleTransPostDto;
 import sideproject.gugumo.page.PageCustom;
 import sideproject.gugumo.request.CreateBookmarkReq;
 import sideproject.gugumo.service.BookmarkService;
@@ -33,11 +34,11 @@ public class BookmarkController {
     }
 
     @GetMapping
-    public PageCustom<BookmarkPostDto> findBookmark(
-            /*@AuthenticationPrincipal CustomUserDetails principal*/
+    public <T extends SimpleTransPostDto> PageCustom<T> findBookmark(
+            @AuthenticationPrincipal CustomUserDetails principal,
             @PageableDefault(size = 12) Pageable pageable) {
 
-        return bookmarkService.findBookmarkByMember(pageable);
+        return bookmarkService.findBookmarkByMember(principal, pageable);
     }
 
     @DeleteMapping("/{bookmark_id}")

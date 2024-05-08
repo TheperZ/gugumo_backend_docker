@@ -324,6 +324,9 @@ public class PostService {
             throw new NoAuthorizationException("삭제 실패: 게시글 삭제 권한이 없습니다.");
         }
 
+        //연관된 북마크 삭제
+        bookmarkRepository.deleteByPost(targetPost);
+
         //targetPost.isDelete=true
         targetPost.tempDelete();
 

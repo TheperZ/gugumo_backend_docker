@@ -2,17 +2,23 @@ package sideproject.gugumo.service;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sideproject.gugumo.domain.Bookmark;
 import sideproject.gugumo.domain.Member;
 import sideproject.gugumo.domain.meeting.Meeting;
+import sideproject.gugumo.domain.meeting.MeetingType;
 import sideproject.gugumo.domain.post.Post;
 import sideproject.gugumo.dto.BookmarkPostDto;
 import sideproject.gugumo.dto.CustomUserDetails;
+import sideproject.gugumo.dto.simplepostdto.SimpleTransLongDto;
+import sideproject.gugumo.dto.simplepostdto.SimpleTransPostDto;
+import sideproject.gugumo.dto.simplepostdto.SimpleTransShortDto;
 import sideproject.gugumo.exception.NoAuthorizationException;
 import sideproject.gugumo.exception.exception.BookmarkNotFoundException;
+import sideproject.gugumo.exception.exception.DuplicateBookmarkException;
 import sideproject.gugumo.exception.exception.PostNotFoundException;
 import sideproject.gugumo.page.PageCustom;
 import sideproject.gugumo.repository.BookmarkRepository;
@@ -34,7 +40,6 @@ public class BookmarkService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final BookmarkRepository bookmarkRepository;
-    private final MeetingRepository meetingRepository;
 
     @Transactional
     public void save(CustomUserDetails principal, CreateBookmarkReq req) {
@@ -49,6 +54,10 @@ public class BookmarkService {
         Post post = postRepository.findByIdAndIsDeleteFalse(req.getPostId())
                 .orElseThrow(()->new PostNotFoundException("북마크 등록 실패: 해당 게시글이 존재하지 않습니다."));
 
+        if (bookmarkRepository.existsByMemberAndPost(member, post)) {
+            throw new DuplicateBookmarkException("북마크 등록 실패: 이미 등록된 북마크입니다.");
+        }
+
         Bookmark bookmark = Bookmark.builder()
                 .member(member)
                 .post(post)
@@ -58,47 +67,75 @@ public class BookmarkService {
 
     }
 
-    public PageCustom<BookmarkPostDto> findBookmarkByMember(/*CustomUserDetails principal*/Pageable pageable) {
+    public <T extends SimpleTransPostDto> PageCustom<T> findBookmarkByMember(
+            CustomUserDetails principal, Pageable pageable) {
 
-        //나중에 토큰에서 가져와야 할듯
-         /*
-        memberRepository.findByUsername(principal.getUsername())
-        .orElseThrow(해당 회원이 없습니다Exception::new)
-         */
-        Member member = memberRepository.findByUsername("testuser").get();
+        if (principal == null) {
+            throw new NoAuthorizationException("북마크 조회 실패: 비로그인 사용자입니다.");
+        }
 
 
-        List<Bookmark> bookmarkList = bookmarkRepository.findByMember(member);
+        Member member = memberRepository.findByUsername(principal.getUsername())
+                .orElseThrow(() -> new NoAuthorizationException("북마크 조회 실패: 권한이 없습니다."));
 
 
-        List<BookmarkPostDto> result = bookmarkList.stream()
-                .map(this::convertToDto)
+
+        Page<Bookmark> page = bookmarkRepository.findByMember(member, pageable);
+
+
+        List<T> result = page.stream()
+                .map(p -> convertToTransDto(p.getPost(), member))
+                .map(r -> (T) r)
                 .collect(Collectors.toList());
 
-        return new PageCustom<BookmarkPostDto>(result, pageable, result.size());
+        return new PageCustom<>(result, page.getPageable(), page.getTotalElements());
 
     }
 
-    private BookmarkPostDto convertToDto(Bookmark bookmark/*CustomUserDetails principal*/) {
+    //이걸 어따 놓고 쓰는게 좋을까(duplicate to postservice)
+    private <T extends SimpleTransPostDto> T convertToTransDto(Post post, Member member) {
 
-        Post post = bookmark.getPost();
-        Meeting meeting = meetingRepository.findByPost(post)
-                .orElseThrow(NoSuchElementException::new);
+        Meeting meeting = post.getMeeting();
 
 
-        BookmarkPostDto result = BookmarkPostDto.builder()
-                .postId(post.getId())
-                .status(meeting.getStatus())
-                .gameType(meeting.getGameType())
-                .location(meeting.getLocation())
-                .title(post.getTitle())
-                .meetingDateTime(meeting.getMeetingDateTime())
-                .meetingDays(meeting.getMeetingDays())
-                .meetingMemberNum(meeting.getMeetingMemberNum())
-                .meetingDeadline(meeting.getMeetingDeadline())
-                .build();
+        if (post.getMeeting().getMeetingType() == MeetingType.SHORT) {
+            SimpleTransShortDto result = SimpleTransShortDto.builder()
+                    .postId(post.getId())
+                    .meetingStatus(meeting.getStatus())
+                    .gameType(meeting.getGameType())
+                    .location(meeting.getLocation())
+                    .title(post.getTitle())
+                    .meetingMemberNum(meeting.getMeetingMemberNum())
+                    .meetingDeadline(meeting.getMeetingDeadline())
+                    .isBookmarked(bookmarkRepository.existsByMemberAndPost(member, post))       //어짜피 다 true인데 이걸 줘야 되나?
+                    .meetingDateTime(meeting.getMeetingDateTime())
+                    .build();
+            return (T)result;
 
-        return result;
+
+        } else if (post.getMeeting().getMeetingType() == MeetingType.LONG) {
+            SimpleTransLongDto result = SimpleTransLongDto.builder()
+                    .postId(post.getId())
+                    .meetingStatus(meeting.getStatus())
+                    .gameType(meeting.getGameType())
+                    .location(meeting.getLocation())
+                    .title(post.getTitle())
+                    .meetingMemberNum(meeting.getMeetingMemberNum())
+                    .meetingDeadline(meeting.getMeetingDeadline())
+                    .isBookmarked(bookmarkRepository.existsByMemberAndPost(member, post))
+                    .meetingTime(meeting.getMeetingDateTime().toLocalTime())
+                    .meetingDays(meeting.getMeetingDays())
+                    .build();
+
+            return (T) result;
+
+
+        } else {
+            //TODO: 해당 타입의 게시글이 없습니다Exception
+            return null;
+        }
+
+
     }
 
     @Transactional

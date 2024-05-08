@@ -6,7 +6,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import sideproject.gugumo.exception.NoAuthorizationException;
 import sideproject.gugumo.exception.exception.BookmarkNotFoundException;
-import sideproject.gugumo.exception.exception.meetingNotFoundException;
+import sideproject.gugumo.exception.exception.DuplicateBookmarkException;
+import sideproject.gugumo.exception.exception.MeetingNotFoundException;
 import sideproject.gugumo.exception.exception.PostNotFoundException;
 
 import java.util.HashMap;
@@ -24,8 +25,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(404).body(result);
     }
 
-    @ExceptionHandler(value = {meetingNotFoundException.class})
-    public ResponseEntity meetingNotFoundExceptionHandler(meetingNotFoundException e) {
+    @ExceptionHandler(value = {MeetingNotFoundException.class})
+    public ResponseEntity meetingNotFoundExceptionHandler(MeetingNotFoundException e) {
         Map<String, String> result = new HashMap<>();
         result.put("ErrorMessage", e.getMessage());
         log.error("[meetingNotFoundExceptionHandler] ex : " + e.getMessage());
@@ -47,5 +48,13 @@ public class GlobalExceptionHandler {
         result.put("ErrorMessage", e.getMessage());
         log.error("[noAuthorizationExceptionHandler] ex : " + e.getMessage());
         return ResponseEntity.status(401).body(result);
+    }
+
+    @ExceptionHandler(value = {DuplicateBookmarkException.class})
+    public ResponseEntity duplicateBookmarkExceptionHandler(DuplicateBookmarkException e) {
+        Map<String, String> result = new HashMap<>();
+        result.put("ErrorMessage", e.getMessage());
+        log.error("[duplicateBookmarkExceptionHandler] ex : " + e.getMessage());
+        return ResponseEntity.status(400).body(result);
     }
 }
