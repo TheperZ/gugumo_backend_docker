@@ -1,4 +1,4 @@
-package sideproject.gugumo.jwt;
+package sideproject.gugumo.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -12,6 +12,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import sideproject.gugumo.domain.dto.CustomUserDetails;
 import sideproject.gugumo.domain.entity.Member;
 import sideproject.gugumo.domain.entity.MemberRole;
+import sideproject.gugumo.jwt.JwtUtil;
 
 import java.io.IOException;
 
