@@ -12,16 +12,16 @@ import java.util.List;
 public class PageCustom<T> implements Serializable {
     private List<T> content;
 
-    private PageableCustom pageableCustom;
+    private PageableCustom pageable;
 
     public PageCustom(List<T> content, Pageable pageable, long total) {
         this.content = content;
-        this.pageableCustom = new PageableCustom(new PageImpl(content, pageable, total));
+        this.pageable = new PageableCustom(new PageImpl(content, pageable, total));
     }
 
     public PageCustom(List<T> content, Pageable pageable, boolean hasNext) {
         this.content = content;
-        this.pageableCustom = new PageableCustom(new SliceImpl(content, pageable, hasNext));
+        this.pageable = new PageableCustom(new SliceImpl(content, pageable, hasNext));
     }
 
 

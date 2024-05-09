@@ -6,12 +6,27 @@ import lombok.Getter;
 import sideproject.gugumo.domain.meeting.GameType;
 import sideproject.gugumo.domain.meeting.MeetingStatus;
 import sideproject.gugumo.domain.meeting.MeetingType;
+import sideproject.gugumo.validate.Conditional;
 import sideproject.gugumo.validate.EnumValue;
 
 import java.time.LocalDate;
 
 
 @Getter
+@Conditional.List(
+        {
+                @Conditional(
+                        selected = "meetingType",
+                        values = "SHORT",
+                        required = "meetingDate"
+                ),
+                @Conditional(
+                        selected = "meetingType",
+                        values = "LONG",
+                        required = "meetingDays"
+                )
+        }
+)
 public class UpdatePostReq {
 
 
