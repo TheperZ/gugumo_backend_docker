@@ -1,10 +1,12 @@
 package sideproject.gugumo.request;
 
+
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 @Getter
 public class CreateBookmarkReq {
 
-    //토큰에서 찾아야 할듯
+    @NotNull
     private Long postId;
 }

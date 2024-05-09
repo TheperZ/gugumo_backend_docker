@@ -27,3 +27,7 @@ spring:
   jwt:
     secret: 339c5f60d4b8c54ada6a66432d405a83d959f6306d0157e27a72dd90c06290f1
     expiration_time: 86400000   #1일
+
+server:
+  error:
+    include-stacktrace: never

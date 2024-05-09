@@ -1,6 +1,7 @@
 package sideproject.gugumo.controller;
 
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -26,7 +27,7 @@ public class BookmarkController {
     @PostMapping("/new")
     public ResponseEntity<String> saveBookmark(
             @AuthenticationPrincipal CustomUserDetails principal,
-            @RequestBody CreateBookmarkReq createBookmarkReq) {
+            @RequestBody @Valid CreateBookmarkReq createBookmarkReq) {
 
         bookmarkService.save(principal, createBookmarkReq);
 

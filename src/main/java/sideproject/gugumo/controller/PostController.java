@@ -1,6 +1,7 @@
 package sideproject.gugumo.controller;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,7 +37,8 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping("/new")
-    public ResponseEntity<String> save(@AuthenticationPrincipal CustomUserDetails principal, @RequestBody CreatePostReq createPostReq) {
+    public ResponseEntity<String> save(@AuthenticationPrincipal CustomUserDetails principal,
+                                       @RequestBody @Valid CreatePostReq createPostReq) {
         postService.save(principal, createPostReq);
 
         return ResponseEntity.status(201).body("글 작성 완료");
@@ -73,7 +75,7 @@ public class PostController {
     @PatchMapping("/{post_id}")
     public ResponseEntity<String> updatePost(@AuthenticationPrincipal CustomUserDetails principal,
                                              @PathVariable("post_id") Long postId,
-                                             @RequestBody UpdatePostReq updatePostReq) {
+                                             @RequestBody @Valid UpdatePostReq updatePostReq) {
         postService.update(principal, postId, updatePostReq);
 
         return ResponseEntity.ok("글 갱신 완료");
