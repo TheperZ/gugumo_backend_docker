@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import sideproject.gugumo.domain.meeting.GameType;
+import sideproject.gugumo.domain.meeting.MeetingType;
+import sideproject.gugumo.validate.EnumValue;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -13,8 +16,10 @@ public class CreatePostReq {
 
 
     @NotEmpty
+    @EnumValue(enumClass = MeetingType.class)
     private String meetingType;     //단기, 장기
     @NotEmpty
+    @EnumValue(enumClass = GameType.class)
     private String gameType;
     @NotNull
     private int meetingMemberNum;

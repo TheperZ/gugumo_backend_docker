@@ -3,6 +3,10 @@ package sideproject.gugumo.request;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import sideproject.gugumo.domain.meeting.GameType;
+import sideproject.gugumo.domain.meeting.MeetingStatus;
+import sideproject.gugumo.domain.meeting.MeetingType;
+import sideproject.gugumo.validate.EnumValue;
 
 import java.time.LocalDate;
 
@@ -12,8 +16,10 @@ public class UpdatePostReq {
 
 
     @NotEmpty
+    @EnumValue(enumClass = MeetingType.class)
     private String meetingType;
     @NotEmpty
+    @EnumValue(enumClass = GameType.class)
     private String gameType;
     @NotNull
     private int meetingMemberNum;
@@ -33,6 +39,7 @@ public class UpdatePostReq {
     @NotEmpty
     private String content;
     @NotEmpty
+    @EnumValue(enumClass = MeetingStatus.class)
     private String meetingStatus;
 
 }
