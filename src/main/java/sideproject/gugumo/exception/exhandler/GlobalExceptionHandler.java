@@ -61,6 +61,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ApiResponse<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.error("[handleMethodArgumentNotValidException] ex : " + e.getMessage());
-        return ApiResponse.createFail("입력이 올바르지 못합니다.");
+        return ApiResponse.createFail(e.getFieldError().getDefaultMessage());
     }
 }

@@ -3,10 +3,10 @@ package sideproject.gugumo.controller;
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,12 +15,12 @@ import sideproject.gugumo.domain.Member;
 import sideproject.gugumo.domain.MemberRole;
 import sideproject.gugumo.dto.CustomUserDetails;
 import sideproject.gugumo.dto.detailpostdto.DetailPostDto;
-import sideproject.gugumo.dto.simplepostdto.SimplePostDto;
 import sideproject.gugumo.dto.simplepostdto.SimpleTransPostDto;
 import sideproject.gugumo.page.PageCustom;
 import sideproject.gugumo.repository.MemberRepository;
 import sideproject.gugumo.request.CreatePostReq;
 import sideproject.gugumo.request.UpdatePostReq;
+import sideproject.gugumo.response.ApiResponse;
 import sideproject.gugumo.service.PostService;
 
 
@@ -37,11 +37,12 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping("/new")
-    public ResponseEntity<String> save(@AuthenticationPrincipal CustomUserDetails principal,
-                                       @RequestBody @Valid CreatePostReq createPostReq) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public ApiResponse<String> save(@AuthenticationPrincipal CustomUserDetails principal,
+                                    @RequestBody @Valid CreatePostReq createPostReq) {
         postService.save(principal, createPostReq);
 
-        return ResponseEntity.status(201).body("글 작성 완료");
+        return ApiResponse.createSuccess("글 작성 완료");
     }
 
 
@@ -50,7 +51,7 @@ public class PostController {
      * 동적 정렬 기능이 필요하면 스프링 데이터 페이징이 제공하는 Sort를 사용하기 보다는 파라미터를 받아서 직접 처리하는 것을 권장한다.
      */
     @GetMapping
-    public <T extends SimpleTransPostDto> ResponseEntity<PageCustom<T>> findPostSimple(
+    public <T extends SimpleTransPostDto> ApiResponse<PageCustom<T>> findPostSimple(
             @AuthenticationPrincipal CustomUserDetails principal,
             @PageableDefault(size=12) Pageable pageable,
             @RequestParam(required = false, value = "q") String q,
@@ -61,43 +62,43 @@ public class PostController {
 
 
 
-        return ResponseEntity.ok(postService.findSimplePost(principal, pageable, q, location, gameType, meetingStatus, sortType));
+        return ApiResponse.createSuccess(postService.findSimplePost(principal, pageable, q, location, gameType, meetingStatus, sortType));
     }
     @GetMapping("/{post_id}")
-    public <T extends DetailPostDto> ResponseEntity<T> findPostDetail(
+    public <T extends DetailPostDto> ApiResponse<T> findPostDetail(
             @AuthenticationPrincipal CustomUserDetails principal,
             @PathVariable("post_id") Long postId) {
         DetailPostDto detailPostDto = postService.findDetailPostByPostId(principal, postId);
 
-        return ResponseEntity.ok((T)detailPostDto);
+        return ApiResponse.createSuccess((T)detailPostDto);
     }
 
     @PatchMapping("/{post_id}")
-    public ResponseEntity<String> updatePost(@AuthenticationPrincipal CustomUserDetails principal,
+    public ApiResponse<String> updatePost(@AuthenticationPrincipal CustomUserDetails principal,
                                              @PathVariable("post_id") Long postId,
                                              @RequestBody @Valid UpdatePostReq updatePostReq) {
         postService.update(principal, postId, updatePostReq);
 
-        return ResponseEntity.ok("글 갱신 완료");
+        return ApiResponse.createSuccess("글 갱신 완료");
     }
 
 
     @DeleteMapping("/{post_id}")
-    public ResponseEntity<String> deletePost(
+    public ApiResponse<String> deletePost(
             @AuthenticationPrincipal CustomUserDetails principal,
             @PathVariable("post_id") Long postId) {
 
         postService.deletePost(principal, postId);
 
-        return ResponseEntity.ok("글 삭제 완료");
+        return ApiResponse.createSuccess("글 삭제 완료");
     }
 
 
     @GetMapping("/my")
-    public <T extends SimpleTransPostDto> ResponseEntity<PageCustom<T>> findMyPost(
+    public <T extends SimpleTransPostDto> ApiResponse<PageCustom<T>> findMyPost(
             @AuthenticationPrincipal CustomUserDetails principal,
             @PageableDefault(size=12, sort="createDate", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok(postService.findMyPost(principal, pageable));
+        return ApiResponse.createSuccess(postService.findMyPost(principal, pageable));
 
     }
 
