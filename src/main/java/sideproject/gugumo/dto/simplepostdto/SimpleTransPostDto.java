@@ -14,9 +14,9 @@ import java.time.LocalDateTime;
 
 @Getter
 @SuperBuilder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
-public abstract class SimpleTransPostDto {
+public class SimpleTransPostDto {
 
     private Long postId;
     private MeetingStatus meetingStatus;

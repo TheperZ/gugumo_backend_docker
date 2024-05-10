@@ -97,9 +97,10 @@ public class BookmarkService {
 
         Meeting meeting = post.getMeeting();
 
+        SimpleTransPostDto result = new SimpleTransPostDto();
 
         if (post.getMeeting().getMeetingType() == MeetingType.SHORT) {
-            SimpleTransShortDto result = SimpleTransShortDto.builder()
+            result = SimpleTransShortDto.builder()
                     .postId(post.getId())
                     .meetingStatus(meeting.getStatus())
                     .gameType(meeting.getGameType())
@@ -107,14 +108,13 @@ public class BookmarkService {
                     .title(post.getTitle())
                     .meetingMemberNum(meeting.getMeetingMemberNum())
                     .meetingDeadline(meeting.getMeetingDeadline())
-                    .isBookmarked(bookmarkRepository.existsByMemberAndPost(member, post))       //어짜피 다 true인데 이걸 줘야 되나?
+                    .isBookmarked(bookmarkRepository.existsByMemberAndPost(member, post))
                     .meetingDateTime(meeting.getMeetingDateTime())
                     .build();
-            return (T)result;
 
 
         } else if (post.getMeeting().getMeetingType() == MeetingType.LONG) {
-            SimpleTransLongDto result = SimpleTransLongDto.builder()
+            result = SimpleTransLongDto.builder()
                     .postId(post.getId())
                     .meetingStatus(meeting.getStatus())
                     .gameType(meeting.getGameType())
@@ -127,20 +127,18 @@ public class BookmarkService {
                     .meetingDays(meeting.getMeetingDays())
                     .build();
 
-            return (T) result;
 
-
-        } else {
-            //TODO: 해당 타입의 게시글이 없습니다Exception
-            return null;
         }
-
+        return (T) result;
 
     }
 
     @Transactional
     public void delete(CustomUserDetails principal, Long postId) {
 
+        if (principal == null) {
+            throw new NoAuthorizationException("북마크 삭제 실패: 비로그인 사용자입니다.");
+        }
 
         Member member = memberRepository.findByUsername(principal.getUsername())
                 .orElseThrow(() -> new NoAuthorizationException("북마크 삭제 실패: 권한이 없습니다."));

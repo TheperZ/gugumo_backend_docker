@@ -65,7 +65,7 @@ public class PostService {
 
         //if principal==null->로그인을 하지 않아 principal 이 없음->권한이 없습니다 exception
         if (principal == null) {
-            throw new NoAuthorizationException("저장 실패: 비로그인 사용자입니다.");
+            throw new NoAuthorizationException("저장 실패: 게시글 저장 권한이 없습니다.");
         }
 
         //토큰에서
@@ -165,8 +165,10 @@ public class PostService {
 
     private <T extends SimpleTransPostDto> T convertToTransDto(SimplePostDto s) {
 
+        SimpleTransPostDto result = new SimpleTransPostDto();
+
         if (s.getMeetingType() == MeetingType.SHORT) {
-            SimpleTransShortDto result = SimpleTransShortDto.builder()
+            result = SimpleTransShortDto.builder()
                     .postId(s.getPostId())
                     .meetingStatus(s.getStatus())
                     .gameType(s.getGameType())
@@ -177,11 +179,11 @@ public class PostService {
                     .isBookmarked(s.isBookmarked())
                     .meetingDateTime(s.getMeetingDateTime())
                     .build();
-            return (T)result;
+
 
 
         } else if (s.getMeetingType() == MeetingType.LONG) {
-            SimpleTransLongDto result = SimpleTransLongDto.builder()
+            result = SimpleTransLongDto.builder()
                     .postId(s.getPostId())
                     .meetingStatus(s.getStatus())
                     .gameType(s.getGameType())
@@ -194,13 +196,12 @@ public class PostService {
                     .meetingDays(s.getMeetingDays())
                     .build();
 
-            return (T) result;
 
 
-        } else {
-            //TODO: 해당 타입의 게시글이 없습니다Exception
-            return null;
+
         }
+
+        return (T) result;
     }
 
 
@@ -359,9 +360,10 @@ public class PostService {
 
         Meeting meeting = post.getMeeting();
 
+        SimpleTransPostDto result = new SimpleTransPostDto();
 
         if (post.getMeeting().getMeetingType() == MeetingType.SHORT) {
-            SimpleTransShortDto result = SimpleTransShortDto.builder()
+            result = SimpleTransShortDto.builder()
                     .postId(post.getId())
                     .meetingStatus(meeting.getStatus())
                     .gameType(meeting.getGameType())
@@ -372,11 +374,11 @@ public class PostService {
                     .isBookmarked(bookmarkRepository.existsByMemberAndPost(member, post))
                     .meetingDateTime(meeting.getMeetingDateTime())
                     .build();
-            return (T)result;
+
 
 
         } else if (post.getMeeting().getMeetingType() == MeetingType.LONG) {
-            SimpleTransLongDto result = SimpleTransLongDto.builder()
+            result = SimpleTransLongDto.builder()
                     .postId(post.getId())
                     .meetingStatus(meeting.getStatus())
                     .gameType(meeting.getGameType())
@@ -389,14 +391,11 @@ public class PostService {
                     .meetingDays(meeting.getMeetingDays())
                     .build();
 
-            return (T) result;
 
 
-        } else {
-            //TODO: 해당 타입의 게시글이 없습니다Exception
-            return null;
+
         }
-
+        return (T) result;
 
     }
 
