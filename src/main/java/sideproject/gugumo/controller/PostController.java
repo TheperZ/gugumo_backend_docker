@@ -2,6 +2,7 @@ package sideproject.gugumo.controller;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -12,8 +13,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import sideproject.gugumo.cond.MeetingStatusType;
+import sideproject.gugumo.cond.SortType;
 import sideproject.gugumo.domain.Member;
 import sideproject.gugumo.domain.MemberRole;
+import sideproject.gugumo.domain.meeting.GameType;
 import sideproject.gugumo.dto.CustomUserDetails;
 import sideproject.gugumo.dto.detailpostdto.DetailPostDto;
 import sideproject.gugumo.dto.simplepostdto.SimpleTransPostDto;
@@ -23,6 +27,7 @@ import sideproject.gugumo.request.CreatePostReq;
 import sideproject.gugumo.request.UpdatePostReq;
 import sideproject.gugumo.response.ApiResponse;
 import sideproject.gugumo.service.PostService;
+import sideproject.gugumo.validate.EnumValue;
 
 
 /**
@@ -63,7 +68,7 @@ public class PostController {
 
 
 
-        return ApiResponse.createSuccess(postService.findSimplePost(principal, pageable, q, location, gameType, meetingStatus, sortType));
+        return ApiResponse.createSuccess(postService.findSimplePost(principal, pageable, q, gameType, location, meetingStatus, sortType));
     }
     @GetMapping("/{post_id}")
     public <T extends DetailPostDto> ApiResponse<T> findPostDetail(
