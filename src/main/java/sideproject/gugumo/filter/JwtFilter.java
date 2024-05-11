@@ -9,10 +9,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-import sideproject.gugumo.domain.entity.Member;
 import sideproject.gugumo.domain.dto.CustomUserDetails;
+import sideproject.gugumo.domain.entity.Member;
+import sideproject.gugumo.domain.entity.MemberRole;
 import sideproject.gugumo.jwt.JwtUtil;
-
 
 import java.io.IOException;
 
