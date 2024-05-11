@@ -3,9 +3,9 @@ package sideproject.gugumo.request;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import sideproject.gugumo.domain.meeting.GameType;
-import sideproject.gugumo.domain.meeting.MeetingStatus;
-import sideproject.gugumo.domain.meeting.MeetingType;
+import sideproject.gugumo.domain.entity.meeting.GameType;
+import sideproject.gugumo.domain.entity.meeting.MeetingStatus;
+import sideproject.gugumo.domain.entity.meeting.MeetingType;
 import sideproject.gugumo.validate.Conditional;
 import sideproject.gugumo.validate.EnumValue;
 

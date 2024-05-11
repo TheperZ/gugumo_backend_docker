@@ -5,8 +5,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import sideproject.gugumo.domain.Member;
-import sideproject.gugumo.dto.CustomUserDetails;
+import sideproject.gugumo.domain.entity.Member;
+import sideproject.gugumo.domain.dto.CustomUserDetails;
 import sideproject.gugumo.repository.MemberRepository;
 
 import java.util.Optional;

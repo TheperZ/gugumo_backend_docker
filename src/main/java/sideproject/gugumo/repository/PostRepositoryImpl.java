@@ -12,19 +12,21 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import sideproject.gugumo.cond.PostSearchCondition;
 import sideproject.gugumo.cond.SortType;
-import sideproject.gugumo.domain.Member;
-import sideproject.gugumo.domain.meeting.GameType;
-import sideproject.gugumo.domain.meeting.Location;
-import sideproject.gugumo.domain.meeting.MeetingStatus;
-import sideproject.gugumo.dto.CustomUserDetails;
-import sideproject.gugumo.dto.simplepostdto.QSimplePostDto;
-import sideproject.gugumo.dto.simplepostdto.SimplePostDto;
+import sideproject.gugumo.domain.dto.simplepostdto.QSimplePostDto;
+import sideproject.gugumo.domain.entity.Member;
+import sideproject.gugumo.domain.entity.meeting.GameType;
+import sideproject.gugumo.domain.entity.meeting.Location;
+import sideproject.gugumo.domain.entity.meeting.MeetingStatus;
+import sideproject.gugumo.domain.dto.CustomUserDetails;
+
+import sideproject.gugumo.domain.dto.simplepostdto.SimplePostDto;
 
 import java.util.List;
 
-import static sideproject.gugumo.domain.QBookmark.bookmark;
-import static sideproject.gugumo.domain.meeting.QMeeting.meeting;
-import static sideproject.gugumo.domain.post.QPost.*;
+import static sideproject.gugumo.domain.entity.QBookmark.bookmark;
+import static sideproject.gugumo.domain.entity.meeting.QMeeting.meeting;
+import static sideproject.gugumo.domain.entity.post.QPost.post;
+
 
 /**
  * querydsl을 이용한 동적 검색

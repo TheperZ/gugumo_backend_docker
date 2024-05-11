@@ -1,11 +1,11 @@
-package sideproject.gugumo.dto.detailpostdto;
+package sideproject.gugumo.domain.dto.detailpostdto;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import sideproject.gugumo.domain.meeting.GameType;
-import sideproject.gugumo.domain.meeting.Location;
-import sideproject.gugumo.domain.meeting.MeetingStatus;
-import sideproject.gugumo.domain.meeting.MeetingType;
+import sideproject.gugumo.domain.entity.meeting.GameType;
+import sideproject.gugumo.domain.entity.meeting.Location;
+import sideproject.gugumo.domain.entity.meeting.MeetingStatus;
+import sideproject.gugumo.domain.entity.meeting.MeetingType;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

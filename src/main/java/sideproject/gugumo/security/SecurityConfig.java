@@ -11,9 +11,9 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import sideproject.gugumo.jwt.JwtFilter;
+import sideproject.gugumo.filter.JwtFilter;
 import sideproject.gugumo.jwt.JwtUtil;
-import sideproject.gugumo.jwt.LoginFilter;
+import sideproject.gugumo.filter.LoginFilter;
 
 @EnableWebSecurity
 @Configuration

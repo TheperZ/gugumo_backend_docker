@@ -1,11 +1,11 @@
-package sideproject.gugumo.dto;
+package sideproject.gugumo.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
-import sideproject.gugumo.domain.meeting.GameType;
-import sideproject.gugumo.domain.meeting.Location;
-import sideproject.gugumo.domain.meeting.MeetingStatus;
+import sideproject.gugumo.domain.entity.meeting.GameType;
+import sideproject.gugumo.domain.entity.meeting.Location;
+import sideproject.gugumo.domain.entity.meeting.MeetingStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

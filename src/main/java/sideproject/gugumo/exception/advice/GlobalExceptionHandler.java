@@ -1,8 +1,7 @@
-package sideproject.gugumo.exception.exhandler;
+package sideproject.gugumo.exception.advice;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -13,9 +12,6 @@ import sideproject.gugumo.exception.exception.DuplicateBookmarkException;
 import sideproject.gugumo.exception.exception.MeetingNotFoundException;
 import sideproject.gugumo.exception.exception.PostNotFoundException;
 import sideproject.gugumo.response.ApiResponse;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @RestControllerAdvice
 @Slf4j

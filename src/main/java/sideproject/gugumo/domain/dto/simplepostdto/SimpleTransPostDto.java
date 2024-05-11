@@ -1,16 +1,14 @@
-package sideproject.gugumo.dto.simplepostdto;
+package sideproject.gugumo.domain.dto.simplepostdto;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import sideproject.gugumo.domain.meeting.GameType;
-import sideproject.gugumo.domain.meeting.Location;
-import sideproject.gugumo.domain.meeting.MeetingStatus;
+import sideproject.gugumo.domain.entity.meeting.GameType;
+import sideproject.gugumo.domain.entity.meeting.Location;
+import sideproject.gugumo.domain.entity.meeting.MeetingStatus;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 @SuperBuilder

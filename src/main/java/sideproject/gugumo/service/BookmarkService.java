@@ -6,29 +6,26 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sideproject.gugumo.domain.Bookmark;
-import sideproject.gugumo.domain.Member;
-import sideproject.gugumo.domain.meeting.Meeting;
-import sideproject.gugumo.domain.meeting.MeetingType;
-import sideproject.gugumo.domain.post.Post;
-import sideproject.gugumo.dto.BookmarkPostDto;
-import sideproject.gugumo.dto.CustomUserDetails;
-import sideproject.gugumo.dto.simplepostdto.SimpleTransLongDto;
-import sideproject.gugumo.dto.simplepostdto.SimpleTransPostDto;
-import sideproject.gugumo.dto.simplepostdto.SimpleTransShortDto;
+import sideproject.gugumo.domain.entity.Bookmark;
+import sideproject.gugumo.domain.entity.Member;
+import sideproject.gugumo.domain.entity.meeting.Meeting;
+import sideproject.gugumo.domain.entity.meeting.MeetingType;
+import sideproject.gugumo.domain.entity.post.Post;
+import sideproject.gugumo.domain.dto.CustomUserDetails;
+import sideproject.gugumo.domain.dto.simplepostdto.SimpleTransLongDto;
+import sideproject.gugumo.domain.dto.simplepostdto.SimpleTransPostDto;
+import sideproject.gugumo.domain.dto.simplepostdto.SimpleTransShortDto;
 import sideproject.gugumo.exception.NoAuthorizationException;
 import sideproject.gugumo.exception.exception.BookmarkNotFoundException;
 import sideproject.gugumo.exception.exception.DuplicateBookmarkException;
 import sideproject.gugumo.exception.exception.PostNotFoundException;
 import sideproject.gugumo.page.PageCustom;
 import sideproject.gugumo.repository.BookmarkRepository;
-import sideproject.gugumo.repository.MeetingRepository;
 import sideproject.gugumo.repository.MemberRepository;
 import sideproject.gugumo.repository.PostRepository;
 import sideproject.gugumo.request.CreateBookmarkReq;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service

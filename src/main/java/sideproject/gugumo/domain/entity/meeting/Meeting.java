@@ -1,9 +1,9 @@
-package sideproject.gugumo.domain.meeting;
+package sideproject.gugumo.domain.entity.meeting;
 
 import jakarta.persistence.*;
 import lombok.*;
-import sideproject.gugumo.domain.Member;
-import sideproject.gugumo.domain.post.Post;
+import sideproject.gugumo.domain.entity.Member;
+import sideproject.gugumo.domain.entity.post.Post;
 import sideproject.gugumo.request.UpdatePostReq;
 
 

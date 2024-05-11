@@ -1,8 +1,8 @@
-package sideproject.gugumo.domain;
+package sideproject.gugumo.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import sideproject.gugumo.domain.post.Post;
+import sideproject.gugumo.domain.entity.post.Post;
 
 @Entity
 @Builder

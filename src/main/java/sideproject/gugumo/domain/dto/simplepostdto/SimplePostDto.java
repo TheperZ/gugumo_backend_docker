@@ -1,13 +1,12 @@
-package sideproject.gugumo.dto.simplepostdto;
+package sideproject.gugumo.domain.dto.simplepostdto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
 import lombok.Getter;
-import sideproject.gugumo.domain.meeting.GameType;
-import sideproject.gugumo.domain.meeting.Location;
-import sideproject.gugumo.domain.meeting.MeetingStatus;
-import sideproject.gugumo.domain.meeting.MeetingType;
+import sideproject.gugumo.domain.entity.meeting.GameType;
+import sideproject.gugumo.domain.entity.meeting.Location;
+import sideproject.gugumo.domain.entity.meeting.MeetingStatus;
+import sideproject.gugumo.domain.entity.meeting.MeetingType;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

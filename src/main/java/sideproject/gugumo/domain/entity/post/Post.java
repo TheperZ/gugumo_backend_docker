@@ -1,10 +1,10 @@
-package sideproject.gugumo.domain.post;
+package sideproject.gugumo.domain.entity.post;
 
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
-import sideproject.gugumo.domain.Member;
-import sideproject.gugumo.domain.meeting.Meeting;
+import sideproject.gugumo.domain.entity.Member;
+import sideproject.gugumo.domain.entity.meeting.Meeting;
 import sideproject.gugumo.request.UpdatePostReq;
 
 import java.time.LocalDateTime;

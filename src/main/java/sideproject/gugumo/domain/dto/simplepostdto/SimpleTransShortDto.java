@@ -1,4 +1,4 @@
-package sideproject.gugumo.dto.simplepostdto;
+package sideproject.gugumo.domain.dto.simplepostdto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

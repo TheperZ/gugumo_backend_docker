@@ -1,18 +1,15 @@
-package sideproject.gugumo.controller;
+package sideproject.gugumo.api.controller;
 
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import sideproject.gugumo.dto.BookmarkPostDto;
-import sideproject.gugumo.dto.CustomUserDetails;
-import sideproject.gugumo.dto.simplepostdto.SimpleTransPostDto;
+import sideproject.gugumo.domain.dto.CustomUserDetails;
+import sideproject.gugumo.domain.dto.simplepostdto.SimpleTransPostDto;
 import sideproject.gugumo.page.PageCustom;
 import sideproject.gugumo.request.CreateBookmarkReq;
 import sideproject.gugumo.response.ApiResponse;

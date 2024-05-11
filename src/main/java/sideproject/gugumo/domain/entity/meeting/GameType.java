@@ -1,4 +1,4 @@
-package sideproject.gugumo.domain.meeting;
+package sideproject.gugumo.domain.entity.meeting;
 
 public enum GameType {
     BADMINTON,

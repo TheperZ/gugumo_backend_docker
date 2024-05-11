@@ -3,9 +3,9 @@ package sideproject.gugumo.cond;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import sideproject.gugumo.domain.meeting.GameType;
-import sideproject.gugumo.domain.meeting.Location;
-import sideproject.gugumo.domain.meeting.MeetingStatus;
+import sideproject.gugumo.domain.entity.meeting.GameType;
+import sideproject.gugumo.domain.entity.meeting.Location;
+import sideproject.gugumo.domain.entity.meeting.MeetingStatus;
 
 @AllArgsConstructor
 @Builder
