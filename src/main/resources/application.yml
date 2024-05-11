@@ -4,6 +4,10 @@ spring:
     username: sa
     password:
     driver-class-name: org.h2.Driver
+#    url: jdbc:postgresql://localhost:5432/gugumo
+#    username: postgres
+#    password: postgres
+#    driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
