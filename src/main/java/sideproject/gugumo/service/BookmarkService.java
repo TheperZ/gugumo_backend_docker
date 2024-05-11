@@ -15,7 +15,7 @@ import sideproject.gugumo.domain.dto.CustomUserDetails;
 import sideproject.gugumo.domain.dto.simplepostdto.SimpleTransLongDto;
 import sideproject.gugumo.domain.dto.simplepostdto.SimpleTransPostDto;
 import sideproject.gugumo.domain.dto.simplepostdto.SimpleTransShortDto;
-import sideproject.gugumo.exception.NoAuthorizationException;
+import sideproject.gugumo.exception.exception.NoAuthorizationException;
 import sideproject.gugumo.exception.exception.BookmarkNotFoundException;
 import sideproject.gugumo.exception.exception.DuplicateBookmarkException;
 import sideproject.gugumo.exception.exception.PostNotFoundException;
