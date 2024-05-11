@@ -110,16 +110,5 @@ public class PostController {
 
 
 
-    /**
-     * 테스트 코드: 추후 반드시 삭제할 것
-     */
-    private final MemberRepository memberRepository;
-    private final PasswordEncoder passwordEncoder;
-
-    @PostConstruct
-    public void init() {
-        memberRepository.save(new Member("testuser", "testnick", passwordEncoder.encode("password"), MemberRole.ROLE_USER));        //memberId: 1
-        memberRepository.save(new Member("testuser2", "testnick2", passwordEncoder.encode("password"), MemberRole.ROLE_USER));        //memberId: 2
-    }
 
 }
