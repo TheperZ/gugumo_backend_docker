@@ -4,15 +4,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import sideproject.gugumo.domain.dto.CustomUserDetails;
 import sideproject.gugumo.domain.dto.MemberDto;
 import sideproject.gugumo.domain.dto.SignUpMemberDto;
 import sideproject.gugumo.domain.dto.UpdateMemberDto;
-import sideproject.gugumo.domain.entity.Member;
-import sideproject.gugumo.exception.DuplicateEmailException;
-import sideproject.gugumo.exception.NoAuthorizationException;
+import sideproject.gugumo.exception.exception.NoAuthorizationException;
 import sideproject.gugumo.response.ApiResponse;
 import sideproject.gugumo.service.MemberService;
 

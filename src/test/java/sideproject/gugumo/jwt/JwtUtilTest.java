@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.PropertySource;
+import sideproject.gugumo.domain.entity.MemberRole;
 
 @SpringBootTest
 class JwtUtilTest {

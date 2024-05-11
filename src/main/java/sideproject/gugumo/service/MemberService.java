@@ -1,7 +1,6 @@
 package sideproject.gugumo.service;
 
 import lombok.RequiredArgsConstructor;
-import org.hibernate.sql.Update;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,7 +8,7 @@ import sideproject.gugumo.domain.dto.MemberDto;
 import sideproject.gugumo.domain.dto.SignUpMemberDto;
 import sideproject.gugumo.domain.dto.UpdateMemberDto;
 import sideproject.gugumo.domain.entity.Member;
-import sideproject.gugumo.exception.DuplicateEmailException;
+import sideproject.gugumo.exception.exception.DuplicateEmailException;
 import sideproject.gugumo.repository.MemberRepository;
 
 import java.util.Optional;

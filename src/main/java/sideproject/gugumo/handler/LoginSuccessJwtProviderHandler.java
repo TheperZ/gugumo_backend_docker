@@ -1,4 +1,4 @@
-package sideproject.handler;
+package sideproject.gugumo.handler;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

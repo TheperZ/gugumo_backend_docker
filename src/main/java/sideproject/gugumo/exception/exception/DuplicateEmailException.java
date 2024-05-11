@@ -1,4 +1,4 @@
-package sideproject.gugumo.exception;
+package sideproject.gugumo.exception.exception;
 
 public class DuplicateEmailException extends RuntimeException{
     public DuplicateEmailException() {
