@@ -10,6 +10,7 @@ import sideproject.gugumo.domain.dto.MemberDto;
 import sideproject.gugumo.domain.dto.SignUpMemberDto;
 import sideproject.gugumo.domain.dto.UpdateMemberDto;
 import sideproject.gugumo.exception.exception.NoAuthorizationException;
+import sideproject.gugumo.exception.exception.UserNotFoundException;
 import sideproject.gugumo.response.ApiResponse;
 import sideproject.gugumo.service.MemberService;
 
@@ -30,13 +31,18 @@ public class MemberApiController {
         return ApiResponse.createSuccess(joinId);
     }
 
-    @GetMapping("/api/v1/member/{id}")
-    public ApiResponse<UpdateMemberDto> getMember(@AuthenticationPrincipal CustomUserDetails principal,
-                                                  @PathVariable("id") Long id) {
+    @GetMapping("/api/v1/member")
+    public ApiResponse<UpdateMemberDto> getMember(@AuthenticationPrincipal CustomUserDetails principal) {
 
-        MemberDto findMemberDto = memberService.findOne(id);
+        String username = principal.getUsername();
 
-        if(!Objects.equals(findMemberDto.getUsername(), principal.getUsername())) {
+        MemberDto findMemberDto = memberService.findByUsername(username);
+
+        if(findMemberDto == null) {
+            throw new UserNotFoundException(username + " 회원이 없습니다.");
+        }
+
+        if(!Objects.equals(findMemberDto.getUsername(), username)) {
             throw new NoAuthorizationException("권한이 없습니다.");
         }
 
@@ -49,21 +55,23 @@ public class MemberApiController {
         return ApiResponse.createSuccess(updateMemberDto);
     }
 
-    @PatchMapping("/api/v1/member/{id}")
+    @PatchMapping("/api/v1/member")
     public ApiResponse<UpdateMemberDto> editMember(@AuthenticationPrincipal CustomUserDetails principal,
-                           @PathVariable("id") Long id,
                            @RequestBody UpdateMemberDto updateMemberDto) {
 
-        MemberDto findMemberDto = memberService.findOne(id);
+        String username = principal.getUsername();
 
-        if(!Objects.equals(findMemberDto.getUsername(), principal.getUsername())) {
+        MemberDto findMemberDto = memberService.findByUsername(username);
+
+        if(!Objects.equals(findMemberDto.getUsername(), username)) {
             throw new NoAuthorizationException("권한이 없습니다.");
         }
 
-        //TODO update 하면서 예외가 발생하는 경우 고려 안해봄. 있을 경우 추가해야함.(비밀번호가 null이라던가 공백이라던가 등)
-        memberService.update(id, updateMemberDto);
+        //TODO update 시 비밀번호 체크 등 검증 필요
+        memberService.update(findMemberDto.getId(), updateMemberDto);
 
-        MemberDto newMemberDto = memberService.findOne(id);
+        // update를 진행한 후 update된 member를 다시 조회해서 확실하게 된것을 검증
+        MemberDto newMemberDto = memberService.findOne(findMemberDto.getId());
 
         UpdateMemberDto newUpdateMemberDto = UpdateMemberDto.builder()
                 .profileImagePath(newMemberDto.getProfileImagePath())
@@ -72,20 +80,5 @@ public class MemberApiController {
                 .build();
 
         return ApiResponse.createSuccess(newUpdateMemberDto);
-    }
-
-    /**
-     * 권한별 접근 test 용도로 임시 작성
-     * /user, /admin
-     * @return
-     */
-    @GetMapping("/user")
-    public String userP() {
-        return "User Controller";
-    }
-
-    @GetMapping("/admin")
-    public String adminP() {
-        return "User Controller";
     }
 }
