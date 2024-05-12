@@ -10,7 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import sideproject.gugumo.domain.dto.CustomUserDetails;
 import sideproject.gugumo.domain.dto.detailpostdto.DetailPostDto;
-import sideproject.gugumo.domain.dto.simplepostdto.SimpleTransPostDto;
+import sideproject.gugumo.domain.dto.simplepostdto.SimplePostDto;
 import sideproject.gugumo.page.PageCustom;
 import sideproject.gugumo.request.CreatePostReq;
 import sideproject.gugumo.request.UpdatePostReq;
@@ -45,7 +45,7 @@ public class PostController {
      * 동적 정렬 기능이 필요하면 스프링 데이터 페이징이 제공하는 Sort를 사용하기 보다는 파라미터를 받아서 직접 처리하는 것을 권장한다.
      */
     @GetMapping
-    public <T extends SimpleTransPostDto> ApiResponse<PageCustom<T>> findPostSimple(
+    public <T extends SimplePostDto> ApiResponse<PageCustom<T>> findPostSimple(
             @AuthenticationPrincipal CustomUserDetails principal,
             @PageableDefault(size=12) Pageable pageable,
             @RequestParam(required = false, value = "q") String q,
@@ -89,7 +89,7 @@ public class PostController {
 
 
     @GetMapping("/my")
-    public <T extends SimpleTransPostDto> ApiResponse<PageCustom<T>> findMyPost(
+    public <T extends SimplePostDto> ApiResponse<PageCustom<T>> findMyPost(
             @AuthenticationPrincipal CustomUserDetails principal,
             @PageableDefault(size=12, sort="createDate", direction = Sort.Direction.DESC) Pageable pageable) {
         return ApiResponse.createSuccess(postService.findMyPost(principal, pageable));

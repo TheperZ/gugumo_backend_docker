@@ -12,14 +12,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import sideproject.gugumo.cond.PostSearchCondition;
 import sideproject.gugumo.cond.SortType;
-import sideproject.gugumo.domain.dto.simplepostdto.QSimplePostDto;
+import sideproject.gugumo.domain.dto.simplepostdto.QSimplePostQueryDto;
+import sideproject.gugumo.domain.dto.simplepostdto.SimplePostQueryDto;
 import sideproject.gugumo.domain.entity.Member;
 import sideproject.gugumo.domain.entity.meeting.GameType;
 import sideproject.gugumo.domain.entity.meeting.Location;
 import sideproject.gugumo.domain.entity.meeting.MeetingStatus;
 import sideproject.gugumo.domain.dto.CustomUserDetails;
-
-import sideproject.gugumo.domain.dto.simplepostdto.SimplePostDto;
 
 import java.util.List;
 
@@ -45,7 +44,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
 
 
     @Override
-    public Page<SimplePostDto> search(PostSearchCondition cond, Pageable pageable
+    public Page<SimplePostQueryDto> search(PostSearchCondition cond, Pageable pageable
             , CustomUserDetails principal) {
 
         Member member =
@@ -54,7 +53,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
 
         OrderSpecifier orderSpecifier = createOrderSpecifier(cond.getSortType());
 
-        List<SimplePostDto> result = queryFactory.select(new QSimplePostDto(
+        List<SimplePostQueryDto> result = queryFactory.select(new QSimplePostQueryDto(
                         post.id.as("postId"),
                         meeting.meetingType,
                         meeting.status,

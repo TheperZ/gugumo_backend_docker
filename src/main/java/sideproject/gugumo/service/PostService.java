@@ -9,17 +9,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sideproject.gugumo.cond.PostSearchCondition;
 import sideproject.gugumo.cond.SortType;
+import sideproject.gugumo.domain.dto.simplepostdto.SimplePostQueryDto;
 import sideproject.gugumo.domain.entity.meeting.*;
 import sideproject.gugumo.domain.dto.CustomUserDetails;
 import sideproject.gugumo.domain.dto.detailpostdto.DetailPostDto;
 import sideproject.gugumo.domain.entity.Member;
 import sideproject.gugumo.domain.entity.post.Post;
-import sideproject.gugumo.domain.dto.simplepostdto.SimplePostDto;
 import sideproject.gugumo.domain.dto.detailpostdto.LongDetailPostDto;
 import sideproject.gugumo.domain.dto.detailpostdto.ShortDetailPostDto;
-import sideproject.gugumo.domain.dto.simplepostdto.SimpleTransLongDto;
-import sideproject.gugumo.domain.dto.simplepostdto.SimpleTransPostDto;
-import sideproject.gugumo.domain.dto.simplepostdto.SimpleTransShortDto;
+import sideproject.gugumo.domain.dto.simplepostdto.SimplePostLongDto;
+import sideproject.gugumo.domain.dto.simplepostdto.SimplePostDto;
+import sideproject.gugumo.domain.dto.simplepostdto.SimplePostShortDto;
 import sideproject.gugumo.exception.exception.NoAuthorizationException;
 import sideproject.gugumo.exception.exception.PostNotFoundException;
 import sideproject.gugumo.page.PageCustom;
@@ -137,8 +137,8 @@ public class PostService {
      * @return page
      */
 
-    public <T extends SimpleTransPostDto> PageCustom<T> findSimplePost(CustomUserDetails principal, Pageable pageable, String q,
-                                              String gameType, String location, String meetingStatus, String sortType) {
+    public <T extends SimplePostDto> PageCustom<T> findSimplePost(CustomUserDetails principal, Pageable pageable, String q,
+                                                                  String gameType, String location, String meetingStatus, String sortType) {
         PostSearchCondition condition = PostSearchCondition.builder()
                 .q(q)
                 .gameType(gameType == null ? null : GameType.valueOf(gameType))
@@ -148,7 +148,7 @@ public class PostService {
                 .build();
 
 
-        Page<SimplePostDto> page = postRepository.search(condition, pageable, principal);
+        Page<SimplePostQueryDto> page = postRepository.search(condition, pageable, principal);
 
 
         //이걸 한번 더 가공해서(DetailPostDto처럼, 단기모임에서는 meetingDatetime을, 장기모임에서는 meetingTime, meetingDays)
@@ -163,12 +163,12 @@ public class PostService {
 
     }
 
-    private <T extends SimpleTransPostDto> T convertToTransDto(SimplePostDto s) {
+    private <T extends SimplePostDto> T convertToTransDto(SimplePostQueryDto s) {
 
-        SimpleTransPostDto result = new SimpleTransPostDto();
+        SimplePostDto result = new SimplePostDto();
 
         if (s.getMeetingType() == MeetingType.SHORT) {
-            result = SimpleTransShortDto.builder()
+            result = SimplePostShortDto.builder()
                     .postId(s.getPostId())
                     .meetingStatus(s.getStatus())
                     .gameType(s.getGameType())
@@ -183,7 +183,7 @@ public class PostService {
 
 
         } else if (s.getMeetingType() == MeetingType.LONG) {
-            result = SimpleTransLongDto.builder()
+            result = SimplePostLongDto.builder()
                     .postId(s.getPostId())
                     .meetingStatus(s.getStatus())
                     .gameType(s.getGameType())
@@ -333,7 +333,7 @@ public class PostService {
 
     }
 
-    public <T extends SimpleTransPostDto> PageCustom<T> findMyPost(CustomUserDetails principal, Pageable pageable) {
+    public <T extends SimplePostDto> PageCustom<T> findMyPost(CustomUserDetails principal, Pageable pageable) {
 
         //토큰에서
         if (principal == null) {
@@ -356,14 +356,14 @@ public class PostService {
 
     }
 
-    private <T extends SimpleTransPostDto> T convertToTransDto(Post post, Member member) {
+    private <T extends SimplePostDto> T convertToTransDto(Post post, Member member) {
 
         Meeting meeting = post.getMeeting();
 
-        SimpleTransPostDto result = new SimpleTransPostDto();
+        SimplePostDto result = new SimplePostDto();
 
         if (post.getMeeting().getMeetingType() == MeetingType.SHORT) {
-            result = SimpleTransShortDto.builder()
+            result = SimplePostShortDto.builder()
                     .postId(post.getId())
                     .meetingStatus(meeting.getStatus())
                     .gameType(meeting.getGameType())
@@ -378,7 +378,7 @@ public class PostService {
 
 
         } else if (post.getMeeting().getMeetingType() == MeetingType.LONG) {
-            result = SimpleTransLongDto.builder()
+            result = SimplePostLongDto.builder()
                     .postId(post.getId())
                     .meetingStatus(meeting.getStatus())
                     .gameType(meeting.getGameType())
