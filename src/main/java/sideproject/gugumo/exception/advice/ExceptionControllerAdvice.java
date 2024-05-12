@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import sideproject.gugumo.exception.exception.DuplicateEmailException;
 import sideproject.gugumo.exception.exception.NoAuthorizationException;
+import sideproject.gugumo.exception.exception.UserNotFoundException;
 import sideproject.gugumo.response.ApiResponse;
 
 @Slf4j
@@ -17,28 +18,39 @@ public class ExceptionControllerAdvice {
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler()
     public ApiResponse<String> duplicateEmailExceptionHandler(DuplicateEmailException e) {
-        log.error("[duplicateEmailExceptionHandler] ex : " + e.getMessage());
-        return ApiResponse.createFail(e.getMessage());
+        String exceptionMessage = e.getMessage();
+        log.error("[duplicateEmailExceptionHandler] ex : " + exceptionMessage);
+        return ApiResponse.createFail(exceptionMessage);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
     public ApiResponse<String> MethodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
-        log.error("[MethodArgumentNotValidExceptionHandler] ex : " + e.getMessage());
+        log.error("[MethodArgumentNotValidExceptionHandler] ex : 입력이 올바르지 못합니다.");
         return ApiResponse.createFail("입력이 올바르지 못합니다.");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
     public ApiResponse<String> MissingRequestHeaderExceptionHandler(MissingRequestHeaderException e) {
-        log.error("[MissingRequestHeaderExceptionHandler] ex : " + e.getMessage());
+        String exceptionMessage = e.getMessage();
+        log.error("[MissingRequestHeaderExceptionHandler] ex : " + exceptionMessage);
         return ApiResponse.createFail("권한이 없습니다.");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
     public ApiResponse<String> NoAuthorizationExceptionHandler(NoAuthorizationException e) {
-        log.error("[NoAuthorizationExceptionHandler] ex : " + e.getMessage());
-        return ApiResponse.createFail(e.getMessage());
+        String exceptionMessage = e.getMessage();
+        log.error("[NoAuthorizationExceptionHandler] ex : " + exceptionMessage);
+        return ApiResponse.createFail(exceptionMessage);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public ApiResponse<String> UserNotFoundExceptionHandler(UserNotFoundException e) {
+        String exceptionMessage = e.getMessage();
+        log.error("[UserNotFoundExceptionHandler] ex : " + exceptionMessage);
+        return ApiResponse.createFail(exceptionMessage);
     }
 }
