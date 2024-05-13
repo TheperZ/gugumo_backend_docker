@@ -141,8 +141,8 @@ public class PostService {
                                               String gameType, String location, String meetingStatus, String sortType) {
         PostSearchCondition condition = PostSearchCondition.builder()
                 .q(q)
-                .gameType(gameType == null ? null : GameType.valueOf(gameType))
-                .location(location == null ? null : Location.valueOf(location))
+                .gameType(gameType == null || gameType == "" ? null : GameType.valueOf(gameType))
+                .location(location == null || location == "" ? null : Location.valueOf(location))
                 .meetingStatus(meetingStatus.equals("ALL") ? null : MeetingStatus.valueOf(meetingStatus))
                 .sortType(SortType.valueOf(sortType))
                 .build();
