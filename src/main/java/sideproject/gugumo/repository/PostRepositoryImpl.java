@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
@@ -30,6 +31,7 @@ import static sideproject.gugumo.domain.entity.post.QPost.post;
 /**
  * querydsl을 이용한 동적 검색
  */
+@Slf4j
 public class PostRepositoryImpl implements PostRepositoryCustom{
 
 
@@ -84,7 +86,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                 .from(post)
                 .leftJoin(post.meeting, meeting)
                 .where(queryEq(cond.getQ()), locationEq(cond.getLocation()),
-                        gameTypeEq(cond.getGameType()), meetingStatusEq(cond.getMeetingStatus()));
+                        gameTypeEq(cond.getGameType()), meetingStatusEq(cond.getMeetingStatus()), post.isDelete.isFalse());
 
 
         return PageableExecutionUtils.getPage(result, pageable, count::fetchOne);
@@ -101,7 +103,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
     }
 
     private BooleanExpression hasMember(Member member) {
-        return member != null ? bookmark.member.eq(member) : Expressions.TRUE;
+        return member != null ? bookmark.member.eq(member) : Expressions.FALSE;
     }
 
     private BooleanExpression meetingStatusEq(MeetingStatus meetingStatus) {

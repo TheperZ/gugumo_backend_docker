@@ -148,6 +148,7 @@ public class PostService {
                 .build();
 
 
+
         Page<SimplePostQueryDto> page = postRepository.search(condition, pageable, principal);
 
 
@@ -157,6 +158,7 @@ public class PostService {
                 .map(r -> (T) r)
                 .collect(Collectors.toList());
 
+        log.info("principal={}", principal);
 
         return new PageCustom<>(result, page.getPageable(), page.getTotalElements());
 
