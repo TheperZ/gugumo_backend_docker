@@ -102,7 +102,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
     }
 
     private BooleanExpression hasMember(Member member) {
-        return member != null ? bookmark.member.eq(member) : Expressions.TRUE;
+        return member != null ? bookmark.member.eq(member) : Expressions.FALSE;
     }
 
     private BooleanExpression meetingStatusEq(MeetingStatus meetingStatus) {
