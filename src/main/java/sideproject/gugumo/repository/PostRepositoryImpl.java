@@ -7,19 +7,19 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import sideproject.gugumo.cond.PostSearchCondition;
 import sideproject.gugumo.cond.SortType;
-import sideproject.gugumo.domain.dto.simplepostdto.QSimplePostDto;
+import sideproject.gugumo.domain.dto.simplepostdto.QSimplePostQueryDto;
+import sideproject.gugumo.domain.dto.simplepostdto.SimplePostQueryDto;
 import sideproject.gugumo.domain.entity.Member;
 import sideproject.gugumo.domain.entity.meeting.GameType;
 import sideproject.gugumo.domain.entity.meeting.Location;
 import sideproject.gugumo.domain.entity.meeting.MeetingStatus;
 import sideproject.gugumo.domain.dto.CustomUserDetails;
-
-import sideproject.gugumo.domain.dto.simplepostdto.SimplePostDto;
 
 import java.util.List;
 
@@ -31,6 +31,7 @@ import static sideproject.gugumo.domain.entity.post.QPost.post;
 /**
  * querydsl을 이용한 동적 검색
  */
+@Slf4j
 public class PostRepositoryImpl implements PostRepositoryCustom{
 
 
@@ -45,7 +46,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
 
 
     @Override
-    public Page<SimplePostDto> search(PostSearchCondition cond, Pageable pageable
+    public Page<SimplePostQueryDto> search(PostSearchCondition cond, Pageable pageable
             , CustomUserDetails principal) {
 
         Member member =
@@ -54,7 +55,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
 
         OrderSpecifier orderSpecifier = createOrderSpecifier(cond.getSortType());
 
-        List<SimplePostDto> result = queryFactory.select(new QSimplePostDto(
+        List<SimplePostQueryDto> result = queryFactory.select(new QSimplePostQueryDto(
                         post.id.as("postId"),
                         meeting.meetingType,
                         meeting.status,
@@ -85,7 +86,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                 .from(post)
                 .leftJoin(post.meeting, meeting)
                 .where(queryEq(cond.getQ()), locationEq(cond.getLocation()),
-                        gameTypeEq(cond.getGameType()), meetingStatusEq(cond.getMeetingStatus()));
+                        gameTypeEq(cond.getGameType()), meetingStatusEq(cond.getMeetingStatus()), post.isDelete.isFalse());
 
 
         return PageableExecutionUtils.getPage(result, pageable, count::fetchOne);

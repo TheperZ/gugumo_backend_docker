@@ -12,9 +12,9 @@ import sideproject.gugumo.domain.entity.meeting.Meeting;
 import sideproject.gugumo.domain.entity.meeting.MeetingType;
 import sideproject.gugumo.domain.entity.post.Post;
 import sideproject.gugumo.domain.dto.CustomUserDetails;
-import sideproject.gugumo.domain.dto.simplepostdto.SimpleTransLongDto;
-import sideproject.gugumo.domain.dto.simplepostdto.SimpleTransPostDto;
-import sideproject.gugumo.domain.dto.simplepostdto.SimpleTransShortDto;
+import sideproject.gugumo.domain.dto.simplepostdto.SimplePostLongDto;
+import sideproject.gugumo.domain.dto.simplepostdto.SimplePostDto;
+import sideproject.gugumo.domain.dto.simplepostdto.SimplePostShortDto;
 import sideproject.gugumo.exception.exception.NoAuthorizationException;
 import sideproject.gugumo.exception.exception.BookmarkNotFoundException;
 import sideproject.gugumo.exception.exception.DuplicateBookmarkException;
@@ -64,7 +64,7 @@ public class BookmarkService {
 
     }
 
-    public <T extends SimpleTransPostDto> PageCustom<T> findBookmarkByMember(
+    public <T extends SimplePostDto> PageCustom<T> findBookmarkByMember(
             CustomUserDetails principal, Pageable pageable) {
 
         if (principal == null) {
@@ -90,14 +90,14 @@ public class BookmarkService {
     }
 
     //이걸 어따 놓고 쓰는게 좋을까(duplicate to postservice)
-    private <T extends SimpleTransPostDto> T convertToTransDto(Post post, Member member) {
+    private <T extends SimplePostDto> T convertToTransDto(Post post, Member member) {
 
         Meeting meeting = post.getMeeting();
 
-        SimpleTransPostDto result = new SimpleTransPostDto();
+        SimplePostDto result = new SimplePostDto();
 
         if (post.getMeeting().getMeetingType() == MeetingType.SHORT) {
-            result = SimpleTransShortDto.builder()
+            result = SimplePostShortDto.builder()
                     .postId(post.getId())
                     .meetingStatus(meeting.getStatus())
                     .gameType(meeting.getGameType())
@@ -111,7 +111,7 @@ public class BookmarkService {
 
 
         } else if (post.getMeeting().getMeetingType() == MeetingType.LONG) {
-            result = SimpleTransLongDto.builder()
+            result = SimplePostLongDto.builder()
                     .postId(post.getId())
                     .meetingStatus(meeting.getStatus())
                     .gameType(meeting.getGameType())
