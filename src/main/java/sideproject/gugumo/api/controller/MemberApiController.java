@@ -103,9 +103,11 @@ public class MemberApiController {
 
     @GetMapping("/api/v1/member/checkDuplicateNickname")
     public ApiResponse<Boolean> checkDuplicateNickname(/*@AuthenticationPrincipal CustomUserDetails principal,*/
-                                                      @RequestBody UpdateMemberNicknameDto updateMemberNicknameDto) {
+                                                      /*@RequestBody UpdateMemberNicknameDto updateMemberNicknameDto,*/
+                                                      @RequestParam String nickname) {
 
-        Boolean isExistNickname = memberService.isExistNickname(updateMemberNicknameDto.getNickname());
+//        Boolean isExistNickname = memberService.isExistNickname(updateMemberNicknameDto.getNickname());
+        Boolean isExistNickname = memberService.isExistNickname(nickname);
 
         return ApiResponse.createSuccess(isExistNickname);
     }
