@@ -4,14 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 @Getter
 @SuperBuilder
 @AllArgsConstructor
-public class SimpleTransLongDto extends SimpleTransPostDto{
+public class SimplePostShortDto extends SimplePostDto {
 
-
-    private LocalTime meetingTime;
-    private String meetingDays;
+    private LocalDateTime meetingDateTime;
 }

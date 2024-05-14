@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import sideproject.gugumo.domain.dto.CustomUserDetails;
-import sideproject.gugumo.domain.dto.simplepostdto.SimpleTransPostDto;
+import sideproject.gugumo.domain.dto.simplepostdto.SimplePostDto;
 import sideproject.gugumo.page.PageCustom;
 import sideproject.gugumo.request.CreateBookmarkReq;
 import sideproject.gugumo.response.ApiResponse;
@@ -35,7 +35,7 @@ public class BookmarkController {
     }
 
     @GetMapping
-    public <T extends SimpleTransPostDto> ApiResponse<PageCustom<T>> findBookmark(
+    public <T extends SimplePostDto> ApiResponse<PageCustom<T>> findBookmark(
             @AuthenticationPrincipal CustomUserDetails principal,
             @PageableDefault(size = 12) Pageable pageable) {
 
