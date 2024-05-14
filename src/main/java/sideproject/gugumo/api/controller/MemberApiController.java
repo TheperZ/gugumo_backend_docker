@@ -5,10 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import sideproject.gugumo.domain.dto.CustomUserDetails;
-import sideproject.gugumo.domain.dto.MemberDto;
-import sideproject.gugumo.domain.dto.SignUpMemberDto;
-import sideproject.gugumo.domain.dto.UpdateMemberDto;
+import sideproject.gugumo.domain.dto.*;
+import sideproject.gugumo.exception.exception.DuplicateNicknameException;
 import sideproject.gugumo.exception.exception.NoAuthorizationException;
 import sideproject.gugumo.exception.exception.UserNotFoundException;
 import sideproject.gugumo.response.ApiResponse;
@@ -63,6 +61,10 @@ public class MemberApiController {
 
         MemberDto findMemberDto = memberService.findByUsername(username);
 
+        if (findMemberDto == null) {
+            throw new UserNotFoundException(username + " 회원이 없습니다.");
+        }
+
         if(!Objects.equals(findMemberDto.getUsername(), username)) {
             throw new NoAuthorizationException("권한이 없습니다.");
         }
@@ -80,5 +82,44 @@ public class MemberApiController {
                 .build();
 
         return ApiResponse.createSuccess(newUpdateMemberDto);
+    }
+
+    @PatchMapping("/api/v1/member/updateNickname")
+    public ApiResponse<String> updateMemberNickname(@AuthenticationPrincipal CustomUserDetails principal,
+                                                   @RequestBody UpdateMemberNicknameDto updateMemberNicknameDto) {
+
+        String username = principal.getUsername();
+
+        MemberDto member = memberService.findByUsername(username);
+
+        memberService.updateNickname(member.getId(), updateMemberNicknameDto.getNickname());
+
+        MemberDto updateMember = memberService.findOne(member.getId());
+
+        String updateMemberNickname = updateMember.getNickname();
+
+        return ApiResponse.createSuccess(updateMemberNickname);
+    }
+
+    @GetMapping("/api/v1/member/checkDuplicateNickname")
+    public ApiResponse<Boolean> checkDuplicateNickname(/*@AuthenticationPrincipal CustomUserDetails principal,*/
+                                                      @RequestBody UpdateMemberNicknameDto updateMemberNicknameDto) {
+
+        Boolean isExistNickname = memberService.isExistNickname(updateMemberNicknameDto.getNickname());
+
+        return ApiResponse.createSuccess(isExistNickname);
+    }
+
+    @PatchMapping("/api/v1/member/updatePassword")
+    public ApiResponse<String> updateMemberPassword(@AuthenticationPrincipal CustomUserDetails principal,
+                                                    @RequestBody UpdateMemberPasswordDto updateMemberPasswordDto) {
+
+        String username = principal.getUsername();
+
+        MemberDto member = memberService.findByUsername(username);
+
+        memberService.updatePassword(member.getId(), updateMemberPasswordDto.getPassword());
+
+        return null;
     }
 }

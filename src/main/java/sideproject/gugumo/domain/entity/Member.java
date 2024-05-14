@@ -32,6 +32,10 @@ public class Member {
         this.role = role;
     }
 
+    public void updateMemberNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
     public void updateMember(UpdateMemberDto updateMemberDto) {
         this.nickname = updateMemberDto.getNickname();
         this.profileImagePath = updateMemberDto.getProfileImagePath();

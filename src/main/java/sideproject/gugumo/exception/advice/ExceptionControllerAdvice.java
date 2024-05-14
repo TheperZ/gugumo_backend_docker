@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import sideproject.gugumo.exception.exception.DuplicateEmailException;
+import sideproject.gugumo.exception.exception.DuplicateNicknameException;
 import sideproject.gugumo.exception.exception.NoAuthorizationException;
 import sideproject.gugumo.exception.exception.UserNotFoundException;
 import sideproject.gugumo.response.ApiResponse;
@@ -51,6 +52,14 @@ public class ExceptionControllerAdvice {
     public ApiResponse<String> UserNotFoundExceptionHandler(UserNotFoundException e) {
         String exceptionMessage = e.getMessage();
         log.error("[UserNotFoundExceptionHandler] ex : " + exceptionMessage);
+        return ApiResponse.createFail(exceptionMessage);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public ApiResponse<String> DuplicateNicknameExceptionHandler(DuplicateNicknameException e) {
+        String exceptionMessage = e.getMessage();
+        log.error("[DuplicateNicknameExceptionHandler] ex : " + exceptionMessage);
         return ApiResponse.createFail(exceptionMessage);
     }
 }
