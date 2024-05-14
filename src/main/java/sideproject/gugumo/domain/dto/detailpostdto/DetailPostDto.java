@@ -39,4 +39,5 @@ public abstract class DetailPostDto {
     //북마크 수
     private boolean isYours;
     private long bookmarkCount;
+    private boolean isBookmarked;
 }
