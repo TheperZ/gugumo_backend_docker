@@ -36,6 +36,10 @@ public class Member {
         this.nickname = nickname;
     }
 
+    public void updateMemberPassword(String password) {
+        this.password = password;
+    }
+
     public void updateMember(UpdateMemberDto updateMemberDto) {
         this.nickname = updateMemberDto.getNickname();
         this.profileImagePath = updateMemberDto.getProfileImagePath();

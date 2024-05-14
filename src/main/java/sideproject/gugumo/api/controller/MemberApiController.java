@@ -111,7 +111,7 @@ public class MemberApiController {
     }
 
     @PatchMapping("/api/v1/member/updatePassword")
-    public ApiResponse<String> updateMemberPassword(@AuthenticationPrincipal CustomUserDetails principal,
+    public ApiResponse<Boolean> updateMemberPassword(@AuthenticationPrincipal CustomUserDetails principal,
                                                     @RequestBody UpdateMemberPasswordDto updateMemberPasswordDto) {
 
         String username = principal.getUsername();
@@ -120,6 +120,6 @@ public class MemberApiController {
 
         memberService.updatePassword(member.getId(), updateMemberPasswordDto.getPassword());
 
-        return null;
+        return ApiResponse.createSuccess(true);
     }
 }

@@ -115,6 +115,9 @@ public class MemberService {
     }
 
     public void updatePassword(Long id, String password) {
-        String encode = passwordEncoder.encode(password);
+
+        Member findMember = memberRepository.findOne(id);
+
+        findMember.updateMemberPassword(passwordEncoder.encode(password));
     }
 }
