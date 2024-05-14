@@ -29,4 +29,10 @@ public class MemberRepository {
                 .setParameter("username", username)
                 .getResultList().stream().findAny();
     }
+
+    public Optional<Member> findByNickname(String nickname) {
+        return em.createQuery("select m from Member m where m.nickname = :nickname", Member.class)
+                .setParameter("nickname", nickname)
+                .getResultList().stream().findAny();
+    }
 }

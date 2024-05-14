@@ -9,6 +9,7 @@ import sideproject.gugumo.domain.dto.SignUpMemberDto;
 import sideproject.gugumo.domain.dto.UpdateMemberDto;
 import sideproject.gugumo.domain.entity.Member;
 import sideproject.gugumo.exception.exception.DuplicateEmailException;
+import sideproject.gugumo.exception.exception.DuplicateNicknameException;
 import sideproject.gugumo.repository.MemberRepository;
 
 import java.util.Optional;
@@ -64,6 +65,25 @@ public class MemberService {
                 .build()).orElse(null);
     }
 
+    public MemberDto findByNickname(String nickname) {
+        Optional<Member> findMember = memberRepository.findByNickname(nickname);
+
+        return findMember.map(member->MemberDto.builder()
+                .username(member.getUsername())
+                .nickname(member.getNickname())
+                .profileImagePath(member.getProfileImagePath())
+                .status(member.getStatus())
+                .role(member.getRole())
+                .id(member.getId())
+                .build()).orElse(null);
+    }
+
+    public Boolean isExistNickname(String nickname) {
+        Optional<Member> byNickname = memberRepository.findByNickname(nickname);
+
+        return byNickname.isPresent();
+    }
+
     @Transactional
     public void update(Long id, UpdateMemberDto updateMemberDto) {
         Member findMember = memberRepository.findOne(id);
@@ -73,11 +93,31 @@ public class MemberService {
         findMember.updateMember(updateMemberDto);
     }
 
+    @Transactional
+    public void updateNickname(Long id, String nickname) {
+        Member findMember = memberRepository.findOne(id);
+
+        Optional<Member> byNickname = memberRepository.findByNickname(nickname);
+
+        if(byNickname.isPresent()) {
+            throw new DuplicateNicknameException("이미 존재하는 nickname 입니다.");
+        }
+
+        findMember.updateMemberNickname(nickname);
+    }
+
     private void validateDuplicateMember(Member member) {
         Optional<Member> findMember = memberRepository.findByUsername(member.getUsername());
 
         if(findMember.isPresent()) {
             throw new DuplicateEmailException("이미 존재하는 회원입니다.");
         }
+    }
+
+    public void updatePassword(Long id, String password) {
+
+        Member findMember = memberRepository.findOne(id);
+
+        findMember.updateMemberPassword(passwordEncoder.encode(password));
     }
 }
