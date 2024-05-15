@@ -4,6 +4,7 @@ package sideproject.gugumo.api.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -37,7 +38,7 @@ public class BookmarkController {
     @GetMapping
     public <T extends SimplePostDto> ApiResponse<PageCustom<T>> findBookmark(
             @AuthenticationPrincipal CustomUserDetails principal,
-            @PageableDefault(size = 12) Pageable pageable) {
+            @PageableDefault(size = 12, sort="id", direction = Sort.Direction.DESC) Pageable pageable) {
 
         return ApiResponse.createSuccess(bookmarkService.findBookmarkByMember(principal, pageable));
     }
