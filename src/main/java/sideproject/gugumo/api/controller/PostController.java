@@ -91,8 +91,9 @@ public class PostController {
     @GetMapping("/my")
     public <T extends SimplePostDto> ApiResponse<PageCustom<T>> findMyPost(
             @AuthenticationPrincipal CustomUserDetails principal,
-            @PageableDefault(size=12, sort="createDate", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ApiResponse.createSuccess(postService.findMyPost(principal, pageable));
+            @PageableDefault(size=12, sort="createDate", direction = Sort.Direction.DESC) Pageable pageable,
+            @RequestParam(required = false, value = "q", defaultValue = "") String q) {
+        return ApiResponse.createSuccess(postService.findMyPost(principal, pageable, q));
 
     }
 

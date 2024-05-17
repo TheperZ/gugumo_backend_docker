@@ -65,7 +65,7 @@ public class BookmarkService {
     }
 
     public <T extends SimplePostDto> PageCustom<T> findBookmarkByMember(
-            CustomUserDetails principal, Pageable pageable) {
+            CustomUserDetails principal, Pageable pageable, String q) {
 
         if (principal == null) {
             throw new NoAuthorizationException("북마크 조회 실패: 비로그인 사용자입니다.");
@@ -77,7 +77,7 @@ public class BookmarkService {
 
 
 
-        Page<Bookmark> page = bookmarkRepository.findByMember(member, pageable);
+        Page<Bookmark> page = bookmarkRepository.findByMemberAndPostTitleContains(member, pageable, q);
 
 
         List<T> result = page.stream()
