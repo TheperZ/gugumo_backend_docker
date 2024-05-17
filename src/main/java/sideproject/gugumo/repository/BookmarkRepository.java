@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
-    public Page<Bookmark> findByMember(Member member, Pageable pageable);
+    public Page<Bookmark> findByMemberAndPostTitleContains(Member member, Pageable pageable, String title);
 
     public Optional<Bookmark> findByMemberAndPost(Member member, Post post);
 
