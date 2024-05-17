@@ -340,7 +340,7 @@ public class PostService {
 
     }
 
-    public <T extends SimplePostDto> PageCustom<T> findMyPost(CustomUserDetails principal, Pageable pageable) {
+    public <T extends SimplePostDto> PageCustom<T> findMyPost(CustomUserDetails principal, Pageable pageable, String q) {
 
         //토큰에서
         if (principal == null) {
@@ -352,7 +352,7 @@ public class PostService {
                         new NoAuthorizationException("내 글 조회 실패: 접근 권한이 없습니다.")
                 );
 
-        Page<Post> page = postRepository.findByMemberAndIsDeleteFalse(pageable, member);
+        Page<Post> page = postRepository.findByMemberAndTitleContainingAndIsDeleteFalse(pageable, member, q);
 
         List<T> result = page.stream()
                 .map(p -> convertToTransDto(p, member))
