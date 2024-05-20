@@ -10,6 +10,7 @@ import sideproject.gugumo.domain.dto.UpdateMemberDto;
 import sideproject.gugumo.domain.entity.Member;
 import sideproject.gugumo.exception.exception.DuplicateEmailException;
 import sideproject.gugumo.exception.exception.DuplicateNicknameException;
+import sideproject.gugumo.exception.exception.UserNotFoundException;
 import sideproject.gugumo.repository.MemberRepository;
 
 import java.util.Optional;
@@ -114,10 +115,24 @@ public class MemberService {
         }
     }
 
+    @Transactional
     public void updatePassword(Long id, String password) {
 
         Member findMember = memberRepository.findOne(id);
 
         findMember.updateMemberPassword(passwordEncoder.encode(password));
+    }
+
+    @Transactional
+    public void deleteMember(String username) {
+
+        Optional<Member> findMember = memberRepository.findByUsername(username);
+
+        if(findMember.isEmpty()) {
+            throw new UserNotFoundException("존재하지 않는 회원입니다.");
+        }
+
+        findMember.get().deleteMember();
+
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import sideproject.gugumo.domain.dto.MemberDto;
 import sideproject.gugumo.domain.dto.SignUpMemberDto;
+import sideproject.gugumo.domain.entity.MemberStatus;
 import sideproject.gugumo.exception.exception.DuplicateEmailException;
 import sideproject.gugumo.exception.exception.DuplicateNicknameException;
 
@@ -101,4 +102,26 @@ class MemberServiceTest {
         //than
         Assertions.assertThatThrownBy(()->memberService.join(signUpMemberDto2)).isInstanceOf(DuplicateEmailException.class);
     }
+
+    @Test
+    @DisplayName("Member Delete 테스트")
+    public void memberDeleteTest() {
+        //given
+        SignUpMemberDto signUpMemberDto1 = SignUpMemberDto.builder()
+                .nickname("nickname123")
+                .password("password123")
+                .username("username123")
+                .build();
+
+        Long id = memberService.join(signUpMemberDto1);
+
+        //when
+        memberService.deleteMember(signUpMemberDto1.getUsername());
+
+        //than
+        MemberDto findMember = memberService.findByUsername(signUpMemberDto1.getUsername());
+
+        Assertions.assertThat(findMember.getStatus()).isEqualTo(MemberStatus.delete);
+    }
+
 }

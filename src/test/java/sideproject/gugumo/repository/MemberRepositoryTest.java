@@ -50,7 +50,7 @@ class MemberRepositoryTest {
 //                .build();
 
         Member member = Member.createUserBuilder()
-                .email("email")
+                .username("email")
                 .password("password")
                 .nickname("nickname")
                 .build();
@@ -69,14 +69,14 @@ class MemberRepositoryTest {
     public void findMemberTest() {
         //given
         Member member = Member.createUserBuilder()
-                .email("email")
+                .username("email")
                 .password("password")
                 .nickname("nickname")
                 .build();
 
         //when
         memberRepository.save(member);
-        Optional<Member> findMember = memberRepository.findByEmail("email");
+        Optional<Member> findMember = memberRepository.findByUsername("email");
         findMember.orElseThrow(()->new IllegalStateException("없는 회원입니다."));
 
         //than
