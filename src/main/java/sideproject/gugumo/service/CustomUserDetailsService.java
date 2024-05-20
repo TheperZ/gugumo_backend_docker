@@ -6,6 +6,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import sideproject.gugumo.domain.dto.CustomUserDetails;
 import sideproject.gugumo.domain.entity.Member;
+import sideproject.gugumo.domain.entity.MemberStatus;
+import sideproject.gugumo.exception.exception.UserNotFoundException;
 import sideproject.gugumo.repository.MemberRepository;
 
 import java.util.Optional;
@@ -31,6 +33,16 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         return null;
          */
-        return findMember.map(CustomUserDetails::new).orElse(null);
+
+        if(findMember.isEmpty()) {
+            throw new UserNotFoundException("회원이 없습니다.");
+        }
+
+        if(findMember.get().getStatus() == MemberStatus.delete) {
+            return null;
+        }
+
+//        return findMember.map(CustomUserDetails::new).orElse(null);
+        return new CustomUserDetails(findMember.get());
     }
 }

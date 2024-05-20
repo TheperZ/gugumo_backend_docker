@@ -49,6 +49,10 @@ public class Member {
         }
     }
 
+    public void deleteMember() {
+        this.status = MemberStatus.delete;
+    }
+
     //User를 생성할 때 일부 값을 default로 설정하기 위해서 builder 구현
     public static UserBuilder createUserBuilder() {
         return new UserBuilder();

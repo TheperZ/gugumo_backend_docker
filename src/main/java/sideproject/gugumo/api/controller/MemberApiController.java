@@ -124,4 +124,14 @@ public class MemberApiController {
 
         return ApiResponse.createSuccess(true);
     }
+
+    @DeleteMapping("/api/v1/member")
+    public ApiResponse<Boolean> deleteMember(@AuthenticationPrincipal CustomUserDetails principal) {
+
+        String username = principal.getUsername();
+
+        memberService.deleteMember(username);
+
+        return ApiResponse.createSuccess(true);
+    }
 }
