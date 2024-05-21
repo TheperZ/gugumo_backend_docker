@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import sideproject.gugumo.cond.PostSearchCondition;
 import sideproject.gugumo.cond.SortType;
 import sideproject.gugumo.domain.dto.simplepostdto.SimplePostQueryDto;
+import sideproject.gugumo.domain.entity.MemberStatus;
 import sideproject.gugumo.domain.entity.meeting.*;
 import sideproject.gugumo.domain.dto.CustomUserDetails;
 import sideproject.gugumo.domain.dto.detailpostdto.DetailPostDto;
@@ -73,6 +74,10 @@ public class PostService {
                 .orElseThrow(()->
                         new NoAuthorizationException("저장 실패: 게시글 저장 권한이 없습니다.")
                 );
+
+        if (author.getStatus() != MemberStatus.active) {
+            throw new NoAuthorizationException("저장 실패: 게시글 저장 권한이 없습니다.");
+        }
 
 
         //post 저장
@@ -294,6 +299,10 @@ public class PostService {
                         new NoAuthorizationException("수정 실패: 게시글 수정 권한이 없습니다.")
                 );
 
+        if (member.getStatus() != MemberStatus.active) {
+            throw new NoAuthorizationException("수정 실패: 게시글 수정 권한이 없습니다.");
+        }
+
         Post targetPost =postRepository.findByIdAndIsDeleteFalse(postId)
                 .orElseThrow(()->new PostNotFoundException("수정 실패: 해당 게시글이 존재하지 않습니다."));
 
@@ -323,6 +332,9 @@ public class PostService {
                         new NoAuthorizationException("삭제 실패: 게시글 삭제 권한이 없습니다.")
                 );
 
+        if (member.getStatus() != MemberStatus.active) {
+            throw new NoAuthorizationException("삭제 실패: 게시글 삭제 권한이 없습니다.");
+        }
 
         Post targetPost = postRepository.findByIdAndIsDeleteFalse(postId)
                 .orElseThrow(()->new PostNotFoundException("삭제 실패: 해당 게시글이 존재하지 않습니다."));
@@ -351,6 +363,11 @@ public class PostService {
                 .orElseThrow(()->
                         new NoAuthorizationException("내 글 조회 실패: 접근 권한이 없습니다.")
                 );
+
+        if (member.getStatus() != MemberStatus.active) {
+            throw new NoAuthorizationException("내 글 조회 실패: 접근 권한이 없습니다.");
+        }
+
 
         Page<Post> page = postRepository.findByMemberAndTitleContainingAndIsDeleteFalse(pageable, member, q);
 
