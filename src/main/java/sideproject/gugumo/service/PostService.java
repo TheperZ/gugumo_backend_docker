@@ -226,6 +226,10 @@ public class PostService {
         Member member = principal == null ?
                 null : memberRepository.findByUsername(principal.getUsername()).get();
 
+        if (member.getStatus() != MemberStatus.active) {
+            member = null;
+        }
+
         targetPost.addViewCount();
 
 
@@ -246,7 +250,7 @@ public class PostService {
                     .meetingStatus(targetMeeting.getStatus())
                     .viewCount(targetPost.getViewCount())
                     .isYours(
-                            principal != null && principal.getUsername().equals(targetPost.getMember().getUsername())
+                            member != null && member.getUsername().equals(targetPost.getMember().getUsername())
                     )
                     .bookmarkCount(bookmarkRepository.countByPost(targetPost))
                     .isBookmarked(member != null ? bookmarkRepository.existsByMemberAndPost(member, targetPost) : false)
@@ -272,7 +276,7 @@ public class PostService {
                     .meetingStatus(targetMeeting.getStatus())
                     .viewCount(targetPost.getViewCount())
                     .isYours(
-                            principal != null && principal.getUsername().equals(targetPost.getMember().getUsername()))
+                            member != null && member.getUsername().equals(targetPost.getMember().getUsername()))
                     .bookmarkCount(bookmarkRepository.countByPost(targetPost))
                     .isBookmarked(member != null ? bookmarkRepository.existsByMemberAndPost(member, targetPost) : false)
                     .build();
