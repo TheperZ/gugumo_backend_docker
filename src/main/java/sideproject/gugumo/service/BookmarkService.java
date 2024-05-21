@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sideproject.gugumo.domain.entity.Bookmark;
 import sideproject.gugumo.domain.entity.Member;
+import sideproject.gugumo.domain.entity.MemberStatus;
 import sideproject.gugumo.domain.entity.meeting.Meeting;
 import sideproject.gugumo.domain.entity.meeting.MeetingType;
 import sideproject.gugumo.domain.entity.post.Post;
@@ -48,6 +49,10 @@ public class BookmarkService {
         Member member = memberRepository.findByUsername(principal.getUsername())
                 .orElseThrow(() -> new NoAuthorizationException("북마크 등록 실패: 권한이 없습니다."));
 
+        if (member.getStatus() != MemberStatus.active) {
+            throw new NoAuthorizationException("북마크 등록 실패: 권한이 없습니다.");
+        }
+
         Post post = postRepository.findByIdAndIsDeleteFalse(req.getPostId())
                 .orElseThrow(()->new PostNotFoundException("북마크 등록 실패: 해당 게시글이 존재하지 않습니다."));
 
@@ -75,7 +80,9 @@ public class BookmarkService {
         Member member = memberRepository.findByUsername(principal.getUsername())
                 .orElseThrow(() -> new NoAuthorizationException("북마크 조회 실패: 권한이 없습니다."));
 
-
+        if (member.getStatus() != MemberStatus.active) {
+            throw new NoAuthorizationException("북마크 조회 실패: 권한이 없습니다.");
+        }
 
         Page<Bookmark> page = bookmarkRepository.findByMemberAndPostTitleContains(member, pageable, q);
 
@@ -139,6 +146,10 @@ public class BookmarkService {
 
         Member member = memberRepository.findByUsername(principal.getUsername())
                 .orElseThrow(() -> new NoAuthorizationException("북마크 삭제 실패: 권한이 없습니다."));
+
+        if (member.getStatus() != MemberStatus.active) {
+            throw new NoAuthorizationException("북마크 삭제 실패: 권한이 없습니다.");
+        }
 
 
         Post targetPost = postRepository.findByIdAndIsDeleteFalse(postId)
