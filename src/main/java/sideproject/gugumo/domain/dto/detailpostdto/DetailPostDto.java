@@ -40,4 +40,6 @@ public abstract class DetailPostDto {
     private boolean isYours;
     private long bookmarkCount;
     private boolean isBookmarked;
+
+    private boolean isAuthorExpired;
 }

@@ -16,6 +16,7 @@ import sideproject.gugumo.cond.SortType;
 import sideproject.gugumo.domain.dto.simplepostdto.QSimplePostQueryDto;
 import sideproject.gugumo.domain.dto.simplepostdto.SimplePostQueryDto;
 import sideproject.gugumo.domain.entity.Member;
+import sideproject.gugumo.domain.entity.MemberStatus;
 import sideproject.gugumo.domain.entity.meeting.GameType;
 import sideproject.gugumo.domain.entity.meeting.Location;
 import sideproject.gugumo.domain.entity.meeting.MeetingStatus;
@@ -52,6 +53,10 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
         Member member =
                 principal == null ?
                         null : memberRepository.findByUsername(principal.getUsername()).get();
+
+        if (member.getStatus() != MemberStatus.active) {
+            member = null;
+        }
 
         OrderSpecifier orderSpecifier = createOrderSpecifier(cond.getSortType());
 
