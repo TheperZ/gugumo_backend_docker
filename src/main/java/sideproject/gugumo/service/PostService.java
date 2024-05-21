@@ -236,7 +236,7 @@ public class PostService {
         if (targetMeeting.getMeetingType() == MeetingType.SHORT) {
             ShortDetailPostDto detailPostDto = ShortDetailPostDto.builder()
                     .postId(targetPost.getId())
-                    .author(targetPost.getMember().getNickname())
+                    .author(targetPost.getMember() != null && targetPost.getMember().getStatus() != MemberStatus.delete ? targetPost.getMember().getNickname() : "")
                     .meetingType(targetMeeting.getMeetingType())
                     .gameType(targetMeeting.getGameType())
                     .meetingMemberNum(targetMeeting.getMeetingMemberNum())
@@ -254,6 +254,7 @@ public class PostService {
                     )
                     .bookmarkCount(bookmarkRepository.countByPost(targetPost))
                     .isBookmarked(member != null ? bookmarkRepository.existsByMemberAndPost(member, targetPost) : false)
+                    .isAuthorExpired(targetPost.getMember() != null && targetPost.getMember().getStatus() != MemberStatus.delete ? false : true)
                     .build();
 
             return (T) detailPostDto;
@@ -261,7 +262,7 @@ public class PostService {
         } else if (targetMeeting.getMeetingType() == MeetingType.LONG) {
             LongDetailPostDto detailPostDto = LongDetailPostDto.builder()
                     .postId(targetPost.getId())
-                    .author(targetPost.getMember().getNickname())
+                    .author(targetPost.getMember() != null && targetPost.getMember().getStatus() != MemberStatus.delete ? targetPost.getMember().getNickname() : "")
                     .meetingType(targetMeeting.getMeetingType())
                     .gameType(targetMeeting.getGameType())
                     .meetingMemberNum(targetMeeting.getMeetingMemberNum())
@@ -279,6 +280,7 @@ public class PostService {
                             member != null && member.getUsername().equals(targetPost.getMember().getUsername()))
                     .bookmarkCount(bookmarkRepository.countByPost(targetPost))
                     .isBookmarked(member != null ? bookmarkRepository.existsByMemberAndPost(member, targetPost) : false)
+                    .isAuthorExpired(targetPost.getMember() != null && targetPost.getMember().getStatus() != MemberStatus.delete ? false : true)
                     .build();
 
             return (T) detailPostDto;
