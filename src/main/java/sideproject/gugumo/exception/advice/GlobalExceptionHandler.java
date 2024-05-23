@@ -6,11 +6,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import sideproject.gugumo.exception.exception.NoAuthorizationException;
-import sideproject.gugumo.exception.exception.BookmarkNotFoundException;
-import sideproject.gugumo.exception.exception.DuplicateBookmarkException;
-import sideproject.gugumo.exception.exception.MeetingNotFoundException;
-import sideproject.gugumo.exception.exception.PostNotFoundException;
+import sideproject.gugumo.exception.exception.*;
 import sideproject.gugumo.response.ApiResponse;
 
 @RestControllerAdvice
@@ -21,6 +17,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = {PostNotFoundException.class})
     public ApiResponse<String> handlePostNotFoundException(PostNotFoundException e) {
         log.error("[handlePostNotFoundException] ex : " + e.getMessage());
+        return ApiResponse.createFail(e.getMessage());
+    }
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(value = {CommentNotFoundException.class})
+    public ApiResponse<String> handleCommentNotFoundException(CommentNotFoundException e) {
+        log.error("[handleCommentNotFoundException] ex : " + e.getMessage());
         return ApiResponse.createFail(e.getMessage());
     }
 

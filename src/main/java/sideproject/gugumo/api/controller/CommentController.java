@@ -3,10 +3,7 @@ package sideproject.gugumo.api.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import sideproject.gugumo.domain.dto.CustomUserDetails;
 import sideproject.gugumo.request.CreateCommentReq;
 import sideproject.gugumo.response.ApiResponse;
@@ -25,6 +22,15 @@ public class CommentController {
         commentService.save(req, principal);
 
         return ApiResponse.createSuccess("댓글 저장 완료");
+
+    }
+
+    @DeleteMapping("/{comment_id}")
+    public ApiResponse<String> deleteComment(@AuthenticationPrincipal CustomUserDetails principal,
+                                             @PathVariable("comment_id") Long commentId) {
+        commentService.deleteComment(commentId, principal);
+
+        return ApiResponse.createSuccess("댓글 삭제 완료");
 
     }
 }

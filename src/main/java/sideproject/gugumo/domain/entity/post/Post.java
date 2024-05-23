@@ -74,11 +74,11 @@ public class Post {
         this.isDelete = true;
     }
 
-    public void addCommentCnt() {
+    public void increaseCommentCnt() {
         this.commentCnt++;
     }
 
-    public void deleteCommentCnt() {
+    public void decreaseCommentCnt() {
         this.commentCnt--;
     }
 }

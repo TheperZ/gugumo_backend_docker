@@ -8,6 +8,7 @@ import sideproject.gugumo.domain.entity.Comment;
 import sideproject.gugumo.domain.entity.Member;
 import sideproject.gugumo.domain.entity.MemberStatus;
 import sideproject.gugumo.domain.entity.post.Post;
+import sideproject.gugumo.exception.exception.CommentNotFoundException;
 import sideproject.gugumo.exception.exception.NoAuthorizationException;
 import sideproject.gugumo.exception.exception.PostNotFoundException;
 import sideproject.gugumo.repository.CommentRepository;
@@ -27,12 +28,8 @@ public class CommentService {
     @Transactional
     public void save(CreateCommentReq req, CustomUserDetails principal) {
 
-        Member author = memberRepository.findByUsername(principal.getUsername())
-                .orElseThrow(() -> new NoAuthorizationException("댓글 등록 실패: 권한이 없습니다."));
-
-        if (author.getStatus() != MemberStatus.active) {
-            throw new NoAuthorizationException("댓글 등록 실패: 권한이 없습니다.");
-        }
+        Member author = checkMemberValid(principal, "댓글 등록 실패: 비로그인 사용자입니다.",
+                "댓글 등록 실패: 권한이 없습니다.");
 
         Post targetPost = postRepository.findByIdAndIsDeleteFalse(req.getPostId())
                 .orElseThrow(() -> new PostNotFoundException("댓글 등록 실패: 존재하지 않는 게시글입니다."));
@@ -48,7 +45,41 @@ public class CommentService {
                 .build();
 
         commentRepository.save(comment);
-        targetPost.addCommentCnt();
+        targetPost.increaseCommentCnt();
 
     }
+
+    @Transactional
+    public void deleteComment(Long commentId, CustomUserDetails principal) {
+        //토큰에서
+        Member member = checkMemberValid(principal, "댓글 삭제 실패: 비로그인 사용자입니다.",
+                "댓글 삭제 실패: 권한이 없습니다.");
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentNotFoundException("댓글 삭제 실패: 존재하지 않는 댓글입니다."));
+
+        if (!comment.getMember().equals(member)) {
+            throw new NoAuthorizationException("댓글 삭제 실패: 권한이 없습니다.");
+        }
+
+        commentRepository.delete(comment);
+        comment.getPost().decreaseCommentCnt();
+
+    }
+
+    private Member checkMemberValid(CustomUserDetails principal, String noLoginMessage, String notValidUserMessage) {
+        if (principal == null) {
+            throw new NoAuthorizationException(noLoginMessage);
+        }
+
+        Member author = memberRepository.findByUsername(principal.getUsername())
+                .orElseThrow(() -> new NoAuthorizationException(notValidUserMessage));
+
+        if (author.getStatus() != MemberStatus.active) {
+            throw new NoAuthorizationException(notValidUserMessage);
+        }
+        return author;
+    }
+
+
 }
