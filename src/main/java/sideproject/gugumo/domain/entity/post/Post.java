@@ -73,4 +73,12 @@ public class Post {
     public void tempDelete() {
         this.isDelete = true;
     }
+
+    public void addCommentCnt() {
+        this.commentCnt++;
+    }
+
+    public void deleteCommentCnt() {
+        this.commentCnt--;
+    }
 }

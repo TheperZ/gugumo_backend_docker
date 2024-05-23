@@ -27,7 +27,7 @@ public class Comment {
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @Column(length = 500)
+    @Column(length = 1000)
     private String content;
 
 
@@ -38,12 +38,12 @@ public class Comment {
     private Comment parentComment;
 
 
-    private int depth;      //댓글의 깊이, 대댓글이 아닌 경우 0, 이후 1씩 증가
-
     private boolean isNotRoot;
 
     //댓글의 순서를 보장하기 위해 사용되는 변수, 조상 댓글은 게시글의 전체 댓글 수, 손자 댓글은 조상의 변수를 물려받음
     private long orderNum;
+
+    private boolean isDelete;
 
     @Builder
     public Comment(Post post, Comment parentComment, String content, Member member) {
@@ -53,14 +53,13 @@ public class Comment {
         this.member = member;
         if (parentComment == null) {
             this.isNotRoot = false;
-            this.depth = 0;
             this.orderNum = post.getCommentCnt();
         } else {
             this.isNotRoot = true;
-            this.depth = parentComment.depth + 1;
             this.orderNum = parentComment.getOrderNum();
 
         }
         this.createDate = LocalDateTime.now();
+        this.isDelete = false;
     }
 }

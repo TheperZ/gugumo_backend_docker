@@ -48,6 +48,7 @@ public class CommentService {
                 .build();
 
         commentRepository.save(comment);
+        targetPost.addCommentCnt();
 
     }
 }
