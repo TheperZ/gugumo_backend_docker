@@ -15,6 +15,7 @@ import sideproject.gugumo.repository.CommentRepository;
 import sideproject.gugumo.repository.MemberRepository;
 import sideproject.gugumo.repository.PostRepository;
 import sideproject.gugumo.request.CreateCommentReq;
+import sideproject.gugumo.request.UpdateCommentReq;
 
 @Service
 @RequiredArgsConstructor
@@ -64,6 +65,25 @@ public class CommentService {
 
         comment.tempDelete();
         comment.getPost().decreaseCommentCnt();
+
+    }
+
+    @Transactional
+    public void updateComment(Long commentId, UpdateCommentReq req, CustomUserDetails principal) {
+
+        Comment comment = commentRepository.findByIdAndIsDeleteFalse(commentId)
+                .orElseThrow(() -> new CommentNotFoundException("댓글 갱신 실패: 해당 댓글이 존재하지 않습니다."));
+
+        Member member = checkMemberValid(principal, "댓글 갱신 실패: 비로그인 사용자입니다.",
+                "댓글 갱신 실패: 권한이 없습니다.");
+
+        //댓글 작성자와 토큰 유저 정보가 다를 경우 처리
+        if (!comment.getMember().equals(memberRepository.findByUsername(principal.getUsername()))) {
+            throw new NoAuthorizationException("댓글 갱신 실패: 권한이 없습니다.");
+        }
+
+        comment.update(req);
+
 
     }
 

@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sideproject.gugumo.domain.entity.post.Post;
+import sideproject.gugumo.request.UpdateCommentReq;
 
 import java.time.LocalDateTime;
 
@@ -50,6 +51,10 @@ public class Comment {
 
     public void tempDelete() {
         this.isDelete = true;
+    }
+
+    public void update(UpdateCommentReq req) {
+        this.content = req.getContent();
     }
 
     @Builder

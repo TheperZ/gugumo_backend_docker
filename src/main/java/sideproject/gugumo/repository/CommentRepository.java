@@ -6,4 +6,6 @@ import sideproject.gugumo.domain.entity.Comment;
 import java.util.Optional;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
+
+    public Optional<Comment> findByIdAndIsDeleteFalse(Long id);
 }
