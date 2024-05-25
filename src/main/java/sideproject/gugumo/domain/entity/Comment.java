@@ -45,6 +45,12 @@ public class Comment {
     //댓글 조회 시 얘를 기준으로 정렬할 예정
     private long orderNum;
 
+    private boolean isDelete;
+
+
+    public void tempDelete() {
+        this.isDelete = true;
+    }
 
     @Builder
     public Comment(Post post, Comment parentComment, String content, Member member) {
@@ -61,5 +67,6 @@ public class Comment {
 
         }
         this.createDate = LocalDateTime.now();
+        this.isDelete = false;
     }
 }

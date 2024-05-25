@@ -62,7 +62,7 @@ public class CommentService {
             throw new NoAuthorizationException("댓글 삭제 실패: 권한이 없습니다.");
         }
 
-        commentRepository.delete(comment);
+        comment.tempDelete();
         comment.getPost().decreaseCommentCnt();
 
     }
