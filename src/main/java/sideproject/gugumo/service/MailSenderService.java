@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import sideproject.gugumo.redis.RedisUtil;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -15,6 +16,21 @@ public class MailSenderService {
     @Autowired
     private JavaMailSender mailSender;
     private int authNumber;
+
+    @Autowired
+    private RedisUtil redisUtil;
+
+    public boolean checkAuthNum(String email, String authNum) {
+        if (redisUtil.getData(authNum) == null) {
+            return false;
+        }
+        else if(redisUtil.getData(authNum).equals(email)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 
     //임의의 6자리 양수를 반환합니다.
     public void makeRandomNumber() {
@@ -60,5 +76,7 @@ public class MailSenderService {
             // 이러한 경우 MessagingException이 발생
             e.printStackTrace();//e.printStackTrace()는 예외를 기본 오류 스트림에 출력하는 메서드
         }
+
+        redisUtil.setDataExpire(Integer.toString(authNumber), toMail, 60*5L);
     }
 }
