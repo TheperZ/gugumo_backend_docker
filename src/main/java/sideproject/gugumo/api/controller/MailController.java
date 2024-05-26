@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import sideproject.gugumo.domain.dto.EmailCheckDto;
 import sideproject.gugumo.domain.dto.EmailRequestDto;
+import sideproject.gugumo.response.ApiResponse;
 import sideproject.gugumo.service.MailSenderService;
 
 @RestController
@@ -15,25 +16,24 @@ public class MailController {
 
     private final MailSenderService mailService;
 
-    @PostMapping("/mailSend")
-    public String mailSend(@RequestBody @Valid EmailRequestDto emailDto) {
-        System.out.println("인증 이메일 : " + emailDto.getEmail());
+    @PostMapping("/api/v1/mailSend")
+    public ApiResponse<String> mailSend(@RequestBody @Valid EmailRequestDto emailDto) {
 
         mailService.joinEmail(emailDto.getEmail());
 
-        return "인증번호 전송 성공";
+        return ApiResponse.createSuccess("인증번호 전송 완료.");
     }
 
-    @PostMapping("/mailAuthCheck")
-    public String AuthCheck(@RequestBody @Valid EmailCheckDto emailCheckDto) {
+    @PostMapping("/api/v1/mailAuthCheck")
+    public ApiResponse<String> AuthCheck(@RequestBody @Valid EmailCheckDto emailCheckDto) {
 
         boolean checked = mailService.checkAuthNum(emailCheckDto.getEmail(), emailCheckDto.getAuthNum());
 
         if(checked) {
-            return "ok";
+            return ApiResponse.createSuccess("인증 완료.");
         }
         else {
-            throw new NullPointerException("이메일 인증 에러");
+            return ApiResponse.createFail("인증 실패.");
         }
     }
 }

@@ -1,5 +1,6 @@
 package sideproject.gugumo.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -11,6 +12,7 @@ import javax.mail.internet.MimeMessage;
 import java.util.Random;
 
 @Service
+@Slf4j
 public class MailSenderService {
 
     @Autowired
@@ -48,7 +50,7 @@ public class MailSenderService {
     public String joinEmail(String email) {
         makeRandomNumber();
         String setFrom = "donald8848@gmail.com"; // email-config에 설정한 자신의 이메일 주소를 입력
-        String title = "회원 가입 인증 이메일 입니다."; // 이메일 제목
+        String title = "gugumo 회원가입 인증번호"; // 이메일 제목
         String content =
                 "나의 APP을 방문해주셔서 감사합니다." + 	//html 형식으로 작성 !
                         "<br><br>" +
@@ -74,7 +76,8 @@ public class MailSenderService {
             mailSender.send(message);
         } catch (MessagingException e) {//이메일 서버에 연결할 수 없거나, 잘못된 이메일 주소를 사용하거나, 인증 오류가 발생하는 등 오류
             // 이러한 경우 MessagingException이 발생
-            e.printStackTrace();//e.printStackTrace()는 예외를 기본 오류 스트림에 출력하는 메서드
+//            e.printStackTrace();//e.printStackTrace()는 예외를 기본 오류 스트림에 출력하는 메서드
+            log.info("메일 전송 에러 발생");
         }
 
         redisUtil.setDataExpire(Integer.toString(authNumber), toMail, 60*5L);
