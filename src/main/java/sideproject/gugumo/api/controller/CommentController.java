@@ -2,9 +2,13 @@ package sideproject.gugumo.api.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import sideproject.gugumo.domain.dto.CommentDto;
 import sideproject.gugumo.domain.dto.CustomUserDetails;
+import sideproject.gugumo.page.PageCustom;
 import sideproject.gugumo.request.CreateCommentReq;
 import sideproject.gugumo.request.UpdateCommentReq;
 import sideproject.gugumo.response.ApiResponse;
@@ -26,13 +30,12 @@ public class CommentController {
 
     }
 
-    @DeleteMapping("/{comment_id}")
-    public ApiResponse<String> deleteComment(@AuthenticationPrincipal CustomUserDetails principal,
-                                             @PathVariable("comment_id") Long commentId) {
-        commentService.deleteComment(commentId, principal);
+    @GetMapping("/{post_id}")
+    public ApiResponse<PageCustom<CommentDto>> findComment(@AuthenticationPrincipal CustomUserDetails principal,
+                                                           @PathVariable("post_id") Long postId,
+                                                           @PageableDefault Pageable pageable) {
 
-        return ApiResponse.createSuccess("댓글 삭제 완료");
-
+        return ApiResponse.createSuccess(commentService.findComment(postId, principal, pageable));
     }
 
     @PatchMapping("/{comment_id}")
@@ -43,6 +46,15 @@ public class CommentController {
         commentService.updateComment(commentId, req, principal);
 
         return ApiResponse.createSuccess("댓글 갱신 완료");
+
+    }
+
+    @DeleteMapping("/{comment_id}")
+    public ApiResponse<String> deleteComment(@AuthenticationPrincipal CustomUserDetails principal,
+                                             @PathVariable("comment_id") Long commentId) {
+        commentService.deleteComment(commentId, principal);
+
+        return ApiResponse.createSuccess("댓글 삭제 완료");
 
     }
 }

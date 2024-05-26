@@ -48,7 +48,6 @@ public class Post {
     @OneToOne(mappedBy = "post")
     private Meeting meeting;
 
-    //TODO: DetailPostDto 반환 시 해당 필드를 보내도록 수정
     @Builder.Default
     private long commentCnt = 0L;
 

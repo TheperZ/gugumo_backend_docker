@@ -226,7 +226,7 @@ public class PostService {
         Member member = principal == null ?
                 null : memberRepository.findByUsername(principal.getUsername()).get();
 
-        if (member.getStatus() != MemberStatus.active) {
+        if (member != null && member.getStatus() != MemberStatus.active) {
             member = null;
         }
 
