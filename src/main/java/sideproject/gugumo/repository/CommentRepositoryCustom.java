@@ -5,6 +5,8 @@ import org.springframework.data.domain.Pageable;
 import sideproject.gugumo.domain.dto.CommentDto;
 import sideproject.gugumo.domain.dto.CustomUserDetails;
 
+import java.util.List;
+
 public interface CommentRepositoryCustom {
-    Page<CommentDto> findComment(Long postId, CustomUserDetails principal, Pageable pageable);
+    List<CommentDto> findComment(Long postId, CustomUserDetails principal, Pageable pageable);
 }

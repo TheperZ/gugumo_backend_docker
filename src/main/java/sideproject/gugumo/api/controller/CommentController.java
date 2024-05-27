@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import sideproject.gugumo.domain.dto.CommentDto;
@@ -14,6 +15,8 @@ import sideproject.gugumo.request.UpdateCommentReq;
 import sideproject.gugumo.response.ApiResponse;
 import sideproject.gugumo.service.CommentService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/comment")
 @RequiredArgsConstructor
@@ -22,6 +25,7 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping("/new")
+    @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<String> saveComment(@AuthenticationPrincipal CustomUserDetails principal,
                                            @Valid @RequestBody CreateCommentReq req) {
         commentService.save(req, principal);
@@ -31,9 +35,9 @@ public class CommentController {
     }
 
     @GetMapping("/{post_id}")
-    public ApiResponse<PageCustom<CommentDto>> findComment(@AuthenticationPrincipal CustomUserDetails principal,
-                                                           @PathVariable("post_id") Long postId,
-                                                           @PageableDefault Pageable pageable) {
+    public ApiResponse<List<CommentDto>> findComment(@AuthenticationPrincipal CustomUserDetails principal,
+                                                     @PathVariable("post_id") Long postId,
+                                                     @PageableDefault Pageable pageable) {
 
         return ApiResponse.createSuccess(commentService.findComment(postId, principal, pageable));
     }

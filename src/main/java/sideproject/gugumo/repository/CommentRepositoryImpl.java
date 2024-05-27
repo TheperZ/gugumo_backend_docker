@@ -35,7 +35,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom{
 
 
     @Override
-    public Page<CommentDto> findComment(Long postId, CustomUserDetails principal, Pageable pageable) {
+    public List<CommentDto> findComment(Long postId, CustomUserDetails principal, Pageable pageable) {
 
         Member user =
                 principal == null ?
@@ -65,18 +65,8 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom{
                         comment.post.id.eq(postId), comment.isDelete.isFalse()
                 )
                 .orderBy(comment.orderNum.asc(), comment.createDate.asc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
                 .fetch();
 
-        JPAQuery<Long> count = queryFactory.select(comment.count())
-                .from(comment)
-                .join(comment.post, post)
-                .leftJoin(comment.member, member)
-                .where(
-                        comment.post.id.eq(postId), comment.isDelete.isFalse()
-                );
-
-        return PageableExecutionUtils.getPage(result, pageable, count::fetchOne);
+        return result;
     }
 }
