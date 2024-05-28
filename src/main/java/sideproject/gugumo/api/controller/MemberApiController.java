@@ -10,6 +10,7 @@ import sideproject.gugumo.exception.exception.DuplicateNicknameException;
 import sideproject.gugumo.exception.exception.NoAuthorizationException;
 import sideproject.gugumo.exception.exception.UserNotFoundException;
 import sideproject.gugumo.response.ApiResponse;
+import sideproject.gugumo.service.MailSenderService;
 import sideproject.gugumo.service.MemberService;
 
 import java.util.Objects;
@@ -19,10 +20,32 @@ import java.util.Objects;
 public class MemberApiController {
 
     private final MemberService memberService;
+    private final MailSenderService mailService;
 
     @PostMapping("/api/v1/member")
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<Long> saveMember(@RequestBody @Valid SignUpMemberDto signUpMemberDto) {
+
+        Long joinId = memberService.join(signUpMemberDto);
+
+        return ApiResponse.createSuccess(joinId);
+    }
+
+    @PostMapping("/api/v2/member")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ApiResponse<Long> saveMemberWithEmailAuth(@RequestBody @Valid SignUpMemberWithEmailDto signUpMemberWithEmailDto) {
+
+        boolean checked = mailService.checkAuthNum(signUpMemberWithEmailDto.getUsername(), signUpMemberWithEmailDto.getEmailAuth());
+
+        if(!checked) {
+            throw new NoAuthorizationException("이메일 인증 에러");
+        }
+
+        SignUpMemberDto signUpMemberDto = SignUpMemberDto.builder()
+                .username(signUpMemberWithEmailDto.getUsername())
+                .nickname(signUpMemberWithEmailDto.getNickname())
+                .password(signUpMemberWithEmailDto.getPassword())
+                .build();
 
         Long joinId = memberService.join(signUpMemberDto);
 
