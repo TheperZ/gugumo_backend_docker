@@ -48,7 +48,7 @@ public class BookmarkController {
     public ApiResponse<String> deleteBookmark(
             @AuthenticationPrincipal CustomUserDetails principal,
             @PathVariable("bookmark_id") Long bookmarkId) {
-        bookmarkService.delete(principal, bookmarkId);
+        bookmarkService.delete(bookmarkId, principal);
 
         return ApiResponse.createSuccess("북마크 삭제 완료");
     }

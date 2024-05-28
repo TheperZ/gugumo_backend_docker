@@ -138,7 +138,7 @@ public class BookmarkService {
     }
 
     @Transactional
-    public void delete(CustomUserDetails principal, Long postId) {
+    public void delete(Long postId, CustomUserDetails principal) {
 
         if (principal == null) {
             throw new NoAuthorizationException("북마크 삭제 실패: 비로그인 사용자입니다.");

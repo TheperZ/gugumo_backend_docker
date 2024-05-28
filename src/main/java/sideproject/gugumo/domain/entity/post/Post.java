@@ -48,6 +48,9 @@ public class Post {
     @OneToOne(mappedBy = "post")
     private Meeting meeting;
 
+    @Builder.Default
+    private long commentCnt = 0L;
+
 
     public void addViewCount() {
         this.viewCount += 1;
@@ -68,5 +71,13 @@ public class Post {
 
     public void tempDelete() {
         this.isDelete = true;
+    }
+
+    public void increaseCommentCnt() {
+        this.commentCnt++;
+    }
+
+    public void decreaseCommentCnt() {
+        this.commentCnt--;
     }
 }
