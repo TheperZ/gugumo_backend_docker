@@ -6,18 +6,18 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sideproject.gugumo.domain.entity.post.Post;
-import sideproject.gugumo.request.UpdateCommentReq;
+import sideproject.gugumo.request.UpdateCmntReq;
 
 import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class Comment {
+public class Cmnt {
 
     @Id
     @GeneratedValue
-    @Column(name = "comment_id")
+    @Column(name = "cmnt_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -35,8 +35,8 @@ public class Comment {
     private LocalDateTime createDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_comment_id")
-    private Comment parentComment;
+    @JoinColumn(name = "parent_cmnt_id")
+    private Cmnt parentCmnt;
 
     //부모 댓글이 삭제되었을 경우->parentComment==null->얘가 부모 댓글이라 생각될 수 있음
     //위 이유에 의해 필요한 변수
@@ -53,22 +53,22 @@ public class Comment {
         this.isDelete = true;
     }
 
-    public void update(UpdateCommentReq req) {
+    public void update(UpdateCmntReq req) {
         this.content = req.getContent();
     }
 
     @Builder
-    public Comment(Post post, Comment parentComment, String content, Member member) {
+    public Cmnt(Post post, Cmnt parentCmnt, String content, Member member) {
         this.content = content;
         this.post = post;
-        this.parentComment = parentComment;
+        this.parentCmnt = parentCmnt;
         this.member = member;
-        if (parentComment == null) {
+        if (parentCmnt == null) {
             this.isNotRoot = false;
             this.orderNum = post.getCommentCnt();
         } else {
             this.isNotRoot = true;
-            this.orderNum = parentComment.getOrderNum();
+            this.orderNum = parentCmnt.getOrderNum();
 
         }
         this.createDate = LocalDateTime.now();

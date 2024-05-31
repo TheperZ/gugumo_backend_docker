@@ -3,7 +3,7 @@ package sideproject.gugumo.request;
 import lombok.Getter;
 
 @Getter
-public class UpdateCommentReq {
+public class UpdateCmntReq {
 
     String content;
 }

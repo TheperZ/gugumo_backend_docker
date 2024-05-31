@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CommentDto {
+public class CmntDto {
 
     private Long commentId;
 
@@ -25,7 +25,7 @@ public class CommentDto {
 
 
     @QueryProjection
-    public CommentDto(Long commentId, String author, boolean isYours, boolean isAuthorExpired, String content, LocalDateTime createdDateTime, boolean isNotRoot, Long parentCommentId, long orderNum) {
+    public CmntDto(Long commentId, String author, boolean isYours, boolean isAuthorExpired, String content, LocalDateTime createdDateTime, boolean isNotRoot, Long parentCommentId, long orderNum) {
         this.commentId = commentId;
         this.author = author;
         this.isYours = isYours;
