@@ -15,8 +15,8 @@ public class emailConfig {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
-        mailSender.setUsername("donald8848@gmail.com");
-        mailSender.setPassword("naei bjvj qzjs wmoe");
+        mailSender.setUsername("gugumo024@gmail.com");
+        mailSender.setPassword("vjjr vdvn vyeh trxi");
 
         Properties javaMailProperties = new Properties();//JavaMail의 속성을 설정하기 위해 Properties 객체를 생성
         javaMailProperties.put("mail.transport.protocol", "smtp");//프로토콜로 smtp 사용
