@@ -5,7 +5,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Pageable;
 import sideproject.gugumo.domain.dto.CmntDto;
-import sideproject.gugumo.domain.dto.CustomUserDetails;
+import sideproject.gugumo.domain.dto.memberDto.CustomUserDetails;
 
 import sideproject.gugumo.domain.dto.QCmntDto;
 import sideproject.gugumo.domain.entity.Member;

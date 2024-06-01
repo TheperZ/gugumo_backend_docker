@@ -12,7 +12,7 @@ import sideproject.gugumo.cond.SortType;
 import sideproject.gugumo.domain.dto.simplepostdto.SimplePostQueryDto;
 import sideproject.gugumo.domain.entity.MemberStatus;
 import sideproject.gugumo.domain.entity.meeting.*;
-import sideproject.gugumo.domain.dto.CustomUserDetails;
+import sideproject.gugumo.domain.dto.memberDto.CustomUserDetails;
 import sideproject.gugumo.domain.dto.detailpostdto.DetailPostDto;
 import sideproject.gugumo.domain.entity.Member;
 import sideproject.gugumo.domain.entity.post.Post;

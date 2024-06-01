@@ -12,7 +12,7 @@ import sideproject.gugumo.domain.entity.MemberStatus;
 import sideproject.gugumo.domain.entity.meeting.Meeting;
 import sideproject.gugumo.domain.entity.meeting.MeetingType;
 import sideproject.gugumo.domain.entity.post.Post;
-import sideproject.gugumo.domain.dto.CustomUserDetails;
+import sideproject.gugumo.domain.dto.memberDto.CustomUserDetails;
 import sideproject.gugumo.domain.dto.simplepostdto.SimplePostLongDto;
 import sideproject.gugumo.domain.dto.simplepostdto.SimplePostDto;
 import sideproject.gugumo.domain.dto.simplepostdto.SimplePostShortDto;

@@ -1,4 +1,4 @@
-package sideproject.gugumo.domain.dto;
+package sideproject.gugumo.domain.dto.memberDto;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -6,17 +6,15 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class SignUpMemberWithEmailDto {
+public class SignUpMemberDto {
     private String nickname;
     private String username;
     private String password;
-    private String emailAuth;
 
     @Builder
-    public SignUpMemberWithEmailDto(String nickname, String username, String password, String emailAuth) {
+    public SignUpMemberDto(String nickname, String username, String password) {
         this.nickname = nickname;
         this.username = username;
         this.password = password;
-        this.emailAuth = emailAuth;
     }
 }

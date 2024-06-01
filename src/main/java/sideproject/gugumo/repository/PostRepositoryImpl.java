@@ -20,7 +20,7 @@ import sideproject.gugumo.domain.entity.MemberStatus;
 import sideproject.gugumo.domain.entity.meeting.GameType;
 import sideproject.gugumo.domain.entity.meeting.Location;
 import sideproject.gugumo.domain.entity.meeting.MeetingStatus;
-import sideproject.gugumo.domain.dto.CustomUserDetails;
+import sideproject.gugumo.domain.dto.memberDto.CustomUserDetails;
 
 import java.util.List;
 

@@ -3,7 +3,7 @@ package sideproject.gugumo.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.util.StringUtils;
-import sideproject.gugumo.domain.dto.UpdateMemberDto;
+import sideproject.gugumo.domain.dto.memberDto.UpdateMemberDto;
 
 import java.util.Objects;
 

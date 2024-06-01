@@ -1,4 +1,4 @@
-package sideproject.gugumo.domain.dto;
+package sideproject.gugumo.domain.dto.emailDto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;

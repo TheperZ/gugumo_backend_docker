@@ -1,4 +1,4 @@
-package sideproject.gugumo.domain.dto;
+package sideproject.gugumo.domain.dto.memberDto;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
