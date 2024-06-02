@@ -39,13 +39,15 @@ public class MemberService {
         validateDuplicateMemberByNickname(joinMember);
 
         String favoriteSports = signUpMemberDto.getFavoriteSports();
-        String[] split = favoriteSports.split(",");
 
-        for(String str : split) {
-            FavoriteSport favoriteSport = FavoriteSport.createFavoriteSport(str, joinMember);
-            favoriteSportRepository.save(favoriteSport);
+        if(favoriteSports != null) {
+            String[] split = favoriteSports.split(",");
+            for(String str : split) {
+                FavoriteSport favoriteSport = FavoriteSport.createFavoriteSport(str, joinMember);
+                favoriteSportRepository.save(favoriteSport);
+            }
         }
-
+        
         memberRepository.save(joinMember);
 
         return joinMember.getId();
