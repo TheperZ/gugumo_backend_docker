@@ -7,10 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 import sideproject.gugumo.domain.dto.memberDto.MemberDto;
 import sideproject.gugumo.domain.dto.memberDto.SignUpMemberDto;
 import sideproject.gugumo.domain.dto.memberDto.UpdateMemberDto;
-import sideproject.gugumo.domain.entity.Member;
+import sideproject.gugumo.domain.entity.member.FavoriteSport;
+import sideproject.gugumo.domain.entity.member.Member;
 import sideproject.gugumo.exception.exception.DuplicateEmailException;
 import sideproject.gugumo.exception.exception.DuplicateNicknameException;
 import sideproject.gugumo.exception.exception.UserNotFoundException;
+import sideproject.gugumo.repository.FavoriteSportRepository;
 import sideproject.gugumo.repository.MemberRepository;
 
 import java.util.Optional;
@@ -22,6 +24,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final FavoriteSportRepository favoriteSportRepository;
 
     @Transactional
     public Long join(SignUpMemberDto signUpMemberDto) {
@@ -32,7 +35,17 @@ public class MemberService {
                 .password(passwordEncoder.encode(signUpMemberDto.getPassword()))
                 .build();
 
-        validateDuplicateMember(joinMember);
+        validateDuplicateMemberByUsername(joinMember);
+        validateDuplicateMemberByNickname(joinMember);
+
+        String favoriteSports = signUpMemberDto.getFavoriteSports();
+        String[] split = favoriteSports.split(",");
+
+        for(String str : split) {
+            FavoriteSport favoriteSport = FavoriteSport.createFavoriteSport(str, joinMember);
+            favoriteSportRepository.save(favoriteSport);
+        }
+
         memberRepository.save(joinMember);
 
         return joinMember.getId();
@@ -101,17 +114,25 @@ public class MemberService {
         Optional<Member> byNickname = memberRepository.findByNickname(nickname);
 
         if(byNickname.isPresent()) {
-            throw new DuplicateNicknameException("이미 존재하는 nickname 입니다.");
+            throw new DuplicateNicknameException("이미 존재하는 닉네임입니다.");
         }
 
         findMember.updateMemberNickname(nickname);
     }
 
-    private void validateDuplicateMember(Member member) {
+    private void validateDuplicateMemberByUsername(Member member) {
         Optional<Member> findMember = memberRepository.findByUsername(member.getUsername());
 
         if(findMember.isPresent()) {
             throw new DuplicateEmailException("이미 존재하는 회원입니다.");
+        }
+    }
+
+    private void validateDuplicateMemberByNickname(Member member) {
+        Optional<Member> findMember = memberRepository.findByNickname(member.getNickname());
+
+        if(findMember.isPresent()) {
+            throw new DuplicateNicknameException("이미 존재하는 닉네임입니다.");
         }
     }
 

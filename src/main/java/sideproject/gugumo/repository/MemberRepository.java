@@ -4,7 +4,7 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import sideproject.gugumo.domain.entity.Member;
+import sideproject.gugumo.domain.entity.member.Member;
 
 import java.util.Optional;
 

@@ -26,14 +26,14 @@ public class ExceptionControllerAdvice {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
-    public ApiResponse<String> MethodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
+    public ApiResponse<String> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
         log.error("[MethodArgumentNotValidExceptionHandler] ex : 입력이 올바르지 못합니다.");
         return ApiResponse.createFail("입력이 올바르지 못합니다.");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
-    public ApiResponse<String> MissingRequestHeaderExceptionHandler(MissingRequestHeaderException e) {
+    public ApiResponse<String> missingRequestHeaderExceptionHandler(MissingRequestHeaderException e) {
         String exceptionMessage = e.getMessage();
         log.error("[MissingRequestHeaderExceptionHandler] ex : " + exceptionMessage);
         return ApiResponse.createFail("권한이 없습니다.");
@@ -41,7 +41,7 @@ public class ExceptionControllerAdvice {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
-    public ApiResponse<String> NoAuthorizationExceptionHandler(NoAuthorizationException e) {
+    public ApiResponse<String> noAuthorizationExceptionHandler(NoAuthorizationException e) {
         String exceptionMessage = e.getMessage();
         log.error("[NoAuthorizationExceptionHandler] ex : " + exceptionMessage);
         return ApiResponse.createFail(exceptionMessage);
@@ -49,15 +49,15 @@ public class ExceptionControllerAdvice {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
-    public ApiResponse<String> UserNotFoundExceptionHandler(UserNotFoundException e) {
+    public ApiResponse<String> userNotFoundExceptionHandler(UserNotFoundException e) {
         String exceptionMessage = e.getMessage();
         log.error("[UserNotFoundExceptionHandler] ex : " + exceptionMessage);
         return ApiResponse.createFail(exceptionMessage);
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler
-    public ApiResponse<String> DuplicateNicknameExceptionHandler(DuplicateNicknameException e) {
+    public ApiResponse<String> duplicateNicknameExceptionHandler(DuplicateNicknameException e) {
         String exceptionMessage = e.getMessage();
         log.error("[DuplicateNicknameExceptionHandler] ex : " + exceptionMessage);
         return ApiResponse.createFail(exceptionMessage);

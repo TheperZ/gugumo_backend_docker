@@ -32,19 +32,13 @@ public class MemberApiController {
 
     @PostMapping("/api/v2/member")
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<Long> saveMemberWithEmailAuth(@RequestBody @Valid SignUpMemberWithEmailDto signUpMemberWithEmailDto) {
+    public ApiResponse<Long> saveMemberWithEmailAuth(@RequestBody @Valid SignUpMemberDto signUpMemberDto) {
 
-        boolean checked = mailService.checkAuthNum(signUpMemberWithEmailDto.getUsername(), signUpMemberWithEmailDto.getEmailAuth());
+        boolean checked = mailService.checkAuthNum(signUpMemberDto.getUsername(), signUpMemberDto.getEmailAuthNum());
 
         if(!checked) {
             throw new NoAuthorizationException("이메일 인증 에러");
         }
-
-        SignUpMemberDto signUpMemberDto = SignUpMemberDto.builder()
-                .username(signUpMemberWithEmailDto.getUsername())
-                .nickname(signUpMemberWithEmailDto.getNickname())
-                .password(signUpMemberWithEmailDto.getPassword())
-                .build();
 
         Long joinId = memberService.join(signUpMemberDto);
 

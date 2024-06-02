@@ -2,6 +2,7 @@ package sideproject.gugumo.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import sideproject.gugumo.domain.entity.member.Member;
 import sideproject.gugumo.domain.entity.post.Post;
 
 @Entity

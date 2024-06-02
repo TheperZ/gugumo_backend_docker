@@ -5,17 +5,15 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Pageable;
 import sideproject.gugumo.domain.dto.CmntDto;
-import sideproject.gugumo.domain.dto.memberDto.CustomUserDetails;
-
 import sideproject.gugumo.domain.dto.QCmntDto;
-import sideproject.gugumo.domain.entity.Member;
-import sideproject.gugumo.domain.entity.MemberStatus;
+import sideproject.gugumo.domain.dto.memberDto.CustomUserDetails;
+import sideproject.gugumo.domain.entity.member.Member;
+import sideproject.gugumo.domain.entity.member.MemberStatus;
 
 import java.util.List;
 
-
 import static sideproject.gugumo.domain.entity.QCmnt.cmnt;
-import static sideproject.gugumo.domain.entity.QMember.member;
+import static sideproject.gugumo.domain.entity.member.QMember.member;
 import static sideproject.gugumo.domain.entity.post.QPost.post;
 
 

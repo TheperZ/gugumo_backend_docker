@@ -1,4 +1,4 @@
-package sideproject.gugumo.domain.entity;
+package sideproject.gugumo.domain.entity.member;
 
 public enum MemberStatus {
     active, inactive, delete
