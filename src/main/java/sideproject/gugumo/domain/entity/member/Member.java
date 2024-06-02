@@ -28,11 +28,11 @@ public class Member {
     MemberRole role;
 
     // 서비스 이용 약관 동의 여부
-    boolean isAgreeTermsUse;
+    Boolean isAgreeTermsUse;
     // 개인정보 수집 및 이용 동의
-    boolean isAgreeCollectingUsingPersonalInformation;
+    Boolean isAgreeCollectingUsingPersonalInformation;
     // 마케팅 수신 동의
-    boolean isAgreeMarketing;
+    Boolean isAgreeMarketing;
 
     @OneToMany(mappedBy = "member")
     private List<FavoriteSport> favoriteSports = new ArrayList<>();
