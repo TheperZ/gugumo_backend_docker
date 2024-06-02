@@ -5,8 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import sideproject.gugumo.domain.dto.EmailCheckDto;
-import sideproject.gugumo.domain.dto.EmailRequestDto;
+import sideproject.gugumo.domain.dto.emailDto.EmailCheckDto;
+import sideproject.gugumo.domain.dto.emailDto.EmailRequestDto;
 import sideproject.gugumo.response.ApiResponse;
 import sideproject.gugumo.service.MailSenderService;
 

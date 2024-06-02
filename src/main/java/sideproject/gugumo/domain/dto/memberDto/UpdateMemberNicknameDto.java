@@ -1,4 +1,4 @@
-package sideproject.gugumo.domain.dto;
+package sideproject.gugumo.domain.dto.memberDto;
 
 import lombok.Builder;
 import lombok.Getter;

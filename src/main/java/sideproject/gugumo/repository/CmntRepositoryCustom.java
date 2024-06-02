@@ -2,7 +2,7 @@ package sideproject.gugumo.repository;
 
 import org.springframework.data.domain.Pageable;
 import sideproject.gugumo.domain.dto.CmntDto;
-import sideproject.gugumo.domain.dto.CustomUserDetails;
+import sideproject.gugumo.domain.dto.memberDto.CustomUserDetails;
 
 import java.util.List;
 

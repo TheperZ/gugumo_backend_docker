@@ -9,7 +9,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import sideproject.gugumo.domain.dto.CustomUserDetails;
+import sideproject.gugumo.domain.dto.memberDto.CustomUserDetails;
 import sideproject.gugumo.domain.dto.simplepostdto.SimplePostDto;
 import sideproject.gugumo.page.PageCustom;
 import sideproject.gugumo.request.CreateBookmarkReq;
