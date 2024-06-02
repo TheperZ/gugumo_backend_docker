@@ -34,7 +34,7 @@ public class MemberApiController {
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<Long> saveMemberWithEmailAuth(@RequestBody @Valid SignUpMemberDto signUpMemberDto) {
 
-        boolean checked = mailService.checkAuthNum(signUpMemberDto.getUsername(), signUpMemberDto.getEmailAuth());
+        boolean checked = mailService.checkAuthNum(signUpMemberDto.getUsername(), signUpMemberDto.getEmailAuthNum());
 
         if(!checked) {
             throw new NoAuthorizationException("이메일 인증 에러");

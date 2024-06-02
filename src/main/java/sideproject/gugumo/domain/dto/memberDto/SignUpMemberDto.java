@@ -11,5 +11,5 @@ public class SignUpMemberDto {
     private String username;
     private String password;
     private String favoriteSports;
-    private String emailAuth;
+    private String emailAuthNum;
 }
