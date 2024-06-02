@@ -1,10 +1,8 @@
 package sideproject.gugumo.domain.dto.memberDto;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import sideproject.gugumo.domain.entity.Member;
-import sideproject.gugumo.domain.entity.MemberRole;
+import sideproject.gugumo.domain.entity.member.Member;
 
 import java.util.ArrayList;
 import java.util.Collection;

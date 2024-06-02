@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import sideproject.gugumo.domain.dto.memberDto.MemberDto;
 import sideproject.gugumo.domain.dto.memberDto.SignUpMemberDto;
 import sideproject.gugumo.domain.dto.memberDto.UpdateMemberDto;
-import sideproject.gugumo.domain.entity.Member;
+import sideproject.gugumo.domain.entity.member.Member;
 import sideproject.gugumo.exception.exception.DuplicateEmailException;
 import sideproject.gugumo.exception.exception.DuplicateNicknameException;
 import sideproject.gugumo.exception.exception.UserNotFoundException;

@@ -1,10 +1,13 @@
-package sideproject.gugumo.domain.entity;
+package sideproject.gugumo.domain.entity.member;
 
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.util.StringUtils;
 import sideproject.gugumo.domain.dto.memberDto.UpdateMemberDto;
+import sideproject.gugumo.domain.entity.meeting.GameType;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -13,6 +16,7 @@ import java.util.Objects;
 public class Member {
 
     @Id @GeneratedValue
+    @Column(name = "member_id")
     private Long id;
     private String username;
     private String password;
@@ -22,6 +26,16 @@ public class Member {
     MemberStatus status;
     @Enumerated(EnumType.STRING)
     MemberRole role;
+
+    // 서비스 이용 약관 동의 여부
+    boolean isAgreeTermsUse;
+    // 개인정보 수집 및 이용 동의
+    boolean isAgreeCollectingUsingPersonalInformation;
+    // 마케팅 수신 동의
+    boolean isAgreeMarketing;
+
+    @OneToMany(mappedBy = "member")
+    private List<FavoriteSport> favoriteSports = new ArrayList<>();
 
     public Member(String username, String password, String nickname, String profileImagePath, MemberStatus status, MemberRole role) {
         this.username = username;
