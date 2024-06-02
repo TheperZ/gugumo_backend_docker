@@ -7,10 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 import sideproject.gugumo.domain.dto.memberDto.MemberDto;
 import sideproject.gugumo.domain.dto.memberDto.SignUpMemberDto;
 import sideproject.gugumo.domain.dto.memberDto.UpdateMemberDto;
+import sideproject.gugumo.domain.entity.member.FavoriteSport;
 import sideproject.gugumo.domain.entity.member.Member;
 import sideproject.gugumo.exception.exception.DuplicateEmailException;
 import sideproject.gugumo.exception.exception.DuplicateNicknameException;
 import sideproject.gugumo.exception.exception.UserNotFoundException;
+import sideproject.gugumo.repository.FavoriteSportRepository;
 import sideproject.gugumo.repository.MemberRepository;
 
 import java.util.Optional;
@@ -22,6 +24,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final FavoriteSportRepository favoriteSportRepository;
 
     @Transactional
     public Long join(SignUpMemberDto signUpMemberDto) {
@@ -34,6 +37,14 @@ public class MemberService {
 
         validateDuplicateMemberByUsername(joinMember);
         validateDuplicateMemberByNickname(joinMember);
+
+        String favoriteSports = signUpMemberDto.getFavoriteSports();
+        String[] split = favoriteSports.split(",");
+
+        for(String str : split) {
+            FavoriteSport favoriteSport = FavoriteSport.createFavoriteSport(str, joinMember);
+            favoriteSportRepository.save(favoriteSport);
+        }
 
         memberRepository.save(joinMember);
 
