@@ -32,7 +32,9 @@ public class MemberService {
                 .password(passwordEncoder.encode(signUpMemberDto.getPassword()))
                 .build();
 
-        validateDuplicateMember(joinMember);
+        validateDuplicateMemberByUsername(joinMember);
+        validateDuplicateMemberByNickname(joinMember);
+
         memberRepository.save(joinMember);
 
         return joinMember.getId();
@@ -107,11 +109,19 @@ public class MemberService {
         findMember.updateMemberNickname(nickname);
     }
 
-    private void validateDuplicateMember(Member member) {
+    private void validateDuplicateMemberByUsername(Member member) {
         Optional<Member> findMember = memberRepository.findByUsername(member.getUsername());
 
         if(findMember.isPresent()) {
             throw new DuplicateEmailException("이미 존재하는 회원입니다.");
+        }
+    }
+
+    private void validateDuplicateMemberByNickname(Member member) {
+        Optional<Member> findMember = memberRepository.findByNickname(member.getNickname());
+
+        if(findMember.isPresent()) {
+            throw new DuplicateNicknameException("이미 존재하는 닉네임입니다.");
         }
     }
 
