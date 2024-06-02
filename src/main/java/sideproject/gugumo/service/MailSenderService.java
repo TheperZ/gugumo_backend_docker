@@ -49,7 +49,7 @@ public class MailSenderService {
     //mail을 어디서 보내는지, 어디로 보내는지 , 인증 번호를 html 형식으로 어떻게 보내는지 작성합니다.
     public String joinEmail(String email) {
         makeRandomNumber();
-        String setFrom = "donald8848@gmail.com"; // email-config에 설정한 자신의 이메일 주소를 입력
+        String setFrom = "gugumo024@gmail.com"; // email-config에 설정한 자신의 이메일 주소를 입력
         String title = "gugumo 회원가입 인증번호"; // 이메일 제목
         String content =
                 "나의 APP을 방문해주셔서 감사합니다." + 	//html 형식으로 작성 !
