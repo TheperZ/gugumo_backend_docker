@@ -114,7 +114,7 @@ public class MemberService {
         Optional<Member> byNickname = memberRepository.findByNickname(nickname);
 
         if(byNickname.isPresent()) {
-            throw new DuplicateNicknameException("이미 존재하는 nickname 입니다.");
+            throw new DuplicateNicknameException("이미 존재하는 닉네임입니다.");
         }
 
         findMember.updateMemberNickname(nickname);
