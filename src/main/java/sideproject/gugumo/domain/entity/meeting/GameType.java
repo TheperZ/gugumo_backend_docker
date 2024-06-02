@@ -7,8 +7,6 @@ public enum GameType {
     TENNIS,
     TABLETENNIS,
     BASEBALL
-
-
 }
 
 

@@ -3,8 +3,6 @@ package sideproject.gugumo.domain.dto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import sideproject.gugumo.domain.entity.Member;
-import sideproject.gugumo.domain.entity.MemberStatus;
 
 @SpringBootTest
 class MemberMapperTest {
