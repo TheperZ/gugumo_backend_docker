@@ -2,11 +2,13 @@ package sideproject.gugumo.domain.entity.member;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sideproject.gugumo.domain.entity.meeting.GameType;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class FavoriteSport {
 
     @Id

@@ -17,6 +17,8 @@ import sideproject.gugumo.request.UpdatePostReq;
 import sideproject.gugumo.response.ApiResponse;
 import sideproject.gugumo.service.PostService;
 
+import java.util.List;
+
 
 /**
  * /api/v1이 중복
@@ -95,6 +97,12 @@ public class PostController {
             @RequestParam(required = false, value = "q", defaultValue = "") String q) {
         return ApiResponse.createSuccess(postService.findMyPost(principal, pageable, q));
 
+    }
+
+    @GetMapping("/recommend")
+    public <T extends SimplePostDto> ApiResponse<List<T>> findRecommendPost(
+            @AuthenticationPrincipal CustomUserDetails principal) {
+        return ApiResponse.createSuccess(postService.findRecommendPost(principal));
     }
 
 
