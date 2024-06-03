@@ -1,7 +1,9 @@
 package sideproject.gugumo.repository;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -15,6 +17,7 @@ import sideproject.gugumo.cond.PostSearchCondition;
 import sideproject.gugumo.cond.SortType;
 import sideproject.gugumo.domain.dto.simplepostdto.QSimplePostQueryDto;
 import sideproject.gugumo.domain.dto.simplepostdto.SimplePostQueryDto;
+import sideproject.gugumo.domain.entity.member.FavoriteSport;
 import sideproject.gugumo.domain.entity.member.Member;
 import sideproject.gugumo.domain.entity.member.MemberStatus;
 import sideproject.gugumo.domain.entity.meeting.GameType;
@@ -54,7 +57,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                 principal == null ?
                         null : memberRepository.findByUsername(principal.getUsername()).get();
 
-        if (member!=null && member.getStatus() != MemberStatus.active) {
+        if (member != null && member.getStatus() != MemberStatus.active) {
             member = null;
         }
 
@@ -96,6 +99,52 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
 
         return PageableExecutionUtils.getPage(result, pageable, count::fetchOne);
 
+    }
+
+    @Override
+    public List<SimplePostQueryDto> findRecommendPost(Member member) {
+
+        List<FavoriteSport> favoriteSports = member.getFavoriteSports();
+
+        List<SimplePostQueryDto> result = queryFactory.select(new QSimplePostQueryDto(
+                        post.id.as("postId"),
+                        meeting.meetingType,
+                        meeting.status,
+                        meeting.gameType,
+                        meeting.location,
+                        post.title,
+                        meeting.meetingDateTime,
+                        meeting.meetingDays,
+                        meeting.meetingMemberNum,
+                        meeting.meetingDeadline,
+                        bookmark.isNotNull().as("isBookmarked")
+                ))
+                .from(post)
+                .leftJoin(post.meeting, meeting)
+                .leftJoin(bookmark).on(bookmark.post.eq(post), hasMember(member))
+                .where(
+                        post.isDelete.isFalse(), favoriteSportsEq(favoriteSports)
+                )
+                .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
+                .limit(8)
+                .fetch();
+
+        return result;
+
+    }
+
+    private BooleanBuilder favoriteSportsEq(List<FavoriteSport> favoriteSports) {
+        if (favoriteSports.isEmpty()) {
+            return null;
+        }
+
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+
+        for (FavoriteSport favoriteSport : favoriteSports) {
+            booleanBuilder.or(meeting.gameType.eq(favoriteSport.getGameType()));
+        }
+
+        return booleanBuilder;
     }
 
 
