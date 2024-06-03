@@ -348,17 +348,21 @@ public class PostService {
 
     public <T extends SimplePostDto> List<T> findRecommendPost(CustomUserDetails principal) {
         //토큰에서
+
+        Member member;
+
         if (principal == null) {
-            return Collections.emptyList();
-        }
+            member = null;
+        } else {
+            member=memberRepository.findByUsername(principal.getUsername())
+                    .orElseThrow(()->
+                            new NoAuthorizationException("추천 글 조회 실패: 접근 권한이 없습니다.")
+                    );
 
-        Member member=memberRepository.findByUsername(principal.getUsername())
-                .orElseThrow(()->
-                        new NoAuthorizationException("추천 글 조회 실패: 접근 권한이 없습니다.")
-                );
+            if (member.getStatus() != MemberStatus.active) {
+                member = null;
+            }
 
-        if (member.getStatus() != MemberStatus.active) {
-            return Collections.emptyList();
         }
 
         List<SimplePostQueryDto> recommendPost = postRepository.findRecommendPost(member);

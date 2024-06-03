@@ -25,6 +25,7 @@ import sideproject.gugumo.domain.entity.meeting.Location;
 import sideproject.gugumo.domain.entity.meeting.MeetingStatus;
 import sideproject.gugumo.domain.dto.memberDto.CustomUserDetails;
 
+import java.util.Collections;
 import java.util.List;
 
 import static sideproject.gugumo.domain.entity.QBookmark.bookmark;
@@ -104,7 +105,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
     @Override
     public List<SimplePostQueryDto> findRecommendPost(Member member) {
 
-        List<FavoriteSport> favoriteSports = member.getFavoriteSports();
+        List<FavoriteSport> favoriteSports = member!=null?member.getFavoriteSports(): Collections.emptyList();
 
         List<SimplePostQueryDto> result = queryFactory.select(new QSimplePostQueryDto(
                         post.id.as("postId"),
@@ -125,7 +126,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                 .where(
                         post.isDelete.isFalse(), favoriteSportsEq(favoriteSports)
                 )
-                .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
+                .orderBy(Expressions.numberTemplate(Double.class, "function('random')").asc())
                 .limit(8)
                 .fetch();
 
