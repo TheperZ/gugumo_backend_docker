@@ -1,6 +1,7 @@
 package sideproject.gugumo.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -39,12 +40,14 @@ public class CreatePostReq {
     @NotNull
     private int meetingMemberNum;
     @JsonFormat(pattern = "yyyy-MM-dd")
+    @FutureOrPresent
     private LocalDate meetingDate;      //날짜: 단기일 경우
     private String meetingDays;     //요일: 장기일 경우
     @NotNull
     private int meetingTime;
     @JsonFormat(pattern = "yyyy-MM-dd")
     @NotNull
+    @FutureOrPresent
     private LocalDate meetingDeadline;
     @NotEmpty
     private String openKakao;
