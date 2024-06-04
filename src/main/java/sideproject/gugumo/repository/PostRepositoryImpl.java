@@ -124,7 +124,8 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                 .leftJoin(post.meeting, meeting)
                 .leftJoin(bookmark).on(bookmark.post.eq(post), hasMember(member))
                 .where(
-                        post.isDelete.isFalse(), favoriteSportsEq(favoriteSports)
+                        post.isDelete.isFalse(), favoriteSportsEq(favoriteSports),
+                        meeting.status.eq(MeetingStatus.RECRUIT)
                 )
                 .orderBy(Expressions.numberTemplate(Double.class, "function('random')").asc())
                 .limit(8)
