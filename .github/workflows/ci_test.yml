@@ -32,7 +32,9 @@ jobs:
       run: chmod +x ./gradlew
         
     - name: 프로젝트 빌드(테스트 코드 제외)
-      run: ./gradlew clean build --exclude-task test
+      run: 
+        ./gradlew copyGitSubmodule
+        ./gradlew clean build --exclude-task test
 
     - name: AWS credential 설정
       uses: aws-actions/configure-aws-credentials@v1
