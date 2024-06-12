@@ -61,6 +61,17 @@ public class MailSenderService {
         return Integer.toString(authNumber);
     }
 
+    // reset Password
+    public void resetPassword(String email, String newPassword) {
+        String setFrom = "gugumo024@gmail.com";
+        String title = "gugumo 새 비밀번호입니다.";
+        String content =
+                "gugumo 새로운 비밀번호는 " + newPassword + " 입니다."
+                ;
+
+        mailSend(setFrom, email, title, content);
+    }
+
     //이메일을 전송합니다.
     public void mailSend(String setFrom, String toMail, String title, String content) {
 
