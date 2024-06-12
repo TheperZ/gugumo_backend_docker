@@ -1,6 +1,7 @@
 package sideproject.gugumo.service;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -144,6 +145,21 @@ public class MemberService {
         Member findMember = memberRepository.findOne(id);
 
         findMember.updateMemberPassword(passwordEncoder.encode(password));
+    }
+
+    @Transactional
+    public String resetPassword(String username) {
+        Optional<Member> findMember = memberRepository.findByUsername(username);
+
+        String newPassword = RandomStringUtils.randomAlphanumeric(10);
+
+        if(findMember.isEmpty()) {
+            throw new UserNotFoundException("회원이 없습니다.");
+        }
+
+        findMember.get().updateMemberPassword(passwordEncoder.encode(newPassword));
+
+        return newPassword;
     }
 
     @Transactional

@@ -150,4 +150,16 @@ public class MemberApiController {
 
         return ApiResponse.createSuccess(true);
     }
+
+    @PostMapping("/api/v1/resetPassword")
+    public ApiResponse<Boolean> resetPassword(@RequestBody ResetPasswordDto resetPasswordDto) {
+
+        String username = resetPasswordDto.getEmail();
+
+        String newPassword = memberService.resetPassword(username);
+
+        mailService.resetPassword(username, newPassword);
+
+        return ApiResponse.createSuccess(true);
+    }
 }
