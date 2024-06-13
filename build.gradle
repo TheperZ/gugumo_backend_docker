@@ -67,6 +67,11 @@ dependencies {
 
 	// redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	// webflux
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+//	// gson json <-> json string mapping library
+//	implementation 'com.google.code.gson:gson:2.9.0'
 }
 
 def querydslSrcDir = 'src/main/generated'
