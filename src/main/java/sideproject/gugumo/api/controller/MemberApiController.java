@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import sideproject.gugumo.domain.dto.memberDto.*;
+import sideproject.gugumo.domain.entity.member.Member;
 import sideproject.gugumo.exception.exception.NoAuthorizationException;
 import sideproject.gugumo.exception.exception.UserNotFoundException;
 import sideproject.gugumo.response.ApiResponse;
@@ -34,11 +35,7 @@ public class MemberApiController {
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<Long> saveMemberWithEmailAuth(@RequestBody @Valid SignUpMemberDto signUpMemberDto) {
 
-        boolean checked = mailService.checkAuthNum(signUpMemberDto.getUsername(), signUpMemberDto.getEmailAuthNum());
-
-        if(!checked) {
-            throw new NoAuthorizationException("이메일 인증 에러");
-        }
+        mailService.checkAuthNum(signUpMemberDto.getUsername(), signUpMemberDto.getEmailAuthNum());
 
         Long joinId = memberService.join(signUpMemberDto);
 
@@ -118,11 +115,8 @@ public class MemberApiController {
     }
 
     @GetMapping("/api/v1/member/checkDuplicateNickname")
-    public ApiResponse<Boolean> checkDuplicateNickname(/*@AuthenticationPrincipal CustomUserDetails principal,*/
-                                                      /*@RequestBody UpdateMemberNicknameDto updateMemberNicknameDto,*/
-                                                      @RequestParam String nickname) {
+    public ApiResponse<Boolean> checkDuplicateNickname(@RequestParam String nickname) {
 
-//        Boolean isExistNickname = memberService.isExistNickname(updateMemberNicknameDto.getNickname());
         Boolean isExistNickname = memberService.isExistNickname(nickname);
 
         return ApiResponse.createSuccess(isExistNickname);

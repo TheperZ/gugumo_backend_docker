@@ -1,36 +1,37 @@
 package sideproject.gugumo.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import sideproject.gugumo.exception.exception.NoAuthorizationException;
 import sideproject.gugumo.redis.RedisUtil;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.util.Objects;
 import java.util.Random;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class MailSenderService {
 
     @Autowired
     private JavaMailSender mailSender;
-    private int authNumber;
-
     @Autowired
     private RedisUtil redisUtil;
 
-    public boolean checkAuthNum(String email, String authNum) {
-        if (redisUtil.getData(authNum) == null) {
-            return false;
-        }
-        else if(redisUtil.getData(authNum).equals(email)) {
-            return true;
-        }
-        else {
-            return false;
+    private int authNumber;
+
+    public void checkAuthNum(String email, String authNum) {
+
+        boolean isFailEmailAuth = (redisUtil.getData(authNum) == null || !Objects.equals(redisUtil.getData(authNum), email));
+
+        if(isFailEmailAuth) {
+            throw new NoAuthorizationException("이메일 인증 에러");
         }
     }
 
@@ -48,7 +49,9 @@ public class MailSenderService {
 
     //mail을 어디서 보내는지, 어디로 보내는지 , 인증 번호를 html 형식으로 어떻게 보내는지 작성합니다.
     public String joinEmail(String email) {
+
         makeRandomNumber();
+
         String setFrom = "gugumo024@gmail.com"; // email-config에 설정한 자신의 이메일 주소를 입력
         String title = "gugumo 회원가입 인증번호"; // 이메일 제목
         String content =
@@ -57,12 +60,15 @@ public class MailSenderService {
                         "인증 번호는 " + authNumber + "입니다." +
                         "<br>"
                 ;
+
         mailSend(setFrom, email, title, content);
+
         return Integer.toString(authNumber);
     }
 
     // reset Password
     public void resetPassword(String email, String newPassword) {
+
         String setFrom = "gugumo024@gmail.com";
         String title = "gugumo 새 비밀번호입니다.";
         String content =
