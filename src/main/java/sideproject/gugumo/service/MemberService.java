@@ -10,6 +10,8 @@ import sideproject.gugumo.domain.dto.memberDto.SignUpMemberDto;
 import sideproject.gugumo.domain.dto.memberDto.UpdateMemberDto;
 import sideproject.gugumo.domain.entity.member.FavoriteSport;
 import sideproject.gugumo.domain.entity.member.Member;
+import sideproject.gugumo.domain.entity.member.MemberRole;
+import sideproject.gugumo.domain.entity.member.MemberStatus;
 import sideproject.gugumo.exception.exception.DuplicateEmailException;
 import sideproject.gugumo.exception.exception.DuplicateNicknameException;
 import sideproject.gugumo.exception.exception.UserNotFoundException;
@@ -30,10 +32,15 @@ public class MemberService {
     @Transactional
     public Long join(SignUpMemberDto signUpMemberDto) {
 
-        Member joinMember = Member.createUserBuilder()
+        String encodePassword = passwordEncoder.encode(signUpMemberDto.getPassword());
+
+        Member joinMember = Member.userJoin()
                 .username(signUpMemberDto.getUsername())
                 .nickname(signUpMemberDto.getNickname())
-                .password(passwordEncoder.encode(signUpMemberDto.getPassword()))
+                .password(encodePassword)
+                .isAgreeMarketing(signUpMemberDto.isAgreeMarketing())
+                .isAgreeCollectingUsingPersonalInformation(signUpMemberDto.isAgreeCollectingUsingPersonalInformation())
+                .isAgreeTermsUse(signUpMemberDto.isAgreeTermsUse())
                 .build();
 
         validateDuplicateMemberByUsername(joinMember);
