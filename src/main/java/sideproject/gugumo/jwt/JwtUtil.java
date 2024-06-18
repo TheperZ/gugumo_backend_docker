@@ -24,6 +24,10 @@ public class JwtUtil {
         secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
     }
 
+    public Long getId(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("id", Long.class);
+    }
+
     public String getUsername(String token) {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
     }
@@ -37,8 +41,9 @@ public class JwtUtil {
     }
 
     //TODO 시간은 외부에서 주입받도록 수정할 예정
-    public String createJwt(String username, String role, Long expiredMs) {
+    public String createJwt(long id, String username, String role, Long expiredMs) {
         return Jwts.builder()
+                .claim("id", id)
                 .claim("username", username)
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
