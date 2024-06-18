@@ -22,14 +22,15 @@ public class MemberApiController {
     private final MemberService memberService;
     private final MailSenderService mailService;
 
-    @PostMapping("/api/v1/member")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<Long> saveMember(@RequestBody @Valid SignUpMemberDto signUpMemberDto) {
-
-        Long joinId = memberService.join(signUpMemberDto);
-
-        return ApiResponse.createSuccess(joinId);
-    }
+    // 삭제 예정
+//    @PostMapping("/api/v1/member")
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public ApiResponse<Long> saveMember(@RequestBody @Valid SignUpMemberDto signUpMemberDto) {
+//
+//        Long joinId = memberService.join(signUpMemberDto);
+//
+//        return ApiResponse.createSuccess(joinId);
+//    }
 
     @PostMapping("/api/v2/member")
     @ResponseStatus(HttpStatus.CREATED)

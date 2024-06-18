@@ -22,7 +22,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        // email 로그인만 여기를 통과하기 때문에 findByUsername 사용해도 될듯
         Optional<Member> findMember = memberRepository.findByUsername(username);
 
         if(findMember.isEmpty() || findMember.get().getStatus() == MemberStatus.delete) {

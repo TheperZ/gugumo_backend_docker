@@ -78,7 +78,6 @@ public class SecurityConfig {
 
         http
                 .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class)
-//                .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jsonUsernamePasswordAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
         ;
         return http.build();
