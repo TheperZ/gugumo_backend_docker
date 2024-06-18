@@ -44,11 +44,13 @@ public class MemberApiController {
     }
 
     @GetMapping("/api/v1/member")
-    public ApiResponse<UpdateMemberDto> getMember(@AuthenticationPrincipal CustomUserDetails principal) {
+    public ApiResponse<UpdateMemberDto> getMemberInfo(@AuthenticationPrincipal CustomUserDetails principal) {
 
         String username = principal.getUsername();
 
-        MemberDto findMemberDto = memberService.findByUsername(username);
+        long id = principal.getId();
+//        MemberDto findMemberDto = memberService.findOne(id);
+        MemberDto findMemberDto = memberService.getMemberInfo(id, username);
 
         if(findMemberDto == null) {
             throw new UserNotFoundException(username + " 회원이 없습니다.");

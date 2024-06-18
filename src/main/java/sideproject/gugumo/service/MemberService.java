@@ -14,10 +14,12 @@ import sideproject.gugumo.domain.entity.member.MemberRole;
 import sideproject.gugumo.domain.entity.member.MemberStatus;
 import sideproject.gugumo.exception.exception.DuplicateEmailException;
 import sideproject.gugumo.exception.exception.DuplicateNicknameException;
+import sideproject.gugumo.exception.exception.NoAuthorizationException;
 import sideproject.gugumo.exception.exception.UserNotFoundException;
 import sideproject.gugumo.repository.FavoriteSportRepository;
 import sideproject.gugumo.repository.MemberRepository;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -61,9 +63,39 @@ public class MemberService {
         return joinMember.getId();
     }
 
+    /**
+     * deprecated
+     * @param memberId
+     * @return
+     */
     public MemberDto findOne(Long memberId) {
 
         Member findMember = memberRepository.findOne(memberId);
+
+        if (findMember == null) {
+            throw new UserNotFoundException("회원이 없습니다.");
+        }
+
+        return MemberDto.builder()
+                .id(findMember.getId())
+                .username(findMember.getUsername())
+                .nickname(findMember.getNickname())
+                .role(findMember.getRole())
+                .status(findMember.getStatus())
+                .profileImagePath(findMember.getProfileImagePath())
+                .build();
+    }
+
+    public MemberDto getMemberInfo(Long id, String username) {
+        Member findMember = memberRepository.findOne(id);
+
+        if (findMember == null) {
+            throw new UserNotFoundException("회원이 없습니다.");
+        }
+
+        if(!Objects.equals(findMember.getUsername(), username)) {
+            throw new NoAuthorizationException("권한이 없습니다.");
+        }
 
         return MemberDto.builder()
                 .id(findMember.getId())
