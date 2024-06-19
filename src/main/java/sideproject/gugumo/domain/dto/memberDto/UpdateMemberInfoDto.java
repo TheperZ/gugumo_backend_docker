@@ -6,13 +6,13 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UpdateMemberDto {
+public class UpdateMemberInfoDto {
     private String password;
     private String nickname;
     private String profileImagePath;
 
     @Builder
-    public UpdateMemberDto(String password, String nickname, String profileImagePath) {
+    public UpdateMemberInfoDto(String password, String nickname, String profileImagePath) {
         this.password = password;
         this.nickname = nickname;
         this.profileImagePath = profileImagePath;

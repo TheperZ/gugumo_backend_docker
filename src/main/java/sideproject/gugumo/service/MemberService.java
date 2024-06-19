@@ -8,11 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 import sideproject.gugumo.domain.dto.memberDto.MemberDto;
 import sideproject.gugumo.domain.dto.memberDto.MemberInfoDto;
 import sideproject.gugumo.domain.dto.memberDto.SignUpMemberDto;
-import sideproject.gugumo.domain.dto.memberDto.UpdateMemberDto;
+import sideproject.gugumo.domain.dto.memberDto.UpdateMemberInfoDto;
 import sideproject.gugumo.domain.entity.member.FavoriteSport;
 import sideproject.gugumo.domain.entity.member.Member;
-import sideproject.gugumo.domain.entity.member.MemberRole;
-import sideproject.gugumo.domain.entity.member.MemberStatus;
 import sideproject.gugumo.exception.exception.DuplicateEmailException;
 import sideproject.gugumo.exception.exception.DuplicateNicknameException;
 import sideproject.gugumo.exception.exception.NoAuthorizationException;
@@ -48,7 +46,7 @@ public class MemberService {
                 .build();
 
         validateDuplicateMemberByUsername(joinMember);
-        validateDuplicateMemberByNickname(joinMember);
+        validateDuplicateMemberByNickname(joinMember.getNickname());
 
         String favoriteSports = signUpMemberDto.getFavoriteSports();
 
@@ -88,15 +86,11 @@ public class MemberService {
                 .build();
     }
 
-    public MemberInfoDto getMemberInfo(Long id, String username) {
+    public MemberInfoDto getMemberInfo(Long id) {
         Member findMember = memberRepository.findOne(id);
 
         if (findMember == null) {
             throw new UserNotFoundException("회원이 없습니다.");
-        }
-
-        if(!Objects.equals(findMember.getUsername(), username)) {
-            throw new NoAuthorizationException("권한이 없습니다.");
         }
 
         List<FavoriteSport> favoriteSportList = favoriteSportRepository.getFavoriteSports(findMember);
@@ -150,24 +144,46 @@ public class MemberService {
         return byNickname.isPresent();
     }
 
+    /**
+     * 삭제 예정
+     * @param id
+     * @param updateMemberInfoDto
+     */
     @Transactional
-    public void update(Long id, UpdateMemberDto updateMemberDto) {
+    public void update(Long id, UpdateMemberInfoDto updateMemberInfoDto) {
         Member findMember = memberRepository.findOne(id);
 
-        updateMemberDto.setPassword(passwordEncoder.encode(updateMemberDto.getPassword()));
+        updateMemberInfoDto.setPassword(passwordEncoder.encode(updateMemberInfoDto.getPassword()));
 
-        findMember.updateMember(updateMemberDto);
+        findMember.updateMember(updateMemberInfoDto);
+    }
+
+    /**
+     * 삭제 예정
+     * @param id
+     * @param updateMemberInfoDto
+     */
+    @Transactional
+    public void updateMemberInfo(Long id, UpdateMemberInfoDto updateMemberInfoDto) {
+        Member findMember = memberRepository.findOne(id);
+
+        if (findMember == null) {
+            throw new UserNotFoundException("회원이 없습니다.");
+        }
+
+        findMember.updateMember(updateMemberInfoDto);
     }
 
     @Transactional
     public void updateNickname(Long id, String nickname) {
+
         Member findMember = memberRepository.findOne(id);
 
-        Optional<Member> byNickname = memberRepository.findByNickname(nickname);
-
-        if(byNickname.isPresent()) {
-            throw new DuplicateNicknameException("이미 존재하는 닉네임입니다.");
+        if (findMember == null) {
+            throw new UserNotFoundException("회원이 없습니다.");
         }
+
+        validateDuplicateMemberByNickname(nickname);
 
         findMember.updateMemberNickname(nickname);
     }
@@ -180,8 +196,8 @@ public class MemberService {
         }
     }
 
-    private void validateDuplicateMemberByNickname(Member member) {
-        Optional<Member> findMember = memberRepository.findByNickname(member.getNickname());
+    private void validateDuplicateMemberByNickname(String nickname) {
+        Optional<Member> findMember = memberRepository.findByNickname(nickname);
 
         if(findMember.isPresent()) {
             throw new DuplicateNicknameException("이미 존재하는 닉네임입니다.");
@@ -212,15 +228,14 @@ public class MemberService {
     }
 
     @Transactional
-    public void deleteMember(String username) {
+    public void deleteMember(Long id) {
 
-        Optional<Member> findMember = memberRepository.findByUsername(username);
+        Member findMember = memberRepository.findOne(id);
 
-        if(findMember.isEmpty()) {
+        if(findMember == null) {
             throw new UserNotFoundException("존재하지 않는 회원입니다.");
         }
 
-        findMember.get().deleteMember();
-
+        findMember.deleteMember();
     }
 }

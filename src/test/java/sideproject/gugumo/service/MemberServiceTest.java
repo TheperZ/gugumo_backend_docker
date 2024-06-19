@@ -116,7 +116,7 @@ class MemberServiceTest {
         Long id = memberService.join(signUpMemberDto1);
 
         //when
-        memberService.deleteMember(signUpMemberDto1.getUsername());
+        memberService.deleteMember(id);
 
         //than
         MemberDto findMember = memberService.findByUsername(signUpMemberDto1.getUsername());

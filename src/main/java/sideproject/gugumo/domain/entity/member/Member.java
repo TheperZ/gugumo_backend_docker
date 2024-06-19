@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.util.StringUtils;
-import sideproject.gugumo.domain.dto.memberDto.UpdateMemberDto;
+import sideproject.gugumo.domain.dto.memberDto.UpdateMemberInfoDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,12 +85,12 @@ public class Member {
         this.password = password;
     }
 
-    public void updateMember(UpdateMemberDto updateMemberDto) {
-        this.nickname = updateMemberDto.getNickname();
-        this.profileImagePath = updateMemberDto.getProfileImagePath();
+    public void updateMember(UpdateMemberInfoDto updateMemberInfoDto) {
+        this.nickname = updateMemberInfoDto.getNickname();
+        this.profileImagePath = updateMemberInfoDto.getProfileImagePath();
 
-        if(updateMemberDto.getPassword() != null && StringUtils.hasText(this.password = updateMemberDto.getPassword())) {
-            this.password = updateMemberDto.getPassword();
+        if(updateMemberInfoDto.getPassword() != null && StringUtils.hasText(this.password = updateMemberInfoDto.getPassword())) {
+            this.password = updateMemberInfoDto.getPassword();
         }
     }
 
