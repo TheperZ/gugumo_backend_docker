@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sideproject.gugumo.domain.dto.memberDto.MemberDto;
+import sideproject.gugumo.domain.dto.memberDto.MemberInfoDto;
 import sideproject.gugumo.domain.dto.memberDto.SignUpMemberDto;
 import sideproject.gugumo.domain.dto.memberDto.UpdateMemberDto;
 import sideproject.gugumo.domain.entity.member.FavoriteSport;
@@ -19,6 +20,7 @@ import sideproject.gugumo.exception.exception.UserNotFoundException;
 import sideproject.gugumo.repository.FavoriteSportRepository;
 import sideproject.gugumo.repository.MemberRepository;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -86,7 +88,7 @@ public class MemberService {
                 .build();
     }
 
-    public MemberDto getMemberInfo(Long id, String username) {
+    public MemberInfoDto getMemberInfo(Long id, String username) {
         Member findMember = memberRepository.findOne(id);
 
         if (findMember == null) {
@@ -97,14 +99,22 @@ public class MemberService {
             throw new NoAuthorizationException("권한이 없습니다.");
         }
 
-        return MemberDto.builder()
-                .id(findMember.getId())
+        List<FavoriteSport> favoriteSportList = favoriteSportRepository.getFavoriteSports(findMember);
+
+        StringBuilder favoriteSports = new StringBuilder();
+
+        for (FavoriteSport fs : favoriteSportList) {
+            favoriteSports.append(fs.getGameType().name());
+            favoriteSports.append(',');
+        }
+        favoriteSports.deleteCharAt(favoriteSports.length()-1);
+
+        return MemberInfoDto.builder()
                 .username(findMember.getUsername())
                 .nickname(findMember.getNickname())
-                .role(findMember.getRole())
-                .status(findMember.getStatus())
-                .profileImagePath(findMember.getProfileImagePath())
+                .favoriteSports(favoriteSports.toString())
                 .build();
+
     }
 
     public MemberDto findByUsername(String username) {

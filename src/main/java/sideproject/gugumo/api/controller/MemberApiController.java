@@ -44,29 +44,14 @@ public class MemberApiController {
     }
 
     @GetMapping("/api/v1/member")
-    public ApiResponse<UpdateMemberDto> getMemberInfo(@AuthenticationPrincipal CustomUserDetails principal) {
+    public ApiResponse<MemberInfoDto> getMemberInfo(@AuthenticationPrincipal CustomUserDetails principal) {
 
         String username = principal.getUsername();
 
         long id = principal.getId();
-//        MemberDto findMemberDto = memberService.findOne(id);
-        MemberDto findMemberDto = memberService.getMemberInfo(id, username);
+        MemberInfoDto memberInfoDto = memberService.getMemberInfo(id, username);
 
-        if(findMemberDto == null) {
-            throw new UserNotFoundException(username + " 회원이 없습니다.");
-        }
-
-        if(!Objects.equals(findMemberDto.getUsername(), username)) {
-            throw new NoAuthorizationException("권한이 없습니다.");
-        }
-
-        UpdateMemberDto updateMemberDto = UpdateMemberDto.builder()
-                .nickname(findMemberDto.getNickname())
-                .profileImagePath(findMemberDto.getProfileImagePath())
-                .password("")
-                .build();
-
-        return ApiResponse.createSuccess(updateMemberDto);
+        return ApiResponse.createSuccess(memberInfoDto);
     }
 
     @PatchMapping("/api/v1/member")
