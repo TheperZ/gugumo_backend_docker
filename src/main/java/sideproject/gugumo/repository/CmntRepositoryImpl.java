@@ -30,15 +30,9 @@ public class CmntRepositoryImpl implements CmntRepositoryCustom {
 
 
     @Override
-    public List<CmntDto> findComment(Long postId, CustomUserDetails principal, Pageable pageable) {
+    public List<CmntDto> findComment(Long postId, Member user) {
 
-        Member user =
-                principal == null ?
-                        null : memberRepository.findByUsername(principal.getUsername()).get();
 
-        if (user != null && user.getStatus() != MemberStatus.active) {
-            user = null;
-        }
 
 
         //isYours, isAuthorExpired 추가
