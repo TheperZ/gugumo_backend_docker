@@ -41,12 +41,10 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
 
 
     private final JPAQueryFactory queryFactory;
-    private final MemberRepository memberRepository;
 
 
-    public PostRepositoryImpl(EntityManager em, MemberRepository memberRepository) {
+    public PostRepositoryImpl(EntityManager em) {
         this.queryFactory = new JPAQueryFactory(em);
-        this.memberRepository = memberRepository;
     }
 
 

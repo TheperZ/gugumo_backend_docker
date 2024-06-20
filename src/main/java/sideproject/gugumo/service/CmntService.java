@@ -64,7 +64,10 @@ public class CmntService {
 
         Member user =
                 principal == null ?
-                        null : memberRepository.findOne(principal.getId());
+                        null : memberRepository.findOne(principal.getId())
+                        .orElseThrow(
+                                () -> new NoAuthorizationException("댓글 조회 실패: 권한이 없습니다.")
+                        );
 
         if (user != null && user.getStatus() != MemberStatus.active) {
             user = null;
@@ -120,7 +123,10 @@ public class CmntService {
             throw new NoAuthorizationException(noLoginMessage);
         }
 
-        Member author = memberRepository.findOne(principal.getId());
+        Member author = memberRepository.findOne(principal.getId())
+                .orElseThrow(
+                        () -> new NoAuthorizationException(notValidUserMessage)
+                );;
 
         if (author.getStatus() != MemberStatus.active) {
             throw new NoAuthorizationException(notValidUserMessage);
