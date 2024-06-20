@@ -20,25 +20,17 @@ import static sideproject.gugumo.domain.entity.post.QPost.post;
 public class CmntRepositoryImpl implements CmntRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
-    private final MemberRepository memberRepository;
 
 
-    public CmntRepositoryImpl(EntityManager em, MemberRepository memberRepository) {
+    public CmntRepositoryImpl(EntityManager em) {
         this.queryFactory = new JPAQueryFactory(em);
-        this.memberRepository = memberRepository;
     }
 
 
     @Override
-    public List<CmntDto> findComment(Long postId, CustomUserDetails principal, Pageable pageable) {
+    public List<CmntDto> findComment(Long postId, Member user) {
 
-        Member user =
-                principal == null ?
-                        null : memberRepository.findByUsername(principal.getUsername()).get();
 
-        if (user != null && user.getStatus() != MemberStatus.active) {
-            user = null;
-        }
 
 
         //isYours, isAuthorExpired 추가

@@ -35,10 +35,9 @@ public class CmntController {
 
     @GetMapping("/{post_id}")
     public ApiResponse<List<CmntDto>> findComment(@AuthenticationPrincipal CustomUserDetails principal,
-                                                  @PathVariable("post_id") Long postId,
-                                                  @PageableDefault Pageable pageable) {
+                                                  @PathVariable("post_id") Long postId) {
 
-        return ApiResponse.createSuccess(cmntService.findComment(postId, principal, pageable));
+        return ApiResponse.createSuccess(cmntService.findComment(postId, principal));
     }
 
     @PatchMapping("/{comment_id}")

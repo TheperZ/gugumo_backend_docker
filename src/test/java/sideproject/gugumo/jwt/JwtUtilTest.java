@@ -18,7 +18,7 @@ class JwtUtilTest {
     @DisplayName("jwt token 생성")
     public void createJwtToken() {
         //given
-        String token = jwtUtil.createJwt("username", "ROLE_USER", expiredMs);
+        String token = jwtUtil.createJwt(1l, "username", "ROLE_USER", expiredMs);
 
         //when
         String username = jwtUtil.getUsername(token);
