@@ -3,6 +3,7 @@ package sideproject.gugumo.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sideproject.gugumo.domain.dto.CmntDto;
@@ -59,9 +60,20 @@ public class CmntService {
 
     }
 
-    public List<CmntDto> findComment(Long postId, CustomUserDetails principal, Pageable pageable) {
+    public List<CmntDto> findComment(Long postId, CustomUserDetails principal) {
 
-        return cmntRepository.findComment(postId, principal, pageable);
+        Member user =
+                principal == null ?
+                        null : memberRepository.findOne(principal.getId())
+                        .orElseThrow(
+                                () -> new NoAuthorizationException("댓글 조회 실패: 권한이 없습니다.")
+                        );
+
+        if (user != null && user.getStatus() != MemberStatus.active) {
+            user = null;
+        }
+
+        return cmntRepository.findComment(postId, user);
 
 
     }
@@ -111,8 +123,10 @@ public class CmntService {
             throw new NoAuthorizationException(noLoginMessage);
         }
 
-        Member author = memberRepository.findByUsername(principal.getUsername())
-                .orElseThrow(() -> new NoAuthorizationException(notValidUserMessage));
+        Member author = memberRepository.findOne(principal.getId())
+                .orElseThrow(
+                        () -> new NoAuthorizationException(notValidUserMessage)
+                );;
 
         if (author.getStatus() != MemberStatus.active) {
             throw new NoAuthorizationException(notValidUserMessage);

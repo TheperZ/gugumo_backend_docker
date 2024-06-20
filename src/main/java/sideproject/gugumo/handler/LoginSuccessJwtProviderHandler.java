@@ -27,6 +27,7 @@ public class LoginSuccessJwtProviderHandler extends SimpleUrlAuthenticationSucce
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 
+        Long id = customUserDetails.getMember().getId();
         String username = customUserDetails.getUsername();
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
@@ -35,7 +36,7 @@ public class LoginSuccessJwtProviderHandler extends SimpleUrlAuthenticationSucce
 
         String role = auth.getAuthority();
 
-        String token = jwtUtil.createJwt(username, role, Long.parseLong(jwtUtil.getExpiredMillis()));
+        String token = jwtUtil.createJwt(id, username, role, Long.parseLong(jwtUtil.getExpiredMillis()));
 
         response.addHeader("Authorization", "Bearer " + token);
     }

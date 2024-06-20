@@ -1,5 +1,6 @@
 package sideproject.gugumo.domain.dto.memberDto;
 
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import sideproject.gugumo.domain.entity.member.Member;
@@ -7,6 +8,7 @@ import sideproject.gugumo.domain.entity.member.Member;
 import java.util.ArrayList;
 import java.util.Collection;
 
+@Getter
 public class CustomUserDetails implements UserDetails {
 
     private final Member member;
@@ -38,6 +40,10 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public String getUsername() {
         return member.getUsername();
+    }
+
+    public long getId() {
+        return member.getId();
     }
 
     @Override
