@@ -27,13 +27,8 @@ public class MailController {
     @PostMapping("/api/v1/mailAuthCheck")
     public ApiResponse<String> AuthCheck(@RequestBody @Valid EmailCheckDto emailCheckDto) {
 
-        boolean checked = mailService.checkAuthNum(emailCheckDto.getEmail(), emailCheckDto.getEmailAuthNum());
+        mailService.checkAuthNum(emailCheckDto.getEmail(), emailCheckDto.getEmailAuthNum());
 
-        if(checked) {
-            return ApiResponse.createSuccess("인증 완료.");
-        }
-        else {
-            return ApiResponse.createFail("인증 실패.");
-        }
+        return ApiResponse.createSuccess("인증 완료.");
     }
 }

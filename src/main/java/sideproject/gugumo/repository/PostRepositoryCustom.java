@@ -11,7 +11,7 @@ import sideproject.gugumo.domain.entity.member.Member;
 import java.util.List;
 
 public interface PostRepositoryCustom {
-    Page<SimplePostQueryDto> search(PostSearchCondition cond, Pageable pageable, CustomUserDetails principal);
+    Page<SimplePostQueryDto> search(PostSearchCondition cond, Pageable pageable, Member member);
 
     List<SimplePostQueryDto> findRecommendPost(Member member);
 }

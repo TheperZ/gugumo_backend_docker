@@ -59,9 +59,17 @@ public class CmntService {
 
     }
 
-    public List<CmntDto> findComment(Long postId, CustomUserDetails principal, Pageable pageable) {
+    public List<CmntDto> findComment(Long postId, CustomUserDetails principal) {
 
-        return cmntRepository.findComment(postId, principal, pageable);
+        Member user =
+                principal == null ?
+                        null : memberRepository.findOne(principal.getId());
+
+        if (user != null && user.getStatus() != MemberStatus.active) {
+            user = null;
+        }
+
+        return cmntRepository.findComment(postId, user);
 
 
     }
@@ -111,8 +119,7 @@ public class CmntService {
             throw new NoAuthorizationException(noLoginMessage);
         }
 
-        Member author = memberRepository.findByUsername(principal.getUsername())
-                .orElseThrow(() -> new NoAuthorizationException(notValidUserMessage));
+        Member author = memberRepository.findOne(principal.getId());
 
         if (author.getStatus() != MemberStatus.active) {
             throw new NoAuthorizationException(notValidUserMessage);

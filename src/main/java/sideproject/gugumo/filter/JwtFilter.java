@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import sideproject.gugumo.domain.dto.memberDto.CustomUserDetails;
 import sideproject.gugumo.domain.entity.member.Member;
+import sideproject.gugumo.domain.entity.member.MemberRole;
 import sideproject.gugumo.jwt.JwtUtil;
 
 import java.io.IOException;
@@ -39,15 +40,15 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String username = jwtUtil.getUsername(token);
         String role = jwtUtil.getRole(token);
+        Long id = jwtUtil.getId(token);
 
-        Member member = Member.createMemberBuilder()
-                .role(role)
-                .nickname("nickname")
+        Member loginMember = Member.userLogin()
+                .id(id)
+                .role(Enum.valueOf(MemberRole.class, role))
                 .username(username)
-                .password("pass")
                 .build();
 
-        CustomUserDetails customUserDetails = new CustomUserDetails(member);
+        CustomUserDetails customUserDetails = new CustomUserDetails(loginMember);
 
         Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
 

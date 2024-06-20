@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import sideproject.gugumo.domain.dto.memberDto.*;
+import sideproject.gugumo.domain.entity.member.Member;
 import sideproject.gugumo.exception.exception.NoAuthorizationException;
 import sideproject.gugumo.exception.exception.UserNotFoundException;
 import sideproject.gugumo.response.ApiResponse;
@@ -21,24 +22,21 @@ public class MemberApiController {
     private final MemberService memberService;
     private final MailSenderService mailService;
 
-    @PostMapping("/api/v1/member")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<Long> saveMember(@RequestBody @Valid SignUpMemberDto signUpMemberDto) {
-
-        Long joinId = memberService.join(signUpMemberDto);
-
-        return ApiResponse.createSuccess(joinId);
-    }
+    // 삭제 예정
+//    @PostMapping("/api/v1/member")
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public ApiResponse<Long> saveMember(@RequestBody @Valid SignUpMemberDto signUpMemberDto) {
+//
+//        Long joinId = memberService.join(signUpMemberDto);
+//
+//        return ApiResponse.createSuccess(joinId);
+//    }
 
     @PostMapping("/api/v2/member")
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<Long> saveMemberWithEmailAuth(@RequestBody @Valid SignUpMemberDto signUpMemberDto) {
 
-        boolean checked = mailService.checkAuthNum(signUpMemberDto.getUsername(), signUpMemberDto.getEmailAuthNum());
-
-        if(!checked) {
-            throw new NoAuthorizationException("이메일 인증 에러");
-        }
+        mailService.checkAuthNum(signUpMemberDto.getUsername(), signUpMemberDto.getEmailAuthNum());
 
         Long joinId = memberService.join(signUpMemberDto);
 
@@ -46,11 +44,13 @@ public class MemberApiController {
     }
 
     @GetMapping("/api/v1/member")
-    public ApiResponse<UpdateMemberDto> getMember(@AuthenticationPrincipal CustomUserDetails principal) {
+    public ApiResponse<UpdateMemberDto> getMemberInfo(@AuthenticationPrincipal CustomUserDetails principal) {
 
         String username = principal.getUsername();
 
-        MemberDto findMemberDto = memberService.findByUsername(username);
+        long id = principal.getId();
+//        MemberDto findMemberDto = memberService.findOne(id);
+        MemberDto findMemberDto = memberService.getMemberInfo(id, username);
 
         if(findMemberDto == null) {
             throw new UserNotFoundException(username + " 회원이 없습니다.");
@@ -118,11 +118,8 @@ public class MemberApiController {
     }
 
     @GetMapping("/api/v1/member/checkDuplicateNickname")
-    public ApiResponse<Boolean> checkDuplicateNickname(/*@AuthenticationPrincipal CustomUserDetails principal,*/
-                                                      /*@RequestBody UpdateMemberNicknameDto updateMemberNicknameDto,*/
-                                                      @RequestParam String nickname) {
+    public ApiResponse<Boolean> checkDuplicateNickname(@RequestParam String nickname) {
 
-//        Boolean isExistNickname = memberService.isExistNickname(updateMemberNicknameDto.getNickname());
         Boolean isExistNickname = memberService.isExistNickname(nickname);
 
         return ApiResponse.createSuccess(isExistNickname);

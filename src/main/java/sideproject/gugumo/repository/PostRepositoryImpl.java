@@ -52,15 +52,9 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
 
     @Override
     public Page<SimplePostQueryDto> search(PostSearchCondition cond, Pageable pageable
-            , CustomUserDetails principal) {
+            , Member member) {
 
-        Member member =
-                principal == null ?
-                        null : memberRepository.findByUsername(principal.getUsername()).get();
 
-        if (member != null && member.getStatus() != MemberStatus.active) {
-            member = null;
-        }
 
         OrderSpecifier orderSpecifier = createOrderSpecifier(cond.getSortType());
 

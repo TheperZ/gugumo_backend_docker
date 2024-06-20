@@ -42,16 +42,7 @@ public class BookmarkService {
     @Transactional
     public void save(CustomUserDetails principal, CreateBookmarkReq req) {
 
-        if (principal == null) {
-            throw new NoAuthorizationException("북마크 등록 실패: 비로그인 사용자입니다.");
-        }
-
-        Member member = memberRepository.findByUsername(principal.getUsername())
-                .orElseThrow(() -> new NoAuthorizationException("북마크 등록 실패: 권한이 없습니다."));
-
-        if (member.getStatus() != MemberStatus.active) {
-            throw new NoAuthorizationException("북마크 등록 실패: 권한이 없습니다.");
-        }
+        Member member = checkMemberValid(principal, "북마크 등록 실패: 비로그인 사용자입니다.", "북마크 등록 실패: 권한이 없습니다.");
 
         Post post = postRepository.findByIdAndIsDeleteFalse(req.getPostId())
                 .orElseThrow(()->new PostNotFoundException("북마크 등록 실패: 해당 게시글이 존재하지 않습니다."));
@@ -72,17 +63,7 @@ public class BookmarkService {
     public <T extends SimplePostDto> PageCustom<T> findBookmarkByMember(
             CustomUserDetails principal, Pageable pageable, String q) {
 
-        if (principal == null) {
-            throw new NoAuthorizationException("북마크 조회 실패: 비로그인 사용자입니다.");
-        }
-
-
-        Member member = memberRepository.findByUsername(principal.getUsername())
-                .orElseThrow(() -> new NoAuthorizationException("북마크 조회 실패: 권한이 없습니다."));
-
-        if (member.getStatus() != MemberStatus.active) {
-            throw new NoAuthorizationException("북마크 조회 실패: 권한이 없습니다.");
-        }
+        Member member = checkMemberValid(principal, "북마크 조회 실패: 비로그인 사용자입니다.", "북마크 조회 실패: 권한이 없습니다.");
 
         Page<Bookmark> page = bookmarkRepository.findByMemberAndPostTitleContains(member, pageable, q);
 
@@ -97,6 +78,7 @@ public class BookmarkService {
     }
 
     //이걸 어따 놓고 쓰는게 좋을까(duplicate to postservice)
+
     private <T extends SimplePostDto> T convertToTransDto(Post post, Member member) {
 
         Meeting meeting = post.getMeeting();
@@ -136,20 +118,10 @@ public class BookmarkService {
         return (T) result;
 
     }
-
     @Transactional
     public void delete(Long postId, CustomUserDetails principal) {
 
-        if (principal == null) {
-            throw new NoAuthorizationException("북마크 삭제 실패: 비로그인 사용자입니다.");
-        }
-
-        Member member = memberRepository.findByUsername(principal.getUsername())
-                .orElseThrow(() -> new NoAuthorizationException("북마크 삭제 실패: 권한이 없습니다."));
-
-        if (member.getStatus() != MemberStatus.active) {
-            throw new NoAuthorizationException("북마크 삭제 실패: 권한이 없습니다.");
-        }
+        Member member = checkMemberValid(principal, "북마크 삭제 실패: 비로그인 사용자입니다.", "북마크 삭제 실패: 권한이 없습니다.");
 
 
         Post targetPost = postRepository.findByIdAndIsDeleteFalse(postId)
@@ -162,6 +134,19 @@ public class BookmarkService {
                 .orElseThrow(()->new BookmarkNotFoundException("북마크 삭제 실패: 해당 북마크가 존재하지 않습니다."));
 
         bookmarkRepository.delete(bookmark);
+    }
+
+    private Member checkMemberValid(CustomUserDetails principal, String noLoginMessage, String notValidUserMessage) {
+        if (principal == null) {
+            throw new NoAuthorizationException(noLoginMessage);
+        }
+
+        Member member = memberRepository.findOne(principal.getId());
+
+        if (member.getStatus() != MemberStatus.active) {
+            throw new NoAuthorizationException(notValidUserMessage);
+        }
+        return member;
     }
 
 }
