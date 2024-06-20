@@ -2,26 +2,21 @@ package sideproject.gugumo.service;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sideproject.gugumo.domain.dto.memberDto.MemberDto;
 import sideproject.gugumo.domain.dto.memberDto.MemberInfoDto;
 import sideproject.gugumo.domain.dto.memberDto.SignUpMemberDto;
-import sideproject.gugumo.domain.dto.memberDto.UpdateMemberInfoDto;
 import sideproject.gugumo.domain.entity.member.FavoriteSport;
 import sideproject.gugumo.domain.entity.member.Member;
 import sideproject.gugumo.domain.entity.member.MemberStatus;
 import sideproject.gugumo.exception.exception.DuplicateEmailException;
 import sideproject.gugumo.exception.exception.DuplicateNicknameException;
-import sideproject.gugumo.exception.exception.NoAuthorizationException;
 import sideproject.gugumo.exception.exception.UserNotFoundException;
 import sideproject.gugumo.repository.FavoriteSportRepository;
 import sideproject.gugumo.repository.MemberRepository;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -111,58 +106,29 @@ public class MemberService {
 
     }
 
-    public MemberInfoDto findByUsername(String username) {
+    // 삭제 예정
+//    public MemberInfoDto findByUsername(String username) {
+//
+//        Member findMember = memberRepository.findByUsername(username)
+//                .orElseThrow(() -> new UserNotFoundException("회원이 없습니다."));
+//
+//        return getMemberInfo(findMember.getId());
+//    }
 
-        Member findMember = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("회원이 없습니다."));
 
-        return getMemberInfo(findMember.getId());
-    }
-
-
-    public MemberInfoDto findByNickname(String nickname) {
-        Member findMember = memberRepository.findByNickname(nickname)
-                .orElseThrow(() -> new UserNotFoundException("회원이 없습니다."));
-
-        return getMemberInfo(findMember.getId());
-    }
+    // 삭제 예정
+//    public MemberInfoDto findByNickname(String nickname) {
+//        Member findMember = memberRepository.findByNickname(nickname)
+//                .orElseThrow(() -> new UserNotFoundException("회원이 없습니다."));
+//
+//        return getMemberInfo(findMember.getId());
+//    }
 
     public Boolean isExistNickname(String nickname) {
         Optional<Member> byNickname = memberRepository.findByNickname(nickname);
 
         return byNickname.isPresent();
     }
-
-//    /**
-//     * 삭제 예정
-//     * @param id
-//     * @param updateMemberInfoDto
-//     */
-//    @Transactional
-//    public void update(Long id, UpdateMemberInfoDto updateMemberInfoDto) {
-//        Optional<Member> findMember = memberRepository.findOne(id);
-//
-//        updateMemberInfoDto.setPassword(passwordEncoder.encode(updateMemberInfoDto.getPassword()));
-//
-//        findMember.ifPresent(member -> member.updateMember(updateMemberInfoDto));
-//    }
-//
-//    /**
-//     * 삭제 예정
-//     * @param id
-//     * @param updateMemberInfoDto
-//     */
-//    @Transactional
-//    public void updateMemberInfo(Long id, UpdateMemberInfoDto updateMemberInfoDto) {
-//        Optional<Member> findMember = memberRepository.findOne(id);
-//
-//        if (findMember.isEmpty()) {
-//            throw new UserNotFoundException("회원이 없습니다.");
-//        }
-//
-//        findMember.get().updateMember(updateMemberInfoDto);
-//
-//    }
 
     @Transactional
     public void updateNickname(Long id, String nickname) {
@@ -175,7 +141,6 @@ public class MemberService {
         findMember.updateMemberNickname(nickname);
     }
 
-    // throw new DuplicateEmailException("이미 존재하는 회원입니다.")
     private void validateDuplicateMemberByUsername(String username) {
         Optional<Member> findMember = memberRepository.findByUsername(username);
 
