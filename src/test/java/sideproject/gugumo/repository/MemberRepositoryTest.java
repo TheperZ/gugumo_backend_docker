@@ -48,7 +48,7 @@ class MemberRepositoryTest {
 //                .status(MemberStatus.active)
 //                .build();
 
-        Member member = Member.createUserBuilder()
+        Member member = Member.builder()
                 .username("email")
                 .password("password")
                 .nickname("nickname")
@@ -56,10 +56,10 @@ class MemberRepositoryTest {
 
         //when
         memberRepository.save(member);
-        Member findMember = memberRepository.findOne(member.getId());
+        Optional<Member> findMember = memberRepository.findOne(member.getId());
 
         //than
-        Assertions.assertThat(findMember).isEqualTo(member);
+        Assertions.assertThat(findMember.get()).isEqualTo(member);
     }
 
 
@@ -67,7 +67,7 @@ class MemberRepositoryTest {
     @DisplayName("findByEmail 함수를 통해 Member를 찾을 수 있다.")
     public void findMemberTest() {
         //given
-        Member member = Member.createUserBuilder()
+        Member member = Member.builder()
                 .username("email")
                 .password("password")
                 .nickname("nickname")
