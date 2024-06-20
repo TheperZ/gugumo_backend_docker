@@ -141,7 +141,10 @@ public class BookmarkService {
             throw new NoAuthorizationException(noLoginMessage);
         }
 
-        Member member = memberRepository.findOne(principal.getId());
+        Member member = memberRepository.findOne(principal.getId())
+                .orElseThrow(
+                        () -> new NoAuthorizationException(notValidUserMessage)
+                );
 
         if (member.getStatus() != MemberStatus.active) {
             throw new NoAuthorizationException(notValidUserMessage);
