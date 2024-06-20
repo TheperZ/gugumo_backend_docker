@@ -20,12 +20,10 @@ import static sideproject.gugumo.domain.entity.post.QPost.post;
 public class CmntRepositoryImpl implements CmntRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
-    private final MemberRepository memberRepository;
 
 
-    public CmntRepositoryImpl(EntityManager em, MemberRepository memberRepository) {
+    public CmntRepositoryImpl(EntityManager em) {
         this.queryFactory = new JPAQueryFactory(em);
-        this.memberRepository = memberRepository;
     }
 
 

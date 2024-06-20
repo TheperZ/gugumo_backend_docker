@@ -143,7 +143,10 @@ public class PostService {
 
         Member member =
                 principal == null ?
-                        null : memberRepository.findOne(principal.getId());
+                        null : memberRepository.findOne(principal.getId())
+                        .orElseThrow(
+                                () -> new NoAuthorizationException("조회 실패: 권한이 없습니다.")
+                        );
 
         if (member != null && member.getStatus() != MemberStatus.active) {
             member = null;
@@ -179,7 +182,9 @@ public class PostService {
         Meeting targetMeeting = targetPost.getMeeting();
 
         Member member = principal == null ?
-                null : memberRepository.findOne(principal.getId());
+                null : memberRepository.findOne(principal.getId()).orElseThrow(
+                () -> new NoAuthorizationException("조회 실패: 권한이 없습니다.")
+        );
 
         if (member != null && member.getStatus() != MemberStatus.active) {
             member = null;
@@ -315,7 +320,9 @@ public class PostService {
         if (principal == null) {
             member = null;
         } else {
-            member = memberRepository.findOne(principal.getId());
+            member = memberRepository.findOne(principal.getId()).orElseThrow(
+                    () -> new NoAuthorizationException("추천글 조회 실패: 권한이 없습니다.")
+            );
 
             if (member.getStatus() != MemberStatus.active) {
                 member = null;
@@ -338,7 +345,10 @@ public class PostService {
         }
 
         //토큰에서
-        Member author = memberRepository.findOne(principal.getId());
+        Member author = memberRepository.findOne(principal.getId())
+                .orElseThrow(
+                        () -> new NoAuthorizationException(notValidUserMessage)
+                );
 
         if (author.getStatus() != MemberStatus.active) {
             throw new NoAuthorizationException(notValidUserMessage);

@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import sideproject.gugumo.domain.dto.memberDto.*;
-import sideproject.gugumo.domain.entity.member.Member;
 import sideproject.gugumo.exception.exception.NoAuthorizationException;
 import sideproject.gugumo.exception.exception.UserNotFoundException;
 import sideproject.gugumo.response.ApiResponse;
@@ -44,77 +43,63 @@ public class MemberApiController {
     }
 
     @GetMapping("/api/v1/member")
-    public ApiResponse<UpdateMemberDto> getMemberInfo(@AuthenticationPrincipal CustomUserDetails principal) {
+    public ApiResponse<MemberInfoDto> getMemberInfo(@AuthenticationPrincipal CustomUserDetails principal) {
 
         String username = principal.getUsername();
-
         long id = principal.getId();
+
+        MemberInfoDto memberInfoDto = memberService.getMemberInfo(id);
+
+        return ApiResponse.createSuccess(memberInfoDto);
+    }
+
+      // 삭제 예정
+//    @PatchMapping("/api/v1/member")
+//    public ApiResponse<UpdateMemberInfoDto> updateMemberInfo(@AuthenticationPrincipal CustomUserDetails principal,
+//                                                             @RequestBody UpdateMemberInfoDto updateMemberInfoDto) {
+//
+//        String username = principal.getUsername();
+//        long id = principal.getId();
+//
 //        MemberDto findMemberDto = memberService.findOne(id);
-        MemberDto findMemberDto = memberService.getMemberInfo(id, username);
-
-        if(findMemberDto == null) {
-            throw new UserNotFoundException(username + " 회원이 없습니다.");
-        }
-
-        if(!Objects.equals(findMemberDto.getUsername(), username)) {
-            throw new NoAuthorizationException("권한이 없습니다.");
-        }
-
-        UpdateMemberDto updateMemberDto = UpdateMemberDto.builder()
-                .nickname(findMemberDto.getNickname())
-                .profileImagePath(findMemberDto.getProfileImagePath())
-                .password("")
-                .build();
-
-        return ApiResponse.createSuccess(updateMemberDto);
-    }
-
-    @PatchMapping("/api/v1/member")
-    public ApiResponse<UpdateMemberDto> editMember(@AuthenticationPrincipal CustomUserDetails principal,
-                           @RequestBody UpdateMemberDto updateMemberDto) {
-
-        String username = principal.getUsername();
-
-        MemberDto findMemberDto = memberService.findByUsername(username);
-
-        if (findMemberDto == null) {
-            throw new UserNotFoundException(username + " 회원이 없습니다.");
-        }
-
-        if(!Objects.equals(findMemberDto.getUsername(), username)) {
-            throw new NoAuthorizationException("권한이 없습니다.");
-        }
-
-        //TODO update 시 비밀번호 체크 등 검증 필요
-        memberService.update(findMemberDto.getId(), updateMemberDto);
-
-        // update를 진행한 후 update된 member를 다시 조회해서 확실하게 된것을 검증
-        MemberDto newMemberDto = memberService.findOne(findMemberDto.getId());
-
-        UpdateMemberDto newUpdateMemberDto = UpdateMemberDto.builder()
-                .profileImagePath(newMemberDto.getProfileImagePath())
-                .nickname(newMemberDto.getNickname())
-                .password("")
-                .build();
-
-        return ApiResponse.createSuccess(newUpdateMemberDto);
-    }
+//
+//        if (findMemberDto == null) {
+//            throw new UserNotFoundException(username + " 회원이 없습니다.");
+//        }
+//
+//        if(!Objects.equals(findMemberDto.getUsername(), username)) {
+//            throw new NoAuthorizationException("권한이 없습니다.");
+//        }
+//
+//        //TODO update 시 비밀번호 체크 등 검증 필요
+//        memberService.update(findMemberDto.getId(), updateMemberInfoDto);
+//
+//        // update를 진행한 후 update된 member를 다시 조회해서 확실하게 된것을 검증
+//        MemberDto newMemberDto = memberService.findOne(findMemberDto.getId());
+//
+//        UpdateMemberInfoDto newUpdateMemberInfoDto = UpdateMemberInfoDto.builder()
+//                .profileImagePath(newMemberDto.getProfileImagePath())
+//                .nickname(newMemberDto.getNickname())
+//                .password("")
+//                .build();
+//
+//        return ApiResponse.createSuccess(newUpdateMemberInfoDto);
+//    }
 
     @PatchMapping("/api/v1/member/updateNickname")
-    public ApiResponse<String> updateMemberNickname(@AuthenticationPrincipal CustomUserDetails principal,
+    public ApiResponse<MemberInfoDto> updateMemberNickname(@AuthenticationPrincipal CustomUserDetails principal,
                                                    @RequestBody UpdateMemberNicknameDto updateMemberNicknameDto) {
 
-        String username = principal.getUsername();
+        String updateNickname = updateMemberNicknameDto.getNickname();
+        long id = principal.getId();
 
-        MemberDto member = memberService.findByUsername(username);
+        // 회원 정보 수정
+        memberService.updateNickname(id, updateNickname);
 
-        memberService.updateNickname(member.getId(), updateMemberNicknameDto.getNickname());
+        // 수정한 정보로 회원 조회
+        MemberInfoDto memberInfo = memberService.getMemberInfo(id);
 
-        MemberDto updateMember = memberService.findOne(member.getId());
-
-        String updateMemberNickname = updateMember.getNickname();
-
-        return ApiResponse.createSuccess(updateMemberNickname);
+        return ApiResponse.createSuccess(memberInfo);
     }
 
     @GetMapping("/api/v1/member/checkDuplicateNickname")
@@ -129,11 +114,9 @@ public class MemberApiController {
     public ApiResponse<Boolean> updateMemberPassword(@AuthenticationPrincipal CustomUserDetails principal,
                                                     @RequestBody UpdateMemberPasswordDto updateMemberPasswordDto) {
 
-        String username = principal.getUsername();
+        long id = principal.getId();
 
-        MemberDto member = memberService.findByUsername(username);
-
-        memberService.updatePassword(member.getId(), updateMemberPasswordDto.getPassword());
+        memberService.updatePassword(id, updateMemberPasswordDto.getPassword());
 
         return ApiResponse.createSuccess(true);
     }
@@ -141,9 +124,9 @@ public class MemberApiController {
     @DeleteMapping("/api/v1/member")
     public ApiResponse<Boolean> deleteMember(@AuthenticationPrincipal CustomUserDetails principal) {
 
-        String username = principal.getUsername();
+        long id = principal.getId();
 
-        memberService.deleteMember(username);
+        memberService.deleteMember(id);
 
         return ApiResponse.createSuccess(true);
     }
