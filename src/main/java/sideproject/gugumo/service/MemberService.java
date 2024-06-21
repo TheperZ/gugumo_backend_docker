@@ -2,9 +2,12 @@ package sideproject.gugumo.service;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sideproject.gugumo.domain.dto.memberDto.EmailLoginCreateJwtDto;
+import sideproject.gugumo.domain.dto.memberDto.EmailLoginRequestDto;
 import sideproject.gugumo.domain.dto.memberDto.MemberInfoDto;
 import sideproject.gugumo.domain.dto.memberDto.SignUpMemberDto;
 import sideproject.gugumo.domain.entity.member.FavoriteSport;
@@ -13,6 +16,7 @@ import sideproject.gugumo.domain.entity.member.MemberStatus;
 import sideproject.gugumo.exception.exception.DuplicateEmailException;
 import sideproject.gugumo.exception.exception.DuplicateNicknameException;
 import sideproject.gugumo.exception.exception.UserNotFoundException;
+import sideproject.gugumo.jwt.JwtUtil;
 import sideproject.gugumo.repository.FavoriteSportRepository;
 import sideproject.gugumo.repository.MemberRepository;
 
@@ -27,6 +31,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final FavoriteSportRepository favoriteSportRepository;
+    private final JwtUtil jwtUtil;
 
     @Transactional
     public Long join(SignUpMemberDto signUpMemberDto) {
@@ -189,5 +194,26 @@ public class MemberService {
         }
 
         findMember.deleteMember();
+    }
+
+    public String emailLogin(EmailLoginRequestDto emailLoginRequestDto) {
+
+        Member findMember = memberRepository.findByUsername(emailLoginRequestDto.getUsername())
+                .orElseThrow(() ->
+                        new UserNotFoundException("회원이 없습니다.")
+                );
+
+        if(!passwordEncoder.matches(emailLoginRequestDto.getPassword(), findMember.getPassword())) {
+            throw new BadCredentialsException("비밀번호가 틀렸습니다.");
+        }
+
+        EmailLoginCreateJwtDto emailLoginDto = EmailLoginCreateJwtDto.builder()
+                .id(findMember.getId())
+                .username(findMember.getUsername())
+                .role(findMember.getRole().name())
+                .requestTimeMs(System.currentTimeMillis())
+                .build();
+
+        return jwtUtil.createJwt(emailLoginDto);
     }
 }

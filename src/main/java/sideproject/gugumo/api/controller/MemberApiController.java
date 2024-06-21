@@ -6,13 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import sideproject.gugumo.domain.dto.memberDto.*;
-import sideproject.gugumo.exception.exception.NoAuthorizationException;
-import sideproject.gugumo.exception.exception.UserNotFoundException;
 import sideproject.gugumo.response.ApiResponse;
 import sideproject.gugumo.service.MailSenderService;
 import sideproject.gugumo.service.MemberService;
-
-import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,6 +16,15 @@ public class MemberApiController {
 
     private final MemberService memberService;
     private final MailSenderService mailService;
+
+    @PostMapping("/api/v1/emailLogin")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<String> emailLogin(@RequestBody EmailLoginRequestDto emailLoginRequestDto) {
+
+        String token = memberService.emailLogin(emailLoginRequestDto);
+
+        return ApiResponse.createSuccess("Bearer " + token);
+    }
 
     @PostMapping("/api/v2/member")
     @ResponseStatus(HttpStatus.CREATED)
@@ -35,7 +40,6 @@ public class MemberApiController {
     @GetMapping("/api/v1/member")
     public ApiResponse<MemberInfoDto> getMemberInfo(@AuthenticationPrincipal CustomUserDetails principal) {
 
-        String username = principal.getUsername();
         long id = principal.getId();
 
         MemberInfoDto memberInfoDto = memberService.getMemberInfo(id);
