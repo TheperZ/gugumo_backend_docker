@@ -47,7 +47,7 @@ public class MemberService {
 
         String favoriteSports = signUpMemberDto.getFavoriteSports();
 
-        if(favoriteSports != null) {
+        if(!favoriteSports.isEmpty()) {
             String[] split = favoriteSports.split(",");
             for(String str : split) {
                 FavoriteSport favoriteSport = FavoriteSport.createFavoriteSport(str, joinMember);
@@ -92,11 +92,13 @@ public class MemberService {
 
         StringBuilder favoriteSports = new StringBuilder();
 
-        for (FavoriteSport fs : favoriteSportList) {
-            favoriteSports.append(fs.getGameType().name());
-            favoriteSports.append(',');
+        if(!favoriteSportList.isEmpty()) {
+            for (FavoriteSport fs : favoriteSportList) {
+                favoriteSports.append(fs.getGameType().name());
+                favoriteSports.append(',');
+            }
+            favoriteSports.deleteCharAt(favoriteSports.length()-1);
         }
-        favoriteSports.deleteCharAt(favoriteSports.length()-1);
 
         return MemberInfoDto.builder()
                 .username(findMember.getUsername())
