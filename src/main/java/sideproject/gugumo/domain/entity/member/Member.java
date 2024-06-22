@@ -82,15 +82,6 @@ public class Member {
         this.password = password;
     }
 
-//    public void updateMember(UpdateMemberInfoDto updateMemberInfoDto) {
-//        this.nickname = updateMemberInfoDto.getNickname();
-//        this.profileImagePath = updateMemberInfoDto.getProfileImagePath();
-//
-//        if(updateMemberInfoDto.getPassword() != null && StringUtils.hasText(this.password = updateMemberInfoDto.getPassword())) {
-//            this.password = updateMemberInfoDto.getPassword();
-//        }
-//    }
-
     public void deleteMember() {
         this.status = MemberStatus.delete;
     }
@@ -108,15 +99,15 @@ public class Member {
         return Objects.hash(username, password, nickname);
     }
 
-    @Override
-    public String toString() {
-        return "Member{" +
-                "id=" + id +
-                ", email='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", nickname='" + nickname + '\'' +
-                ", profileImagePath='" + profileImagePath + '\'' +
-                ", status=" + status +
-                '}';
-    }
+//    @Override
+//    public String toString() {
+//        return "Member{" +
+//                "id=" + id +
+//                ", email='" + username + '\'' +
+//                ", password='" + password + '\'' +
+//                ", nickname='" + nickname + '\'' +
+//                ", profileImagePath='" + profileImagePath + '\'' +
+//                ", status=" + status +
+//                '}';
+//    }
 }

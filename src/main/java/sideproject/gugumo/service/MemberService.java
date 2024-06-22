@@ -20,6 +20,7 @@ import sideproject.gugumo.jwt.JwtUtil;
 import sideproject.gugumo.repository.FavoriteSportRepository;
 import sideproject.gugumo.repository.MemberRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,11 +54,7 @@ public class MemberService {
         String favoriteSports = signUpMemberDto.getFavoriteSports();
 
         if(!favoriteSports.isEmpty()) {
-            String[] split = favoriteSports.split(",");
-            for(String str : split) {
-                FavoriteSport favoriteSport = FavoriteSport.createFavoriteSport(str, joinMember);
-                favoriteSportRepository.save(favoriteSport);
-            }
+            saveFavoriteSports(favoriteSports, joinMember);
         }
         
         memberRepository.save(joinMember);
@@ -65,6 +62,13 @@ public class MemberService {
         return joinMember.getId();
     }
 
+    public void saveFavoriteSports(String favoriteSports, Member joinMember) {
+        String[] split = favoriteSports.split(",");
+        for(String str : split) {
+            FavoriteSport favoriteSport = FavoriteSport.createFavoriteSport(str, joinMember);
+            favoriteSportRepository.save(favoriteSport);
+        }
+    }
 
     public MemberInfoDto getMemberInfo(Long id) {
 
@@ -72,6 +76,18 @@ public class MemberService {
                 .orElseThrow(()->new UserNotFoundException("회원이 없습니다."));
 
         List<FavoriteSport> favoriteSportList = favoriteSportRepository.getFavoriteSports(findMember);
+
+        String favoriteSports = getFavoritesToString(favoriteSportList);
+
+        return MemberInfoDto.builder()
+                .username(findMember.getUsername())
+                .nickname(findMember.getNickname())
+                .favoriteSports(favoriteSports)
+                .build();
+
+    }
+
+    public String getFavoritesToString(List<FavoriteSport> favoriteSportList) {
 
         StringBuilder favoriteSports = new StringBuilder();
 
@@ -83,31 +99,8 @@ public class MemberService {
             favoriteSports.deleteCharAt(favoriteSports.length()-1);
         }
 
-        return MemberInfoDto.builder()
-                .username(findMember.getUsername())
-                .nickname(findMember.getNickname())
-                .favoriteSports(favoriteSports.toString())
-                .build();
-
+        return favoriteSports.toString();
     }
-
-    // 삭제 예정
-//    public MemberInfoDto findByUsername(String username) {
-//
-//        Member findMember = memberRepository.findByUsername(username)
-//                .orElseThrow(() -> new UserNotFoundException("회원이 없습니다."));
-//
-//        return getMemberInfo(findMember.getId());
-//    }
-
-
-    // 삭제 예정
-//    public MemberInfoDto findByNickname(String nickname) {
-//        Member findMember = memberRepository.findByNickname(nickname)
-//                .orElseThrow(() -> new UserNotFoundException("회원이 없습니다."));
-//
-//        return getMemberInfo(findMember.getId());
-//    }
 
     public Boolean isExistNickname(String nickname) {
         Optional<Member> byNickname = memberRepository.findByNickname(nickname);
@@ -168,7 +161,7 @@ public class MemberService {
                 .orElseThrow(() -> new UserNotFoundException("회원이 없습니다."));
 
         if(findMember.getStatus() == MemberStatus.delete) {
-            throw new IllegalStateException("이미 탈퇴한 회원입니다.");
+            throw new UserNotFoundException("이미 탈퇴한 회원입니다.");
         }
 
         findMember.deleteMember();
@@ -177,9 +170,7 @@ public class MemberService {
     public String emailLogin(EmailLoginRequestDto emailLoginRequestDto) {
 
         Member findMember = memberRepository.findByUsername(emailLoginRequestDto.getUsername())
-                .orElseThrow(() ->
-                        new UserNotFoundException("회원이 없습니다.")
-                );
+                .orElseThrow(() -> new UserNotFoundException("회원이 없습니다."));
 
         if(!passwordEncoder.matches(emailLoginRequestDto.getPassword(), findMember.getPassword())) {
             throw new BadCredentialsException("비밀번호가 틀렸습니다.");
@@ -189,7 +180,7 @@ public class MemberService {
                 .id(findMember.getId())
                 .username(findMember.getUsername())
                 .role(findMember.getRole().name())
-                .requestTimeMs(System.currentTimeMillis())
+                .requestTimeMs(LocalDateTime.now())
                 .build();
 
         return jwtUtil.createJwt(emailLoginDto);
