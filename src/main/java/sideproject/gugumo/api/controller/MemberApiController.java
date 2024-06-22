@@ -32,7 +32,7 @@ public class MemberApiController {
 
         mailService.checkAuthNum(signUpMemberDto.getUsername(), signUpMemberDto.getEmailAuthNum());
 
-        Long joinId = memberService.join(signUpMemberDto);
+        Long joinId = memberService.joinMember(signUpMemberDto);
 
         return ApiResponse.createSuccess(joinId);
     }

@@ -62,7 +62,7 @@ public class Member {
     }
 
     @Builder(builderClassName = "UserJoin", builderMethodName = "userJoin")
-    public Member(Long id, String username, String password, String nickname, Boolean isAgreeTermsUse, Boolean isAgreeCollectingUsingPersonalInformation, Boolean isAgreeMarketing, List<FavoriteSport> favoriteSports) {
+    public Member(Long id, String username, String password, String nickname, Boolean isAgreeTermsUse, Boolean isAgreeCollectingUsingPersonalInformation, Boolean isAgreeMarketing) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -70,7 +70,6 @@ public class Member {
         this.isAgreeTermsUse = isAgreeTermsUse;
         this.isAgreeCollectingUsingPersonalInformation = isAgreeCollectingUsingPersonalInformation;
         this.isAgreeMarketing = isAgreeMarketing;
-        this.favoriteSports = favoriteSports;
         this.role = MemberRole.ROLE_USER;
         this.status = MemberStatus.active;
     }

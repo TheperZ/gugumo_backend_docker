@@ -34,7 +34,7 @@ public class MemberService {
     private final JwtUtil jwtUtil;
 
     @Transactional
-    public Long join(SignUpMemberDto signUpMemberDto) {
+    public Long joinMember(SignUpMemberDto signUpMemberDto) {
 
         String encodePassword = passwordEncoder.encode(signUpMemberDto.getPassword());
 
@@ -65,28 +65,6 @@ public class MemberService {
         return joinMember.getId();
     }
 
-//    /**
-//     * deprecated
-//     * @param memberId
-//     * @return
-//     */
-//    public MemberDto findOne(Long memberId) {
-//
-//        Member findMember = memberRepository.findOne(memberId);
-//
-//        if (findMember == null) {
-//            throw new UserNotFoundException("회원이 없습니다.");
-//        }
-//
-//        return MemberDto.builder()
-//                .id(findMember.getId())
-//                .username(findMember.getUsername())
-//                .nickname(findMember.getNickname())
-//                .role(findMember.getRole())
-//                .status(findMember.getStatus())
-//                .profileImagePath(findMember.getProfileImagePath())
-//                .build();
-//    }
 
     public MemberInfoDto getMemberInfo(Long id) {
 
