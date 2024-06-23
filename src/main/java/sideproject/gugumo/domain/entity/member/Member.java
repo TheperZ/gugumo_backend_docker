@@ -16,34 +16,39 @@ import java.util.Objects;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
 
+    // 공통 속성
     @Id @GeneratedValue
     @Column(name = "member_id")
     private Long id;
-    private String username;
-    private String password;
     private String nickname;
     private String profileImagePath;
     @Enumerated(EnumType.STRING)
-    MemberStatus status;
+    private MemberStatus status;
     @Enumerated(EnumType.STRING)
     @JsonProperty
-    MemberRole role;
-
+    private MemberRole role;
     // 서비스 이용 약관 동의 여부
-    Boolean isAgreeTermsUse;
+    private Boolean isAgreeTermsUse;
     // 개인정보 수집 및 이용 동의
-    Boolean isAgreeCollectingUsingPersonalInformation;
+    private Boolean isAgreeCollectingUsingPersonalInformation;
     // 마케팅 수신 동의
-    Boolean isAgreeMarketing;
-
+    private Boolean isAgreeMarketing;
     @OneToMany(mappedBy = "member")
     private List<FavoriteSport> favoriteSports = new ArrayList<>();
+    
+    // email 속성
+    private Boolean isEmailLogin;
+    private String username;
+    private String password;
+    
+    // kakao 속성
+    private Boolean isKakaoLogin;
+    private Long kakaoId;
+    private String kakaoNickname;
 
-    @Builder
-    public Member(Long id, String username, String password, String nickname, String profileImagePath, MemberStatus status, MemberRole role, Boolean isAgreeTermsUse, Boolean isAgreeCollectingUsingPersonalInformation, Boolean isAgreeMarketing, List<FavoriteSport> favoriteSports) {
+
+    public Member(Long id, String nickname, String profileImagePath, MemberStatus status, MemberRole role, Boolean isAgreeTermsUse, Boolean isAgreeCollectingUsingPersonalInformation, Boolean isAgreeMarketing, List<FavoriteSport> favoriteSports, Boolean isEmailLogin, String username, String password, Boolean isKakaoLogin, Long kakaoId, String kakaoNickname) {
         this.id = id;
-        this.username = username;
-        this.password = password;
         this.nickname = nickname;
         this.profileImagePath = profileImagePath;
         this.status = status;
@@ -52,6 +57,12 @@ public class Member {
         this.isAgreeCollectingUsingPersonalInformation = isAgreeCollectingUsingPersonalInformation;
         this.isAgreeMarketing = isAgreeMarketing;
         this.favoriteSports = favoriteSports;
+        this.isEmailLogin = isEmailLogin;
+        this.username = username;
+        this.password = password;
+        this.isKakaoLogin = isKakaoLogin;
+        this.kakaoId = kakaoId;
+        this.kakaoNickname = kakaoNickname;
     }
 
     @Builder(builderClassName = "UserLogin", builderMethodName = "userLogin")
@@ -61,8 +72,8 @@ public class Member {
         this.role = role;
     }
 
-    @Builder(builderClassName = "UserJoin", builderMethodName = "userJoin")
-    public Member(Long id, String username, String password, String nickname, Boolean isAgreeTermsUse, Boolean isAgreeCollectingUsingPersonalInformation, Boolean isAgreeMarketing, List<FavoriteSport> favoriteSports) {
+    @Builder(builderClassName = "EmailJoin", builderMethodName = "emailJoin")
+    public Member(Long id, String username, String password, String nickname, Boolean isAgreeTermsUse, Boolean isAgreeCollectingUsingPersonalInformation, Boolean isAgreeMarketing) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -70,9 +81,23 @@ public class Member {
         this.isAgreeTermsUse = isAgreeTermsUse;
         this.isAgreeCollectingUsingPersonalInformation = isAgreeCollectingUsingPersonalInformation;
         this.isAgreeMarketing = isAgreeMarketing;
-        this.favoriteSports = favoriteSports;
         this.role = MemberRole.ROLE_USER;
         this.status = MemberStatus.active;
+        this.isEmailLogin = true;
+    }
+
+    @Builder(builderClassName = "KakaoJoin", builderMethodName = "kakaoJoin")
+    public Member(Long id, String nickname, Boolean isAgreeTermsUse, Boolean isAgreeCollectingUsingPersonalInformation, Boolean isAgreeMarketing, Long kakaoId, String kakaoNickname) {
+        this.id = id;
+        this.nickname = nickname;
+        this.isAgreeTermsUse = isAgreeTermsUse;
+        this.isAgreeCollectingUsingPersonalInformation = isAgreeCollectingUsingPersonalInformation;
+        this.isAgreeMarketing = isAgreeMarketing;
+        this.kakaoId = kakaoId;
+        this.kakaoNickname = kakaoNickname;
+        this.role = MemberRole.ROLE_USER;
+        this.status = MemberStatus.active;
+        this.isKakaoLogin = true;
     }
 
     public void updateMemberNickname(String nickname) {
@@ -82,15 +107,6 @@ public class Member {
     public void updateMemberPassword(String password) {
         this.password = password;
     }
-
-//    public void updateMember(UpdateMemberInfoDto updateMemberInfoDto) {
-//        this.nickname = updateMemberInfoDto.getNickname();
-//        this.profileImagePath = updateMemberInfoDto.getProfileImagePath();
-//
-//        if(updateMemberInfoDto.getPassword() != null && StringUtils.hasText(this.password = updateMemberInfoDto.getPassword())) {
-//            this.password = updateMemberInfoDto.getPassword();
-//        }
-//    }
 
     public void deleteMember() {
         this.status = MemberStatus.delete;
@@ -107,17 +123,5 @@ public class Member {
     @Override
     public int hashCode() {
         return Objects.hash(username, password, nickname);
-    }
-
-    @Override
-    public String toString() {
-        return "Member{" +
-                "id=" + id +
-                ", email='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", nickname='" + nickname + '\'' +
-                ", profileImagePath='" + profileImagePath + '\'' +
-                ", status=" + status +
-                '}';
     }
 }

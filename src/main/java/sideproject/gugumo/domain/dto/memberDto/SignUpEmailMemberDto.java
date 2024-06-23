@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class SignUpMemberDto {
+public class SignUpEmailMemberDto {
     private String nickname;
     private String username;
     private String password;
@@ -20,7 +20,7 @@ public class SignUpMemberDto {
     boolean isAgreeMarketing;
 
     @Builder
-    public SignUpMemberDto(String nickname, String username, String password, String favoriteSports, String emailAuth, boolean isAgreeTermsUse, boolean isAgreeCollectingUsingPersonalInformation, boolean isAgreeMarketing) {
+    public SignUpEmailMemberDto(String nickname, String username, String password, String favoriteSports, String emailAuth, boolean isAgreeTermsUse, boolean isAgreeCollectingUsingPersonalInformation, boolean isAgreeMarketing) {
         this.nickname = nickname;
         this.username = username;
         this.password = password;

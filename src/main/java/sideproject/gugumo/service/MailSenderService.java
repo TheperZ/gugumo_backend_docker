@@ -72,7 +72,7 @@ public class MailSenderService {
         String setFrom = "gugumo024@gmail.com";
         String title = "gugumo 새 비밀번호입니다.";
         String content =
-                "gugumo 새로운 비밀번호는 " + newPassword + " 입니다."
+                "gugumo 새로운 비밀번호는 " + newPassword + "입니다."
                 ;
 
         mailSend(setFrom, email, title, content);
