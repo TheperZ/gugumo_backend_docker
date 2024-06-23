@@ -28,11 +28,11 @@ public class MemberApiController {
 
     @PostMapping("/api/v2/member")
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<Boolean> saveMemberWithEmailAuth(@RequestBody @Valid SignUpMemberDto signUpMemberDto) {
+    public ApiResponse<Boolean> joinMemberWithEmailAuth(@RequestBody @Valid SignUpEmailMemberDto signUpEmailMemberDto) {
 
-        mailService.checkAuthNum(signUpMemberDto.getUsername(), signUpMemberDto.getEmailAuthNum());
+        mailService.checkAuthNum(signUpEmailMemberDto.getUsername(), signUpEmailMemberDto.getEmailAuthNum());
 
-        Long joinId = memberService.joinMember(signUpMemberDto);
+        Long joinId = memberService.joinMember(signUpEmailMemberDto);
 
         return ApiResponse.createSuccess(true);
     }

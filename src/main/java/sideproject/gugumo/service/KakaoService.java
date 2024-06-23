@@ -3,22 +3,29 @@ package sideproject.gugumo.service;
 import io.netty.handler.codec.http.HttpHeaderValues;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import sideproject.gugumo.domain.dto.memberDto.KakaoTokenResponseDto;
 import sideproject.gugumo.domain.dto.memberDto.KakaoUserInfoResponseDto;
+import sideproject.gugumo.domain.dto.memberDto.SignUpKakaoMemberDto;
+import sideproject.gugumo.domain.entity.member.Member;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class KakaoService {
 
-    private String cliendId = "e9edf705eb8a0c70b18b798cf80b5590";
-    private final String KAUTH_TOKEN_URL_HOST = "https://kauth.kakao.com";
-    private final String KAUTH_USER_URL_HOST = "https://kapi.kakao.com";
+    @Value("${kakao.restKey}")
+    private String cliendId;
+    @Value("${kakao.secretKey}")
+    private String secretKey;
+    private String KAUTH_TOKEN_URL_HOST = "https://kauth.kakao.com";
+    private String KAUTH_USER_URL_HOST = "https://kapi.kakao.com";
 
     public String getAccessTokenFromKakao(String code) {
         KakaoTokenResponseDto kakaoTokenResponseDto = WebClient.create(KAUTH_TOKEN_URL_HOST).post()
@@ -28,6 +35,7 @@ public class KakaoService {
                         .queryParam("grant_type", "authorization_code")
                         .queryParam("client_id", cliendId)
                         .queryParam("code", code)
+                        .queryParam("client_secret", secretKey)
                         .build(true))
                 .header(HttpHeaders.CONTENT_TYPE, HttpHeaderValues.APPLICATION_X_WWW_FORM_URLENCODED.toString())
                 .retrieve()

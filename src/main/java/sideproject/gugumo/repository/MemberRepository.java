@@ -36,4 +36,10 @@ public class MemberRepository {
                 .setParameter("nickname", nickname)
                 .getResultList().stream().findAny();
     }
+
+    public Optional<Member> findByKakaoId(Long id) {
+        return em.createQuery("select m from Member m where m.kakaoId = :id", Member.class)
+                .setParameter("id", id)
+                .getResultList().stream().findAny();
+    }
 }

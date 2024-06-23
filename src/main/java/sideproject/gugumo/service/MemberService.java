@@ -6,10 +6,8 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sideproject.gugumo.domain.dto.memberDto.EmailLoginCreateJwtDto;
-import sideproject.gugumo.domain.dto.memberDto.EmailLoginRequestDto;
-import sideproject.gugumo.domain.dto.memberDto.MemberInfoDto;
-import sideproject.gugumo.domain.dto.memberDto.SignUpMemberDto;
+import org.springframework.web.bind.annotation.RequestBody;
+import sideproject.gugumo.domain.dto.memberDto.*;
 import sideproject.gugumo.domain.entity.member.FavoriteSport;
 import sideproject.gugumo.domain.entity.member.Member;
 import sideproject.gugumo.domain.entity.member.MemberStatus;
@@ -35,23 +33,23 @@ public class MemberService {
     private final JwtUtil jwtUtil;
 
     @Transactional
-    public Long joinMember(SignUpMemberDto signUpMemberDto) {
+    public Long joinMember(SignUpEmailMemberDto signUpEmailMemberDto) {
 
-        String encodePassword = passwordEncoder.encode(signUpMemberDto.getPassword());
+        String encodePassword = passwordEncoder.encode(signUpEmailMemberDto.getPassword());
 
-        Member joinMember = Member.userJoin()
-                .username(signUpMemberDto.getUsername())
-                .nickname(signUpMemberDto.getNickname())
+        Member joinMember = Member.emailJoin()
+                .username(signUpEmailMemberDto.getUsername())
+                .nickname(signUpEmailMemberDto.getNickname())
                 .password(encodePassword)
-                .isAgreeMarketing(signUpMemberDto.isAgreeMarketing())
-                .isAgreeCollectingUsingPersonalInformation(signUpMemberDto.isAgreeCollectingUsingPersonalInformation())
-                .isAgreeTermsUse(signUpMemberDto.isAgreeTermsUse())
+                .isAgreeMarketing(signUpEmailMemberDto.isAgreeMarketing())
+                .isAgreeCollectingUsingPersonalInformation(signUpEmailMemberDto.isAgreeCollectingUsingPersonalInformation())
+                .isAgreeTermsUse(signUpEmailMemberDto.isAgreeTermsUse())
                 .build();
 
         validateDuplicateMemberByUsername(joinMember.getUsername());
         validateDuplicateMemberByNickname(joinMember.getNickname());
 
-        String favoriteSports = signUpMemberDto.getFavoriteSports();
+        String favoriteSports = signUpEmailMemberDto.getFavoriteSports();
 
         if(!favoriteSports.isEmpty()) {
             saveFavoriteSports(favoriteSports, joinMember);
@@ -60,6 +58,28 @@ public class MemberService {
         memberRepository.save(joinMember);
 
         return joinMember.getId();
+    }
+
+    @Transactional
+    public void kakaoJoinMember(SignUpKakaoMemberDto signUpKakaoMemberDto) {
+
+        Member joinMember = Member.kakaoJoin()
+                .kakaoId(signUpKakaoMemberDto.getKakaoId())
+                .nickname(signUpKakaoMemberDto.getNickname())
+                .isAgreeMarketing(signUpKakaoMemberDto.isAgreeMarketing())
+                .isAgreeTermsUse(signUpKakaoMemberDto.isAgreeTermsUse())
+                .isAgreeCollectingUsingPersonalInformation(signUpKakaoMemberDto.isAgreeCollectingUsingPersonalInformation())
+                .build();
+
+        validateDuplicateMemberByNickname(joinMember.getNickname());
+
+        String favoriteSports = signUpKakaoMemberDto.getFavoriteSports();
+
+        if(!favoriteSports.isEmpty()) {
+            saveFavoriteSports(favoriteSports, joinMember);
+        }
+
+        memberRepository.save(joinMember);
     }
 
     public void saveFavoriteSports(String favoriteSports, Member joinMember) {
@@ -179,6 +199,33 @@ public class MemberService {
         EmailLoginCreateJwtDto emailLoginDto = EmailLoginCreateJwtDto.builder()
                 .id(findMember.getId())
                 .username(findMember.getUsername())
+                .role(findMember.getRole().name())
+                .requestTimeMs(LocalDateTime.now())
+                .build();
+
+        return jwtUtil.createJwt(emailLoginDto);
+    }
+
+    public Boolean isJoinedKakaoMember(Long id) {
+
+        return memberRepository.findByKakaoId(id).isPresent();
+    }
+
+    public Member getMemberByKakaoId(Long id) {
+
+        return memberRepository.findByKakaoId(id)
+                .orElseThrow(()->new UserNotFoundException("회원이 없습니다."));
+    }
+
+    // TODO USERNAME 수정(JWT 토큰 발급할 때 clame에 username 속성 빼기)
+    public String kakaoLogin(long id) {
+
+        Member findMember = memberRepository.findByKakaoId(id)
+                .orElseThrow(()->new UserNotFoundException("회원이 없습니다."));
+
+        EmailLoginCreateJwtDto emailLoginDto = EmailLoginCreateJwtDto.builder()
+                .id(findMember.getId())
+                .username("username")
                 .role(findMember.getRole().name())
                 .requestTimeMs(LocalDateTime.now())
                 .build();
