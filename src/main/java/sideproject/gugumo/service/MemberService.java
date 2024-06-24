@@ -6,7 +6,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 import sideproject.gugumo.domain.dto.memberDto.*;
 import sideproject.gugumo.domain.entity.member.FavoriteSport;
 import sideproject.gugumo.domain.entity.member.Member;
@@ -65,12 +64,14 @@ public class MemberService {
 
         Member joinMember = Member.kakaoJoin()
                 .kakaoId(signUpKakaoMemberDto.getKakaoId())
+                .username(signUpKakaoMemberDto.getUsername())
                 .nickname(signUpKakaoMemberDto.getNickname())
                 .isAgreeMarketing(signUpKakaoMemberDto.isAgreeMarketing())
                 .isAgreeTermsUse(signUpKakaoMemberDto.isAgreeTermsUse())
                 .isAgreeCollectingUsingPersonalInformation(signUpKakaoMemberDto.isAgreeCollectingUsingPersonalInformation())
                 .build();
 
+        validateDuplicateMemberByUsername(joinMember.getUsername());
         validateDuplicateMemberByNickname(joinMember.getNickname());
 
         String favoriteSports = signUpKakaoMemberDto.getFavoriteSports();
@@ -123,9 +124,15 @@ public class MemberService {
     }
 
     public Boolean isExistNickname(String nickname) {
-        Optional<Member> byNickname = memberRepository.findByNickname(nickname);
+        Optional<Member> findMember = memberRepository.findByNickname(nickname);
 
-        return byNickname.isPresent();
+        return findMember.isPresent();
+    }
+
+    public Boolean isExistUsername(String username) {
+        Optional<Member> findMember = memberRepository.findByUsername(username);
+
+        return findMember.isPresent();
     }
 
     @Transactional
@@ -143,7 +150,7 @@ public class MemberService {
         Optional<Member> findMember = memberRepository.findByUsername(username);
 
         if(findMember.isPresent()) {
-            throw new DuplicateEmailException("이미 존재하는 회원입니다.");
+            throw new DuplicateEmailException("이미 존재하는 이메일입니다.");
         }
     }
 
@@ -196,14 +203,14 @@ public class MemberService {
             throw new BadCredentialsException("비밀번호가 틀렸습니다.");
         }
 
-        EmailLoginCreateJwtDto emailLoginDto = EmailLoginCreateJwtDto.builder()
+        LoginCreateJwtDto loginDto = LoginCreateJwtDto.builder()
                 .id(findMember.getId())
                 .username(findMember.getUsername())
                 .role(findMember.getRole().name())
                 .requestTimeMs(LocalDateTime.now())
                 .build();
 
-        return jwtUtil.createJwt(emailLoginDto);
+        return jwtUtil.createJwt(loginDto);
     }
 
     public Boolean isJoinedKakaoMember(Long id) {
@@ -211,25 +218,19 @@ public class MemberService {
         return memberRepository.findByKakaoId(id).isPresent();
     }
 
-    public Member getMemberByKakaoId(Long id) {
-
-        return memberRepository.findByKakaoId(id)
-                .orElseThrow(()->new UserNotFoundException("회원이 없습니다."));
-    }
-
     // TODO USERNAME 수정(JWT 토큰 발급할 때 clame에 username 속성 빼기)
-    public String kakaoLogin(long id) {
+    public String kakaoLogin(String username) {
 
-        Member findMember = memberRepository.findByKakaoId(id)
-                .orElseThrow(()->new UserNotFoundException("회원이 없습니다."));
+        Member findMember = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("회원이 없습니다."));
 
-        EmailLoginCreateJwtDto emailLoginDto = EmailLoginCreateJwtDto.builder()
+        LoginCreateJwtDto loginDto = LoginCreateJwtDto.builder()
                 .id(findMember.getId())
                 .username("username")
                 .role(findMember.getRole().name())
                 .requestTimeMs(LocalDateTime.now())
                 .build();
 
-        return jwtUtil.createJwt(emailLoginDto);
+        return jwtUtil.createJwt(loginDto);
     }
 }

@@ -5,6 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class SignUpKakaoMemberDto {
+    private String username;
     private String nickname;
     private String favoriteSports;
     private Long kakaoId;
@@ -16,7 +17,8 @@ public class SignUpKakaoMemberDto {
     boolean isAgreeMarketing;
 
     @Builder
-    public SignUpKakaoMemberDto(String nickname, String favoriteSports, Long kakaoId, boolean isAgreeTermsUse, boolean isAgreeCollectingUsingPersonalInformation, boolean isAgreeMarketing) {
+    public SignUpKakaoMemberDto(String username, String nickname, String favoriteSports, Long kakaoId, boolean isAgreeTermsUse, boolean isAgreeCollectingUsingPersonalInformation, boolean isAgreeMarketing) {
+        this.username = username;
         this.nickname = nickname;
         this.favoriteSports = favoriteSports;
         this.kakaoId = kakaoId;
