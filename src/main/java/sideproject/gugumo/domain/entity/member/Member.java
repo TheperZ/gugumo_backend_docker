@@ -87,8 +87,9 @@ public class Member {
     }
 
     @Builder(builderClassName = "KakaoJoin", builderMethodName = "kakaoJoin")
-    public Member(Long id, String nickname, Boolean isAgreeTermsUse, Boolean isAgreeCollectingUsingPersonalInformation, Boolean isAgreeMarketing, Long kakaoId, String kakaoNickname) {
+    public Member(Long id, String username, String nickname, Boolean isAgreeTermsUse, Boolean isAgreeCollectingUsingPersonalInformation, Boolean isAgreeMarketing, Long kakaoId, String kakaoNickname) {
         this.id = id;
+        this.username = username;
         this.nickname = nickname;
         this.isAgreeTermsUse = isAgreeTermsUse;
         this.isAgreeCollectingUsingPersonalInformation = isAgreeCollectingUsingPersonalInformation;
