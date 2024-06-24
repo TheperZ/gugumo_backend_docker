@@ -3,7 +3,7 @@ package sideproject.gugumo.jwt;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import sideproject.gugumo.domain.dto.memberDto.EmailLoginCreateJwtDto;
+import sideproject.gugumo.domain.dto.memberDto.LoginCreateJwtDto;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -39,15 +39,15 @@ public class JwtUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
     }
 
-    public String createJwt(EmailLoginCreateJwtDto emailLoginCreateJwtDto) {
+    public String createJwt(LoginCreateJwtDto loginCreateJwtDto) {
 
-        Date requestDate = Timestamp.valueOf(emailLoginCreateJwtDto.getRequestTimeMs());
-        Date expireDate = Timestamp.valueOf(emailLoginCreateJwtDto.getRequestTimeMs().plusSeconds(expiredMs/1000));
+        Date requestDate = Timestamp.valueOf(loginCreateJwtDto.getRequestTimeMs());
+        Date expireDate = Timestamp.valueOf(loginCreateJwtDto.getRequestTimeMs().plusSeconds(expiredMs/1000));
 
         return Jwts.builder()
-                .claim("id", emailLoginCreateJwtDto.getId())
-                .claim("username", emailLoginCreateJwtDto.getUsername())
-                .claim("role", emailLoginCreateJwtDto.getRole())
+                .claim("id", loginCreateJwtDto.getId())
+                .claim("username", loginCreateJwtDto.getUsername())
+                .claim("role", loginCreateJwtDto.getRole())
                 .issuedAt(requestDate)
                 .expiration(expireDate)
                 .signWith(secretKey)

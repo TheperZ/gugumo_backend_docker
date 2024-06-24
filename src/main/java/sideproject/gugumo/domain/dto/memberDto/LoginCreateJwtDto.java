@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class EmailLoginCreateJwtDto {
+public class LoginCreateJwtDto {
 
     private Long id;
     private String username;
@@ -14,7 +14,7 @@ public class EmailLoginCreateJwtDto {
     private LocalDateTime requestTimeMs;
 
     @Builder
-    public EmailLoginCreateJwtDto(Long id, String username, String role, LocalDateTime requestTimeMs) {
+    public LoginCreateJwtDto(Long id, String username, String role, LocalDateTime requestTimeMs) {
         this.id = id;
         this.username = username;
         this.role = role;
