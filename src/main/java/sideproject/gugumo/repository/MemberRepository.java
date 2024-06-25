@@ -42,4 +42,9 @@ public class MemberRepository {
                 .setParameter("id", id)
                 .getResultList().stream().findAny();
     }
+    @Transactional
+    public void deleteMember(Long id) {
+        Member findMember = em.find(Member.class, id);
+        em.remove(findMember);
+    }
 }
