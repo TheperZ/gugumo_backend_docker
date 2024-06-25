@@ -33,7 +33,7 @@ public class Member {
     private Boolean isAgreeCollectingUsingPersonalInformation;
     // 마케팅 수신 동의
     private Boolean isAgreeMarketing;
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
     private List<FavoriteSport> favoriteSports = new ArrayList<>();
     
     // email 속성

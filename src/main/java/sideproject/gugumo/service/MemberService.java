@@ -184,14 +184,15 @@ public class MemberService {
     @Transactional
     public void deleteMember(Long id) {
 
-        Member findMember = memberRepository.findOne(id)
-                .orElseThrow(() -> new UserNotFoundException("회원이 없습니다."));
-
-        if(findMember.getStatus() == MemberStatus.delete) {
-            throw new UserNotFoundException("이미 탈퇴한 회원입니다.");
-        }
-
-        findMember.deleteMember();
+//        Member findMember = memberRepository.findOne(id)
+//                .orElseThrow(() -> new UserNotFoundException("회원이 없습니다."));
+//
+//        if(findMember.getStatus() == MemberStatus.delete) {
+//            throw new UserNotFoundException("이미 탈퇴한 회원입니다.");
+//        }
+//
+//        findMember.deleteMember();
+        memberRepository.deleteMember(id);
     }
 
     public String emailLogin(EmailLoginRequestDto emailLoginRequestDto) {
