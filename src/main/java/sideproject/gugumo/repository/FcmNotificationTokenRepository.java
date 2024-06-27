@@ -15,6 +15,8 @@ public interface FcmNotificationTokenRepository extends JpaRepository<FcmNotific
 
     public void deleteAllByMember(Member member);
 
+    public void deleteAllByToken(String token);
+
     public List<FcmNotificationToken> findByMember(Member member);
 
 }

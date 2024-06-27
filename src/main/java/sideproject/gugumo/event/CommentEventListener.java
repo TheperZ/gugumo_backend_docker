@@ -1,9 +1,6 @@
 package sideproject.gugumo.event;
 
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.FirebaseMessagingException;
-import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
+import com.google.firebase.messaging.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
@@ -20,6 +17,7 @@ import sideproject.gugumo.repository.CustomNotiRepository;
 import sideproject.gugumo.repository.FcmNotificationTokenRepository;
 import sideproject.gugumo.repository.PostRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,28 +59,35 @@ public class CommentEventListener {
             return;
         }
 
+        List<String> tokens = new ArrayList<>();
+        for (FcmNotificationToken fcmNotificationToken : tempToken) {
+            tokens.add(fcmNotificationToken.getToken());
+        }
+
+
         //토큰 여러개 집어넣기->한 계정에서의 여러 디바이스 사용
-        Message commentMessage = getCommentMessage(message, token.getToken());
-        String response = FirebaseMessaging.getInstance().send(commentMessage);
+        MulticastMessage commentMessage = getCommentMessage(message, tokens);
+        BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(commentMessage);
 
         //에러 발생시?
-/*
         //db에서 찾기
+        List<String> failedTokens = new ArrayList<>();
         if (response.getFailureCount() > 0) {
             List<SendResponse> responses = response.getResponses();
-            List<String> failedTokens = new ArrayList<>();
             for (int i = 0; i < responses.size(); i++) {
                 if (!responses.get(i).isSuccessful()) {
                     // The order of responses corresponds to the order of the registration tokens.
-                    failedTokens.add(registrationTokens.get(i));
+                    failedTokens.add(tokens.get(i));
                 }
             }
+        }
 
         //db에서 삭제
-        tokenrepo.delete();
-*/
+        for (String failedToken : failedTokens) {
+            fcmNotificationTokenRepository.deleteAllByToken(failedToken);
+        }
 
-        log.info("Fcm Response: {}", response);
+
 
 
 
@@ -91,14 +96,14 @@ public class CommentEventListener {
     }
 
 
-    private Message getCommentMessage(String message, String fcmToken){
+    private MulticastMessage getCommentMessage(String message, List<String> tokens){
         Notification notification = Notification.builder()
                 .setTitle("회원님의 게시글에 댓글이 달렸습니다.")
                 .setBody(message)
                 .build();
-        return Message.builder()
+        return MulticastMessage.builder()
                 .setNotification(notification)
-                .setToken(fcmToken)
+                .addAllTokens(tokens)
                 .build();
     }
 }
