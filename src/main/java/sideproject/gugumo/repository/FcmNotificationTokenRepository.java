@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import sideproject.gugumo.domain.entity.FcmNotificationToken;
 import sideproject.gugumo.domain.entity.member.Member;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,5 +23,7 @@ public interface FcmNotificationTokenRepository extends JpaRepository<FcmNotific
     public void deleteAllByToken(String token);
 
     public List<FcmNotificationToken> findByMember(Member member);
+
+    public List<FcmNotificationToken> findByCreateDateBefore(LocalDateTime expire);
 
 }
