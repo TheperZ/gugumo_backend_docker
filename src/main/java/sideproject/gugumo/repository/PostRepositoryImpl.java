@@ -5,7 +5,9 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -64,6 +66,11 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
 
         OrderSpecifier orderSpecifier = createOrderSpecifier(cond.getSortType());
 
+        NumberExpression<Integer> recruitFirst = new CaseBuilder()
+                .when(meeting.status.eq(MeetingStatus.RECRUIT)).then(0)
+                .when(meeting.status.eq(MeetingStatus.END)).then(1)
+                .otherwise(2);
+
         List<SimplePostQueryDto> result = queryFactory.select(new QSimplePostQueryDto(
                         post.id.as("postId"),
                         meeting.meetingType,
@@ -85,7 +92,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                         gameTypeEq(cond.getGameType()), meetingStatusEq(cond.getMeetingStatus()),
                         post.isDelete.isFalse()
                 )
-                .orderBy(orderSpecifier, post.id.desc())
+                .orderBy(recruitFirst.asc(), orderSpecifier, post.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
