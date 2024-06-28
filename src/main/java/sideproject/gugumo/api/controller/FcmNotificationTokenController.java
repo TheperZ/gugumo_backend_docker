@@ -23,6 +23,6 @@ public class FcmNotificationTokenController {
                                          @RequestBody FcmTokenDto fcmTokenDto) {
         fcmNotificationTokenService.subscribe(principal, fcmTokenDto);
 
-        return ApiResponse.createSuccess("토큰 저장 완료");
+        return ApiResponse.createSuccess("토큰 저장 및 갱신 완료");
     }
 }

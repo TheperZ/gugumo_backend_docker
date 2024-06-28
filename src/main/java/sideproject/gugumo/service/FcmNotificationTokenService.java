@@ -12,6 +12,8 @@ import sideproject.gugumo.repository.FcmNotificationTokenRepository;
 import sideproject.gugumo.repository.MemberRepository;
 import sideproject.gugumo.request.FcmTokenDto;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class FcmNotificationTokenService {
@@ -28,14 +30,21 @@ public class FcmNotificationTokenService {
 
         //token이 있으면->createDate update?
 
+        if (fcmNotificationTokenRepository.existsByMemberAndToken(member, fcmTokenDto.getFCMtoken())) {
+            FcmNotificationToken updateToken = fcmNotificationTokenRepository.findByMemberAndToken(member, fcmTokenDto.getFCMtoken()).get();
 
-        //새로운 토큰일 경우
-        FcmNotificationToken fcmNotificationToken = FcmNotificationToken.builder()
-                .token(fcmTokenDto.getFCMtoken())
-                .member(member)
-                .build();
+            updateToken.updateDate();
 
-        fcmNotificationTokenRepository.save(fcmNotificationToken);
+
+        } else {
+            //새로운 토큰일 경우
+            FcmNotificationToken fcmNotificationToken = FcmNotificationToken.builder()
+                    .token(fcmTokenDto.getFCMtoken())
+                    .member(member)
+                    .build();
+
+            fcmNotificationTokenRepository.save(fcmNotificationToken);
+        }
 
     }
 
