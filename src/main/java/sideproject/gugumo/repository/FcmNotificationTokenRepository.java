@@ -12,9 +12,6 @@ import java.util.Optional;
 @Repository
 public interface FcmNotificationTokenRepository extends JpaRepository<FcmNotificationToken, Long> {
 
-    public boolean existsByMember(Member member);
-
-    public void deleteAllByMember(Member member);
 
     public boolean existsByMemberAndToken(Member member, String token);
 
