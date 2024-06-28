@@ -4,15 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sideproject.gugumo.domain.dto.memberDto.CustomUserDetails;
-import sideproject.gugumo.domain.entity.FcmNotificationToken;
+import sideproject.gugumo.domain.entity.notification.FcmNotificationToken;
 import sideproject.gugumo.domain.entity.member.Member;
 import sideproject.gugumo.domain.entity.member.MemberStatus;
 import sideproject.gugumo.exception.exception.NoAuthorizationException;
 import sideproject.gugumo.repository.FcmNotificationTokenRepository;
 import sideproject.gugumo.repository.MemberRepository;
 import sideproject.gugumo.request.FcmTokenDto;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

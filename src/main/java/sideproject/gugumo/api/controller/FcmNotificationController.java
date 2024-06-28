@@ -20,6 +20,7 @@ public class FcmNotificationController {
     private final FcmNotificationService fcmNotificationService;
 
 
+    //몇개?
     @GetMapping("/notification")
     public <T extends CustomNotiDto> ApiResponse<List<T>> findNoti(@AuthenticationPrincipal CustomUserDetails principal) {
         return ApiResponse.createSuccess(fcmNotificationService.findNotification(principal));

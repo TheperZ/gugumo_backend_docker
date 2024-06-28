@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import sideproject.gugumo.domain.entity.NotificationType;
+import sideproject.gugumo.domain.entity.notification.NotificationType;
 
 import java.time.LocalDateTime;
 

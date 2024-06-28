@@ -4,7 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import sideproject.gugumo.domain.entity.FcmNotificationToken;
+import sideproject.gugumo.domain.entity.notification.FcmNotificationToken;
 import sideproject.gugumo.repository.FcmNotificationTokenRepository;
 
 import java.time.LocalDateTime;

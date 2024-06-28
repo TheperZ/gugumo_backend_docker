@@ -1,4 +1,4 @@
-package sideproject.gugumo.domain.entity;
+package sideproject.gugumo.domain.entity.notification;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
