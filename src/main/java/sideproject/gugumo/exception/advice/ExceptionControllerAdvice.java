@@ -2,6 +2,7 @@ package sideproject.gugumo.exception.advice;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -60,6 +61,14 @@ public class ExceptionControllerAdvice {
     public ApiResponse<String> duplicateNicknameExceptionHandler(DuplicateNicknameException e) {
         String exceptionMessage = e.getMessage();
         log.error("[DuplicateNicknameExceptionHandler] ex : " + exceptionMessage);
+        return ApiResponse.createFail(exceptionMessage);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public ApiResponse<String> badCredentialsExceptionHandler(BadCredentialsException e) {
+        String exceptionMessage = e.getMessage();
+        log.error("[BadCredentialsExceptionHandler] ex : " + exceptionMessage);
         return ApiResponse.createFail(exceptionMessage);
     }
 }

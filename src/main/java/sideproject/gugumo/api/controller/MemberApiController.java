@@ -6,13 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import sideproject.gugumo.domain.dto.memberDto.*;
-import sideproject.gugumo.exception.exception.NoAuthorizationException;
-import sideproject.gugumo.exception.exception.UserNotFoundException;
 import sideproject.gugumo.response.ApiResponse;
 import sideproject.gugumo.service.MailSenderService;
 import sideproject.gugumo.service.MemberService;
-
-import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,70 +17,35 @@ public class MemberApiController {
     private final MemberService memberService;
     private final MailSenderService mailService;
 
-    // 삭제 예정
-//    @PostMapping("/api/v1/member")
-//    @ResponseStatus(HttpStatus.CREATED)
-//    public ApiResponse<Long> saveMember(@RequestBody @Valid SignUpMemberDto signUpMemberDto) {
-//
-//        Long joinId = memberService.join(signUpMemberDto);
-//
-//        return ApiResponse.createSuccess(joinId);
-//    }
+    @PostMapping("/api/v1/emailLogin")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<String> emailLogin(@RequestBody EmailLoginRequestDto emailLoginRequestDto) {
+
+        String token = memberService.emailLogin(emailLoginRequestDto);
+
+        return ApiResponse.createSuccess("Bearer " + token);
+    }
 
     @PostMapping("/api/v2/member")
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<Long> saveMemberWithEmailAuth(@RequestBody @Valid SignUpMemberDto signUpMemberDto) {
+    public ApiResponse<Boolean> joinMemberWithEmailAuth(@RequestBody @Valid SignUpEmailMemberDto signUpEmailMemberDto) {
 
-        mailService.checkAuthNum(signUpMemberDto.getUsername(), signUpMemberDto.getEmailAuthNum());
+        mailService.checkAuthNum(signUpEmailMemberDto.getUsername(), signUpEmailMemberDto.getEmailAuthNum());
 
-        Long joinId = memberService.join(signUpMemberDto);
+        Long joinId = memberService.joinMember(signUpEmailMemberDto);
 
-        return ApiResponse.createSuccess(joinId);
+        return ApiResponse.createSuccess(true);
     }
 
     @GetMapping("/api/v1/member")
     public ApiResponse<MemberInfoDto> getMemberInfo(@AuthenticationPrincipal CustomUserDetails principal) {
 
-        String username = principal.getUsername();
         long id = principal.getId();
 
         MemberInfoDto memberInfoDto = memberService.getMemberInfo(id);
 
         return ApiResponse.createSuccess(memberInfoDto);
     }
-
-      // 삭제 예정
-//    @PatchMapping("/api/v1/member")
-//    public ApiResponse<UpdateMemberInfoDto> updateMemberInfo(@AuthenticationPrincipal CustomUserDetails principal,
-//                                                             @RequestBody UpdateMemberInfoDto updateMemberInfoDto) {
-//
-//        String username = principal.getUsername();
-//        long id = principal.getId();
-//
-//        MemberDto findMemberDto = memberService.findOne(id);
-//
-//        if (findMemberDto == null) {
-//            throw new UserNotFoundException(username + " 회원이 없습니다.");
-//        }
-//
-//        if(!Objects.equals(findMemberDto.getUsername(), username)) {
-//            throw new NoAuthorizationException("권한이 없습니다.");
-//        }
-//
-//        //TODO update 시 비밀번호 체크 등 검증 필요
-//        memberService.update(findMemberDto.getId(), updateMemberInfoDto);
-//
-//        // update를 진행한 후 update된 member를 다시 조회해서 확실하게 된것을 검증
-//        MemberDto newMemberDto = memberService.findOne(findMemberDto.getId());
-//
-//        UpdateMemberInfoDto newUpdateMemberInfoDto = UpdateMemberInfoDto.builder()
-//                .profileImagePath(newMemberDto.getProfileImagePath())
-//                .nickname(newMemberDto.getNickname())
-//                .password("")
-//                .build();
-//
-//        return ApiResponse.createSuccess(newUpdateMemberInfoDto);
-//    }
 
     @PatchMapping("/api/v1/member/updateNickname")
     public ApiResponse<MemberInfoDto> updateMemberNickname(@AuthenticationPrincipal CustomUserDetails principal,

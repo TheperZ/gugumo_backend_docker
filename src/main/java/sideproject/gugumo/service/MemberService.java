@@ -2,26 +2,23 @@ package sideproject.gugumo.service;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sideproject.gugumo.domain.dto.memberDto.MemberDto;
-import sideproject.gugumo.domain.dto.memberDto.MemberInfoDto;
-import sideproject.gugumo.domain.dto.memberDto.SignUpMemberDto;
-import sideproject.gugumo.domain.dto.memberDto.UpdateMemberInfoDto;
+import sideproject.gugumo.domain.dto.memberDto.*;
 import sideproject.gugumo.domain.entity.member.FavoriteSport;
 import sideproject.gugumo.domain.entity.member.Member;
 import sideproject.gugumo.domain.entity.member.MemberStatus;
 import sideproject.gugumo.exception.exception.DuplicateEmailException;
 import sideproject.gugumo.exception.exception.DuplicateNicknameException;
-import sideproject.gugumo.exception.exception.NoAuthorizationException;
 import sideproject.gugumo.exception.exception.UserNotFoundException;
+import sideproject.gugumo.jwt.JwtUtil;
 import sideproject.gugumo.repository.FavoriteSportRepository;
 import sideproject.gugumo.repository.MemberRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -32,32 +29,29 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final FavoriteSportRepository favoriteSportRepository;
+    private final JwtUtil jwtUtil;
 
     @Transactional
-    public Long join(SignUpMemberDto signUpMemberDto) {
+    public Long joinMember(SignUpEmailMemberDto signUpEmailMemberDto) {
 
-        String encodePassword = passwordEncoder.encode(signUpMemberDto.getPassword());
+        String encodePassword = passwordEncoder.encode(signUpEmailMemberDto.getPassword());
 
-        Member joinMember = Member.userJoin()
-                .username(signUpMemberDto.getUsername())
-                .nickname(signUpMemberDto.getNickname())
+        Member joinMember = Member.emailJoin()
+                .username(signUpEmailMemberDto.getUsername())
+                .nickname(signUpEmailMemberDto.getNickname())
                 .password(encodePassword)
-                .isAgreeMarketing(signUpMemberDto.isAgreeMarketing())
-                .isAgreeCollectingUsingPersonalInformation(signUpMemberDto.isAgreeCollectingUsingPersonalInformation())
-                .isAgreeTermsUse(signUpMemberDto.isAgreeTermsUse())
+                .isAgreeMarketing(signUpEmailMemberDto.isAgreeMarketing())
+                .isAgreeCollectingUsingPersonalInformation(signUpEmailMemberDto.isAgreeCollectingUsingPersonalInformation())
+                .isAgreeTermsUse(signUpEmailMemberDto.isAgreeTermsUse())
                 .build();
 
         validateDuplicateMemberByUsername(joinMember.getUsername());
         validateDuplicateMemberByNickname(joinMember.getNickname());
 
-        String favoriteSports = signUpMemberDto.getFavoriteSports();
+        String favoriteSports = signUpEmailMemberDto.getFavoriteSports();
 
-        if(favoriteSports != null) {
-            String[] split = favoriteSports.split(",");
-            for(String str : split) {
-                FavoriteSport favoriteSport = FavoriteSport.createFavoriteSport(str, joinMember);
-                favoriteSportRepository.save(favoriteSport);
-            }
+        if(!favoriteSports.isEmpty()) {
+            saveFavoriteSports(favoriteSports, joinMember);
         }
         
         memberRepository.save(joinMember);
@@ -65,28 +59,37 @@ public class MemberService {
         return joinMember.getId();
     }
 
-//    /**
-//     * deprecated
-//     * @param memberId
-//     * @return
-//     */
-//    public MemberDto findOne(Long memberId) {
-//
-//        Member findMember = memberRepository.findOne(memberId);
-//
-//        if (findMember == null) {
-//            throw new UserNotFoundException("회원이 없습니다.");
-//        }
-//
-//        return MemberDto.builder()
-//                .id(findMember.getId())
-//                .username(findMember.getUsername())
-//                .nickname(findMember.getNickname())
-//                .role(findMember.getRole())
-//                .status(findMember.getStatus())
-//                .profileImagePath(findMember.getProfileImagePath())
-//                .build();
-//    }
+    @Transactional
+    public void kakaoJoinMember(SignUpKakaoMemberDto signUpKakaoMemberDto) {
+
+        Member joinMember = Member.kakaoJoin()
+                .kakaoId(signUpKakaoMemberDto.getKakaoId())
+                .username(signUpKakaoMemberDto.getUsername())
+                .nickname(signUpKakaoMemberDto.getNickname())
+                .isAgreeMarketing(signUpKakaoMemberDto.isAgreeMarketing())
+                .isAgreeTermsUse(signUpKakaoMemberDto.isAgreeTermsUse())
+                .isAgreeCollectingUsingPersonalInformation(signUpKakaoMemberDto.isAgreeCollectingUsingPersonalInformation())
+                .build();
+
+        validateDuplicateMemberByUsername(joinMember.getUsername());
+        validateDuplicateMemberByNickname(joinMember.getNickname());
+
+        String favoriteSports = signUpKakaoMemberDto.getFavoriteSports();
+
+        if(!favoriteSports.isEmpty()) {
+            saveFavoriteSports(favoriteSports, joinMember);
+        }
+
+        memberRepository.save(joinMember);
+    }
+
+    public void saveFavoriteSports(String favoriteSports, Member joinMember) {
+        String[] split = favoriteSports.split(",");
+        for(String str : split) {
+            FavoriteSport favoriteSport = FavoriteSport.createFavoriteSport(str, joinMember);
+            favoriteSportRepository.save(favoriteSport);
+        }
+    }
 
     public MemberInfoDto getMemberInfo(Long id) {
 
@@ -95,74 +98,42 @@ public class MemberService {
 
         List<FavoriteSport> favoriteSportList = favoriteSportRepository.getFavoriteSports(findMember);
 
-        StringBuilder favoriteSports = new StringBuilder();
-
-        for (FavoriteSport fs : favoriteSportList) {
-            favoriteSports.append(fs.getGameType().name());
-            favoriteSports.append(',');
-        }
-        favoriteSports.deleteCharAt(favoriteSports.length()-1);
+        String favoriteSports = getFavoritesToString(favoriteSportList);
 
         return MemberInfoDto.builder()
                 .username(findMember.getUsername())
                 .nickname(findMember.getNickname())
-                .favoriteSports(favoriteSports.toString())
+                .favoriteSports(favoriteSports)
                 .build();
 
     }
 
-    public MemberInfoDto findByUsername(String username) {
+    public String getFavoritesToString(List<FavoriteSport> favoriteSportList) {
 
-        Member findMember = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("회원이 없습니다."));
+        StringBuilder favoriteSports = new StringBuilder();
 
-        return getMemberInfo(findMember.getId());
-    }
+        if(!favoriteSportList.isEmpty()) {
+            for (FavoriteSport fs : favoriteSportList) {
+                favoriteSports.append(fs.getGameType().name());
+                favoriteSports.append(',');
+            }
+            favoriteSports.deleteCharAt(favoriteSports.length()-1);
+        }
 
-
-    public MemberInfoDto findByNickname(String nickname) {
-        Member findMember = memberRepository.findByNickname(nickname)
-                .orElseThrow(() -> new UserNotFoundException("회원이 없습니다."));
-
-        return getMemberInfo(findMember.getId());
+        return favoriteSports.toString();
     }
 
     public Boolean isExistNickname(String nickname) {
-        Optional<Member> byNickname = memberRepository.findByNickname(nickname);
+        Optional<Member> findMember = memberRepository.findByNickname(nickname);
 
-        return byNickname.isPresent();
+        return findMember.isPresent();
     }
 
-//    /**
-//     * 삭제 예정
-//     * @param id
-//     * @param updateMemberInfoDto
-//     */
-//    @Transactional
-//    public void update(Long id, UpdateMemberInfoDto updateMemberInfoDto) {
-//        Optional<Member> findMember = memberRepository.findOne(id);
-//
-//        updateMemberInfoDto.setPassword(passwordEncoder.encode(updateMemberInfoDto.getPassword()));
-//
-//        findMember.ifPresent(member -> member.updateMember(updateMemberInfoDto));
-//    }
-//
-//    /**
-//     * 삭제 예정
-//     * @param id
-//     * @param updateMemberInfoDto
-//     */
-//    @Transactional
-//    public void updateMemberInfo(Long id, UpdateMemberInfoDto updateMemberInfoDto) {
-//        Optional<Member> findMember = memberRepository.findOne(id);
-//
-//        if (findMember.isEmpty()) {
-//            throw new UserNotFoundException("회원이 없습니다.");
-//        }
-//
-//        findMember.get().updateMember(updateMemberInfoDto);
-//
-//    }
+    public Boolean isExistUsername(String username) {
+        Optional<Member> findMember = memberRepository.findByUsername(username);
+
+        return findMember.isPresent();
+    }
 
     @Transactional
     public void updateNickname(Long id, String nickname) {
@@ -175,12 +146,11 @@ public class MemberService {
         findMember.updateMemberNickname(nickname);
     }
 
-    // throw new DuplicateEmailException("이미 존재하는 회원입니다.")
     private void validateDuplicateMemberByUsername(String username) {
         Optional<Member> findMember = memberRepository.findByUsername(username);
 
         if(findMember.isPresent()) {
-            throw new DuplicateEmailException("이미 존재하는 회원입니다.");
+            throw new DuplicateEmailException("이미 존재하는 이메일입니다.");
         }
     }
 
@@ -214,13 +184,54 @@ public class MemberService {
     @Transactional
     public void deleteMember(Long id) {
 
-        Member findMember = memberRepository.findOne(id)
+//        Member findMember = memberRepository.findOne(id)
+//                .orElseThrow(() -> new UserNotFoundException("회원이 없습니다."));
+//
+//        if(findMember.getStatus() == MemberStatus.delete) {
+//            throw new UserNotFoundException("이미 탈퇴한 회원입니다.");
+//        }
+//
+//        findMember.deleteMember();
+        memberRepository.deleteMember(id);
+    }
+
+    public String emailLogin(EmailLoginRequestDto emailLoginRequestDto) {
+
+        Member findMember = memberRepository.findByUsername(emailLoginRequestDto.getUsername())
                 .orElseThrow(() -> new UserNotFoundException("회원이 없습니다."));
 
-        if(findMember.getStatus() == MemberStatus.delete) {
-            throw new IllegalStateException("이미 탈퇴한 회원입니다.");
+        if(!passwordEncoder.matches(emailLoginRequestDto.getPassword(), findMember.getPassword())) {
+            throw new BadCredentialsException("비밀번호가 틀렸습니다.");
         }
 
-        findMember.deleteMember();
+        LoginCreateJwtDto loginDto = LoginCreateJwtDto.builder()
+                .id(findMember.getId())
+                .username(findMember.getUsername())
+                .role(findMember.getRole().name())
+                .requestTimeMs(LocalDateTime.now())
+                .build();
+
+        return jwtUtil.createJwt(loginDto);
+    }
+
+    public Boolean isJoinedKakaoMember(Long id) {
+
+        return memberRepository.findByKakaoId(id).isPresent();
+    }
+
+    // TODO USERNAME 수정(JWT 토큰 발급할 때 clame에 username 속성 빼기)
+    public String kakaoLogin(String username) {
+
+        Member findMember = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("회원이 없습니다."));
+
+        LoginCreateJwtDto loginDto = LoginCreateJwtDto.builder()
+                .id(findMember.getId())
+                .username("username")
+                .role(findMember.getRole().name())
+                .requestTimeMs(LocalDateTime.now())
+                .build();
+
+        return jwtUtil.createJwt(loginDto);
     }
 }

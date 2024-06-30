@@ -2,16 +2,13 @@ package sideproject.gugumo.domain.dto.memberDto;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
-public class SignUpMemberDto {
-    private String nickname;
+public class SignUpKakaoMemberDto {
     private String username;
-    private String password;
+    private String nickname;
     private String favoriteSports;
-    private String emailAuthNum;
+    private Long kakaoId;
     // 서비스 이용 약관 동의 여부
     boolean isAgreeTermsUse;
     // 개인정보 수집 및 이용 동의
@@ -20,12 +17,11 @@ public class SignUpMemberDto {
     boolean isAgreeMarketing;
 
     @Builder
-    public SignUpMemberDto(String nickname, String username, String password, String favoriteSports, String emailAuth, boolean isAgreeTermsUse, boolean isAgreeCollectingUsingPersonalInformation, boolean isAgreeMarketing) {
-        this.nickname = nickname;
+    public SignUpKakaoMemberDto(String username, String nickname, String favoriteSports, Long kakaoId, boolean isAgreeTermsUse, boolean isAgreeCollectingUsingPersonalInformation, boolean isAgreeMarketing) {
         this.username = username;
-        this.password = password;
+        this.nickname = nickname;
         this.favoriteSports = favoriteSports;
-        this.emailAuthNum = emailAuth;
+        this.kakaoId = kakaoId;
         this.isAgreeTermsUse = isAgreeTermsUse;
         this.isAgreeCollectingUsingPersonalInformation = isAgreeCollectingUsingPersonalInformation;
         this.isAgreeMarketing = isAgreeMarketing;

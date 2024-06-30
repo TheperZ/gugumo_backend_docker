@@ -76,6 +76,10 @@ public class Meeting {
 
     }
 
+    public void expireStatus() {
+        this.status = MeetingStatus.END;
+    }
+
 
 
 }

@@ -11,10 +11,10 @@ import java.util.Collection;
 @Getter
 public class CustomUserDetails implements UserDetails {
 
-    private final Member member;
+    private final CustomUserInfoDto customUserInfoDto;
 
-    public CustomUserDetails(Member member) {
-        this.member = member;
+    public CustomUserDetails(CustomUserInfoDto customUserInfoDto) {
+        this.customUserInfoDto = customUserInfoDto;
     }
 
     @Override
@@ -25,7 +25,7 @@ public class CustomUserDetails implements UserDetails {
         authorities.add(new GrantedAuthority() {
             @Override
             public String getAuthority() {
-                return member.getRole().toString();
+                return customUserInfoDto.getRole().toString();
             }
         });
 
@@ -34,21 +34,17 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return member.getPassword();
+        return customUserInfoDto.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return member.getUsername();
+        return customUserInfoDto.getUsername();
     }
 
     public long getId() {
-        return member.getId();
+        return customUserInfoDto.getId();
     }
-
-//    public Member getMember() {
-//        return member;
-//    }
 
     @Override
     public boolean isAccountNonExpired() {

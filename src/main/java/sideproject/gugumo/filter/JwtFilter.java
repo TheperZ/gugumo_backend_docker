@@ -7,19 +7,24 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 import sideproject.gugumo.domain.dto.memberDto.CustomUserDetails;
 import sideproject.gugumo.domain.entity.member.Member;
 import sideproject.gugumo.domain.entity.member.MemberRole;
 import sideproject.gugumo.jwt.JwtUtil;
+import sideproject.gugumo.service.CustomUserDetailsService;
 
 import java.io.IOException;
+import java.util.Collection;
 
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+    private final CustomUserDetailsService customUserDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -42,15 +47,9 @@ public class JwtFilter extends OncePerRequestFilter {
         String role = jwtUtil.getRole(token);
         Long id = jwtUtil.getId(token);
 
-        Member loginMember = Member.userLogin()
-                .id(id)
-                .role(Enum.valueOf(MemberRole.class, role))
-                .username(username)
-                .build();
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(id.toString());
 
-        CustomUserDetails customUserDetails = new CustomUserDetails(loginMember);
-
-        Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
+        Authentication authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
         SecurityContextHolder.getContext().setAuthentication(authToken);
 

@@ -1,14 +1,18 @@
 package sideproject.gugumo.repository;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import sideproject.gugumo.domain.entity.member.Member;
 
 import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
@@ -17,69 +21,72 @@ class MemberRepositoryTest {
     @Autowired
     MemberRepository memberRepository;
 
-    @Test
-    @DisplayName("DB에 저장시 에러가 없어야 한다.")
-    public void memberRepositoryTest() {
-        //given
-//        Member member = Member.builder()
-//                .email("email")
-//                .password("password")
-//                .nickname("nickname")
-//                .status(MemberStatus.active)
-//                .build();
-
-
-
-        //when
-
-        //than
-//        Assertions.assertThatCode(()->memberRepository.save(member)).doesNotThrowAnyException();
-
-    }
-
-    @Test
-    @DisplayName("findOne 함수를 통해 Member를 찾을 수 있다.")
-    public void findOneTest() {
-        //given
-//        Member member = Member.builder()
-//                .email("email")
-//                .password("password")
-//                .nickname("nickname")
-//                .status(MemberStatus.active)
-//                .build();
-
-        Member member = Member.builder()
-                .username("email")
+    Member getJoinMemberBuild() {
+        return Member.userJoin()
+                .username("donald010@naver.com")
                 .password("password")
                 .nickname("nickname")
+                .isAgreeMarketing(true)
+                .isAgreeTermsUse(true)
+                .isAgreeCollectingUsingPersonalInformation(true)
                 .build();
-
-        //when
-        memberRepository.save(member);
-        Optional<Member> findMember = memberRepository.findOne(member.getId());
-
-        //than
-        Assertions.assertThat(findMember.get()).isEqualTo(member);
     }
 
 
     @Test
-    @DisplayName("findByEmail 함수를 통해 Member를 찾을 수 있다.")
-    public void findMemberTest() {
+    @DisplayName("repository에 에러를 발생하지 않고 저장한다.")
+    public void memberSaveTest() {
         //given
-        Member member = Member.builder()
-                .username("email")
-                .password("password")
-                .nickname("nickname")
-                .build();
-
+        Member member = getJoinMemberBuild();
         //when
-        memberRepository.save(member);
-        Optional<Member> findMember = memberRepository.findByUsername("email");
-        findMember.orElseThrow(()->new IllegalStateException("없는 회원입니다."));
 
         //than
-        Assertions.assertThat(member).isEqualTo(findMember.get());
+        assertThatCode(()->memberRepository.save(member)).doesNotThrowAnyException();
     }
+
+    @Test
+    @DisplayName("id를 통해 member를 조회할 수 있다.")
+    public void findOneMemberByIdTest() {
+        //given
+        Member member = getJoinMemberBuild();
+        memberRepository.save(member);
+
+        //when
+        Long id = member.getId();
+        Optional<Member> findMember = memberRepository.findOne(id);
+
+        //than
+        assertThat(findMember.get()).isEqualTo(member);
+    }
+
+    @Test
+    @DisplayName("username을 통해 member를 조회할 수 있다.")
+    public void findByUsernameTest() {
+        //given
+        Member member = getJoinMemberBuild();
+        memberRepository.save(member);
+
+        //when
+        Optional<Member> findMember = memberRepository.findByUsername(member.getUsername());
+
+        //than
+        assertThat(findMember.get()).isEqualTo(member);
+
+    }
+
+    @Test
+    @DisplayName("nickname을 통해 member를 조회할 수 있다.")
+    public void findByNicknameTest() {
+        //given
+        Member member = getJoinMemberBuild();
+        memberRepository.save(member);
+
+        //when
+        Optional<Member> findMember = memberRepository.findByNickname(member.getNickname());
+
+        //than
+        assertThat(findMember.get()).isEqualTo(member);
+    }
+
 
 }
