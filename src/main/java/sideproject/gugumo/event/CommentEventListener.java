@@ -51,7 +51,7 @@ public class CommentEventListener {
                 .build();
 
 
-        String message = ms.getMessage(null, new Object[]{noti.getSenderNick(), post.getTitle(), noti.getContent()}, null);
+        String message = ms.getMessage("post.writer.comment.push", new Object[]{post.getTitle(), noti.getContent()}, null);
 
         //List로 받아서 모든 토큰에 대해 보내도록 변경
         List<FcmNotificationToken> tempToken = fcmNotificationTokenRepository.findByMember(postWriter);
@@ -97,8 +97,10 @@ public class CommentEventListener {
 
 
     private MulticastMessage getCommentMessage(String message, List<String> tokens){
+        String title = ms.getMessage("comment.push.title",null,null);
+
         Notification notification = Notification.builder()
-                .setTitle("회원님의 게시글에 댓글이 달렸습니다.")
+                .setTitle(title)
                 .setBody(message)
                 .build();
         return MulticastMessage.builder()
