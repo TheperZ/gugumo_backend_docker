@@ -30,11 +30,11 @@ public class FcmNotificationToken {
 
     //2달 주기?로 토큰 삭제 용
     @Builder.Default
-    private LocalDateTime createDate = LocalDateTime.now();
+    private LocalDateTime modifiedDate = LocalDateTime.now();
 
 
     public void updateDate() {
-        this.createDate = LocalDateTime.now();
+        this.modifiedDate = LocalDateTime.now();
     }
 
 }
