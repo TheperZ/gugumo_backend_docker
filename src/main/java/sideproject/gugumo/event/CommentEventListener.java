@@ -42,7 +42,7 @@ public class CommentEventListener {
         Post post = targetPost.get();
         Member postWriter = post.getMember();
 
-        String message = ms.getMessage("post.writer.comment.push", new Object[]{post.getTitle(), cmnt.getContent()}, null);
+        String message = ms.getMessage("post.writer.comment.push", new Object[]{cmnt.getContent()}, null);
 
         CustomNoti noti = CustomNoti.builder()
                 .message(message)
