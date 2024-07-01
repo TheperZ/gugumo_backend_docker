@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-
 public class CustomNotiDto {
 
 
