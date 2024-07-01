@@ -14,7 +14,7 @@ public class CommentFcmEvent {
     private Cmnt cmnt;
     private Member cmntAuthor;
 
-    public boolean hasCommentEvent(Post post) {
+    public boolean isCmntPostAuthorEq(Post post) {
         return !cmntAuthor.getId().equals(post.getMember().getId());
     }
 

@@ -36,7 +36,7 @@ public class CommentEventListener {
     public void sendPostWriter(CommentFcmEvent event) throws FirebaseMessagingException {
         Cmnt cmnt = event.getCmnt();
         Optional<Post> targetPost = postRepository.findById(cmnt.getPost().getId());
-        if (targetPost.isEmpty() || !event.hasCommentEvent(targetPost.get())) {
+        if (targetPost.isEmpty() || !event.isCmntPostAuthorEq(targetPost.get())) {
             return;
         }
         Post post = targetPost.get();
