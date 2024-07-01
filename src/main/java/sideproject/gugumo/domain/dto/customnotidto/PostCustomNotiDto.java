@@ -11,6 +11,6 @@ import lombok.experimental.SuperBuilder;
 public class PostCustomNotiDto extends CustomNotiDto{
 
     private Long postId;
-    private String senderNick;
+
 
 }

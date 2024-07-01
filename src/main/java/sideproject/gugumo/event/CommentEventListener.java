@@ -42,16 +42,16 @@ public class CommentEventListener {
         Post post = targetPost.get();
         Member postWriter = post.getMember();
 
+        String message = ms.getMessage("post.writer.comment.push", new Object[]{post.getTitle(), cmnt.getContent()}, null);
+
         CustomNoti noti = CustomNoti.builder()
-                .content(cmnt.getContent())
+                .message(message)
                 .notificationType(NotificationType.COMMENT)
                 .member(postWriter)
                 .postId(post.getId())
-                .senderNick(event.getCmntAuthor().getNickname())
                 .build();
 
 
-        String message = ms.getMessage("post.writer.comment.push", new Object[]{post.getTitle(), noti.getContent()}, null);
 
         //List로 받아서 모든 토큰에 대해 보내도록 변경
         List<FcmNotificationToken> tempToken = fcmNotificationTokenRepository.findByMember(postWriter);

@@ -19,7 +19,7 @@ public class CustomNotiDto {
 
 
     private Long id;
-    private String content;
+    private String message;
     private NotificationType notificationType;
 
     private LocalDateTime createDate;

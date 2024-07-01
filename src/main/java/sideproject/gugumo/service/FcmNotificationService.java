@@ -47,11 +47,10 @@ public class FcmNotificationService {
         if (customNoti.getNotificationType() == NotificationType.COMMENT) {
             return (T) PostCustomNotiDto.builder()
                     .id(customNoti.getId())
-                    .content(customNoti.getContent())
+                    .message(customNoti.getMessage())
                     .notificationType(NotificationType.COMMENT)
                     .createDate(customNoti.getCreateDate())
                     .isRead(customNoti.isRead())
-                    .senderNick(customNoti.getSenderNick())
                     .postId(customNoti.getPostId())
                     .build();
         } else {

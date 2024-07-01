@@ -17,7 +17,8 @@ public class CustomNoti {
     @Column(name = "customnoti_id")
     private Long id;
 
-    private String content;
+
+    private String message;
 
     private NotificationType notificationType;
 
@@ -33,7 +34,7 @@ public class CustomNoti {
 
     //postNoti
     private Long postId;
-    private String senderNick;
+
 
 
     public void read() {
