@@ -66,7 +66,7 @@ public class CommentEventListener {
 
 
         //토큰 여러개 집어넣기->한 계정에서의 여러 디바이스 사용
-        MulticastMessage commentMessage = getCommentMessage(message, tokens);
+        MulticastMessage commentMessage = getCommentMessage(message, tokens, post.getId());
         BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(commentMessage);
 
         //에러 발생시?
@@ -96,7 +96,7 @@ public class CommentEventListener {
     }
 
 
-    private MulticastMessage getCommentMessage(String message, List<String> tokens){
+    private MulticastMessage getCommentMessage(String message, List<String> tokens, Long postId){
         String title = ms.getMessage("comment.push.title",null,null);
 
         Notification notification = Notification.builder()
@@ -106,6 +106,7 @@ public class CommentEventListener {
         return MulticastMessage.builder()
                 .setNotification(notification)
                 .addAllTokens(tokens)
+                .putData("postId", String.valueOf(postId))
                 .build();
     }
 }
