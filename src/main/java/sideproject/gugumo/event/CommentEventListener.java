@@ -42,7 +42,7 @@ public class CommentEventListener {
         Post post = targetPost.get();
         Member postWriter = post.getMember();
 
-        String message = ms.getMessage("post.writer.comment.push", new Object[]{post.getTitle(), cmnt.getContent()}, null);
+        String message = cmnt.getContent();
 
         CustomNoti noti = CustomNoti.builder()
                 .message(message)
@@ -97,7 +97,7 @@ public class CommentEventListener {
 
 
     private MulticastMessage getCommentMessage(String message, List<String> tokens, Long postId){
-        String title = ms.getMessage("comment.push.title",null,null);
+        String title = ms.getMessage("push.comment.title",null,null);
 
         Notification notification = Notification.builder()
                 .setTitle(title)
