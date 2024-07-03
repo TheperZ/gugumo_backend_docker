@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface CustomNotiRepository extends JpaRepository<CustomNoti, Long> {
     public List<CustomNoti> findByMemberOrderByCreateDateDesc(Member member);
+
+    public void deleteAllInBatchByMemberAndIsReadTrue(Member member);
 }

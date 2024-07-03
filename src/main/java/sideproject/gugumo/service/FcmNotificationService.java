@@ -102,6 +102,14 @@ public class FcmNotificationService {
 
     }
 
+    @Transactional
+    public void deleteReadNotification(CustomUserDetails principal) {
+        Member member = checkMemberValid(principal, "읽은 알림 삭제 실패: 비로그인 사용자입니다.", "읽은 알림 삭제 실패: 권한이 없습니다.");
+
+        customNotiRepository.deleteAllInBatchByMemberAndIsReadTrue(member);
+        
+    }
+
     private Member checkMemberValid(CustomUserDetails principal, String noLoginMessage, String notValidUserMessage) {
         if (principal == null) {
             throw new NoAuthorizationException(noLoginMessage);
