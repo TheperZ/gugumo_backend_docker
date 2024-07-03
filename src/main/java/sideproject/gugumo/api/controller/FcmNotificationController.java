@@ -51,4 +51,10 @@ public class FcmNotificationController {
 
 
     //TODO: 읽은 알림 삭제 기능 추가
+    @DeleteMapping("/notification/read")
+    public ApiResponse<String> deleteReadNoti(@AuthenticationPrincipal CustomUserDetails principal) {
+        fcmNotificationService.deleteReadNotification(principal);
+
+        return ApiResponse.createSuccess("읽은 알림 삭제 완료");
+    }
 }
