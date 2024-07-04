@@ -28,13 +28,13 @@ public class FcmNotificationToken {
     private String token;
 
 
-    //2달 주기?로 토큰 삭제 용
+    //2달 주기로 토큰 삭제 용
     @Builder.Default
-    private LocalDateTime modifiedDate = LocalDateTime.now();
+    private LocalDateTime lastUsedDate = LocalDateTime.now();
 
 
     public void updateDate() {
-        this.modifiedDate = LocalDateTime.now();
+        this.lastUsedDate = LocalDateTime.now();
     }
 
 }

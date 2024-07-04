@@ -21,6 +21,6 @@ public interface FcmNotificationTokenRepository extends JpaRepository<FcmNotific
 
     public List<FcmNotificationToken> findByMember(Member member);
 
-    public List<FcmNotificationToken> findByCreateDateBefore(LocalDateTime expire);
+    public List<FcmNotificationToken> findByLastUsedDateBefore(LocalDateTime expire);
 
 }
