@@ -37,4 +37,8 @@ public class FcmNotificationToken {
         this.lastUsedDate = LocalDateTime.now();
     }
 
+    public void setMember(Member member) {
+        this.member = member;
+    }
+
 }

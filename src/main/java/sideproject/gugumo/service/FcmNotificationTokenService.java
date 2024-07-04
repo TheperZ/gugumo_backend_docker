@@ -31,6 +31,7 @@ public class FcmNotificationTokenService {
             FcmNotificationToken updateToken = fcmNotificationTokenRepository.findByMemberAndToken(member, fcmTokenDto.getFCMtoken()).get();
 
             updateToken.updateDate();
+            updateToken.setMember(member);
 
 
         } else {
