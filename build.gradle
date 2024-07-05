@@ -100,6 +100,13 @@ task copyGitSubmodule(type: Copy) {
 	into './src/main/resources'
 }
 
+task copyFirebaseKeyFromGitSubmodule(type: Copy){
+	from('./config'){
+		include 'firebase/**'
+	}
+	into './src/main/resources'
+}
+
 jar {
 	enabled=false
 }
