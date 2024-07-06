@@ -75,6 +75,11 @@ dependencies {
 
 	// Random String Utils Method
 	implementation 'org.apache.commons:commons-lang3:3.12.0'
+
+	//firebase
+	implementation 'com.google.firebase:firebase-admin:9.1.1'
+	implementation("com.squareup.okhttp3:okhttp:4.10.0")
+
 }
 
 def querydslSrcDir = 'src/main/generated'
@@ -92,6 +97,13 @@ tasks.named('test') {
 task copyGitSubmodule(type: Copy) {
 	from './config'
 	include '*.yml'
+	into './src/main/resources'
+}
+
+task copyFirebaseKeyFromGitSubmodule(type: Copy){
+	from('./config'){
+		include 'firebase/**'
+	}
 	into './src/main/resources'
 }
 

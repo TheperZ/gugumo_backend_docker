@@ -34,6 +34,7 @@ jobs:
     - name: 프로젝트 빌드(테스트 코드 제외)
       run: |
         ./gradlew copyGitSubmodule
+        ./gradlew copyFirebaseKeyFromGitSubmodule
         ./gradlew clean build --exclude-task test
 
     - name: AWS credential 설정

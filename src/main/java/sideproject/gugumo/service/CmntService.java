@@ -2,6 +2,7 @@ package sideproject.gugumo.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import sideproject.gugumo.domain.entity.Cmnt;
 import sideproject.gugumo.domain.entity.member.Member;
 import sideproject.gugumo.domain.entity.member.MemberStatus;
 import sideproject.gugumo.domain.entity.post.Post;
+import sideproject.gugumo.event.CommentFcmEvent;
 import sideproject.gugumo.exception.exception.CommentNotFoundException;
 import sideproject.gugumo.exception.exception.NoAuthorizationException;
 import sideproject.gugumo.exception.exception.PostNotFoundException;
@@ -32,6 +34,7 @@ public class CmntService {
     private final CmntRepository cmntRepository;
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public void save(CreateCmntReq req, CustomUserDetails principal) {
@@ -57,6 +60,8 @@ public class CmntService {
 
         cmntRepository.save(cmnt);
         targetPost.increaseCommentCnt();
+
+        eventPublisher.publishEvent(new CommentFcmEvent(cmnt, author));
 
     }
 

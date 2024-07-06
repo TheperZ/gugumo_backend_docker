@@ -61,4 +61,11 @@ public class GlobalExceptionHandler {
         log.error("[handleMethodArgumentNotValidException] ex : " + e.getMessage());
         return ApiResponse.createFail(e.getFieldError().getDefaultMessage());
     }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NotificationNotFoundException.class)
+    public ApiResponse<String> handleNofiticationNotFoundException(NotificationNotFoundException e) {
+        log.error("[handleMethodArgumentNotValidException] ex : " + e.getMessage());
+        return ApiResponse.createFail(e.getMessage());
+    }
 }
