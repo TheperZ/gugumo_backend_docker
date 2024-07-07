@@ -1,13 +1,11 @@
 package sideproject.gugumo.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 @Getter
-@Builder
-@AllArgsConstructor
 public class FcmTokenDto {
 
-    private String FCMToken;
+
+    private String fcmToken;
 }
