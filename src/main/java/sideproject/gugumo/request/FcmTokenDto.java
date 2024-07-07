@@ -9,5 +9,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class FcmTokenDto {
 
-    private String FCMtoken;
+    private String FCMToken;
 }
