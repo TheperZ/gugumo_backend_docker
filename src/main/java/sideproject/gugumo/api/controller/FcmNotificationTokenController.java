@@ -1,5 +1,6 @@
 package sideproject.gugumo.api.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +21,7 @@ public class FcmNotificationTokenController {
 
     @PostMapping("/subscribe")
     public ApiResponse<String> subscribe(@AuthenticationPrincipal CustomUserDetails principal,
-                                         @RequestBody FcmTokenDto fcmTokenDto) {
+                                         @Valid @RequestBody FcmTokenDto fcmTokenDto) {
 
         fcmNotificationTokenService.subscribe(principal, fcmTokenDto);
 

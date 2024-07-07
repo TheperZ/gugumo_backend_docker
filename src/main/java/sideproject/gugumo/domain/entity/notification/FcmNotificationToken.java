@@ -18,7 +18,7 @@ public class FcmNotificationToken {
 
     @Id
     @GeneratedValue
-    @Column(name = "notification_id")
+    @Column(name = "fcm_token_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
