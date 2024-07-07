@@ -21,6 +21,7 @@ public class FcmNotificationTokenController {
     @PostMapping("/subscribe")
     public ApiResponse<String> subscribe(@AuthenticationPrincipal CustomUserDetails principal,
                                          @RequestBody FcmTokenDto fcmTokenDto) {
+
         fcmNotificationTokenService.subscribe(principal, fcmTokenDto);
 
         return ApiResponse.createSuccess("토큰 저장 및 갱신 완료");
