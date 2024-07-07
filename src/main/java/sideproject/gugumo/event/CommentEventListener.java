@@ -37,6 +37,7 @@ public class CommentEventListener {
         Cmnt cmnt = event.getCmnt();
         Optional<Post> targetPost = postRepository.findById(cmnt.getPost().getId());
         if (targetPost.isEmpty() || !event.isCmntPostAuthorEq(targetPost.get())) {
+            log.info("없는 게시글이거나 게시글 작성자와 댓글 작성자가 일치함");
             return;
         }
         Post post = targetPost.get();
@@ -56,6 +57,7 @@ public class CommentEventListener {
         //List로 받아서 모든 토큰에 대해 보내도록 변경
         List<FcmNotificationToken> tempToken = fcmNotificationTokenRepository.findByMember(postWriter);
         if (tempToken.isEmpty()) {
+            log.info("FCM 토큰 존재하지 않음");
             return;
         }
 
