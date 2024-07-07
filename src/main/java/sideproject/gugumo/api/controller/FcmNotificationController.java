@@ -26,7 +26,7 @@ public class FcmNotificationController {
         return ApiResponse.createSuccess(fcmNotificationService.findNotification(principal));
     }
 
-    @PatchMapping("/notification/{noti_id}")
+    @PatchMapping("/notification/read/{noti_id}")
     public ApiResponse<String> read(@AuthenticationPrincipal CustomUserDetails principal,
                                     @PathVariable("noti_id") Long id) {
 
@@ -34,7 +34,7 @@ public class FcmNotificationController {
         return ApiResponse.createSuccess("알림 읽음처리 완료");
     }
 
-    @PatchMapping("/notification")
+    @PatchMapping("/notification/read")
     public ApiResponse<String> readAll(@AuthenticationPrincipal CustomUserDetails principal) {
 
         fcmNotificationService.readAll(principal);
@@ -50,7 +50,6 @@ public class FcmNotificationController {
     }
 
 
-    //TODO: 읽은 알림 삭제 기능 추가
     @DeleteMapping("/notification/read")
     public ApiResponse<String> deleteReadNoti(@AuthenticationPrincipal CustomUserDetails principal) {
         fcmNotificationService.deleteReadNotification(principal);
