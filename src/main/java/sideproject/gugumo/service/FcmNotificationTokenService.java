@@ -27,7 +27,7 @@ public class FcmNotificationTokenService {
                 "토큰 저장 실패: 권한이 없습니다.");
 
         //token이 있으면->createDate update?
-        if (fcmNotificationTokenRepository.existsByMemberAndToken(member, fcmTokenDto.getFcmToken())) {
+        if (fcmNotificationTokenRepository.existsByToken(fcmTokenDto.getFcmToken())) {
             FcmNotificationToken updateToken = fcmNotificationTokenRepository.findByMemberAndToken(member, fcmTokenDto.getFcmToken()).get();
 
             updateToken.updateDate();
