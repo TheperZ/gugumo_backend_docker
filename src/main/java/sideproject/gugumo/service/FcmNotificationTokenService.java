@@ -28,7 +28,7 @@ public class FcmNotificationTokenService {
 
         //token이 있으면->createDate update?
         if (fcmNotificationTokenRepository.existsByToken(fcmTokenDto.getFcmToken())) {
-            FcmNotificationToken updateToken = fcmNotificationTokenRepository.findByMemberAndToken(member, fcmTokenDto.getFcmToken()).get();
+            FcmNotificationToken updateToken = fcmNotificationTokenRepository.findByToken(fcmTokenDto.getFcmToken()).get();
 
             updateToken.updateDate();
             updateToken.setMember(member);

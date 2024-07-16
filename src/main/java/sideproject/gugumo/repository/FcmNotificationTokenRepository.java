@@ -19,7 +19,7 @@ public interface FcmNotificationTokenRepository extends JpaRepository<FcmNotific
 
     public boolean existsByToken(String token);
 
-    public Optional<FcmNotificationToken> findByMemberAndToken(Member member, String token);
+    public Optional<FcmNotificationToken> findByToken(String token);
 
     @Modifying(clearAutomatically = true)
     @Query("delete from FcmNotificationToken t where t.token=:token")
