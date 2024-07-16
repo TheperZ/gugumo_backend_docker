@@ -17,7 +17,7 @@ import java.util.Optional;
 public interface FcmNotificationTokenRepository extends JpaRepository<FcmNotificationToken, Long> {
 
 
-    public boolean existsByMemberAndToken(Member member, String token);
+    public boolean existsByToken(String token);
 
     public Optional<FcmNotificationToken> findByMemberAndToken(Member member, String token);
 
