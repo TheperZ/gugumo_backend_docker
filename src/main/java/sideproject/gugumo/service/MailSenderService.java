@@ -82,8 +82,6 @@ public class MailSenderService {
                 "문의 - gugumo024@gmail.com"
                 ;
 
-        System.out.println("content = " + content);
-
         mailSend(setFrom, email, title, content);
     }
 
