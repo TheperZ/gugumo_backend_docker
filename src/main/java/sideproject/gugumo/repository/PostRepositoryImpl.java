@@ -179,6 +179,6 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
      * like("string"): 'string'으로 나감->%나 _ 등을 쓰려면 붙여줘야 함
      */
     private BooleanExpression queryEq(String q) {
-        return q != null ? post.title.contains(q) : null;
+        return q != null ? post.title.contains(q).or(post.content.contains(q)): null;
     }
 }
