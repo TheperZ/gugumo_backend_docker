@@ -53,12 +53,13 @@ public class MailSenderService {
         makeRandomNumber();
 
         String setFrom = "gugumo024@gmail.com"; // email-config에 설정한 자신의 이메일 주소를 입력
-        String title = "gugumo 회원가입 인증번호"; // 이메일 제목
+        String title = "[구구모] 인증번호가 도착하였습니다."; // 이메일 제목
         String content =
-                "나의 APP을 방문해주셔서 감사합니다." + 	//html 형식으로 작성 !
+                "구기종목 매칭 서비스 구구모에 오신 것을 환영합니다." + 	//html 형식으로 작성 !
                         "<br><br>" +
-                        "인증 번호는 " + authNumber + "입니다." +
-                        "<br>"
+                        "인증 번호는 <" + authNumber + "> 입니다." +
+                        "<br><br>" +
+                        "문의 - gugumo024@gmail.com"
                 ;
 
         mailSend(setFrom, email, title, content);
@@ -70,9 +71,9 @@ public class MailSenderService {
     public void resetPassword(String email, String newPassword) {
 
         String setFrom = "gugumo024@gmail.com";
-        String title = "gugumo 새 비밀번호입니다.";
+        String title = "구구모 새 비밀번호입니다.";
         String content =
-                "gugumo 새로운 비밀번호는 " + newPassword + "입니다."
+                "새로운 비밀번호는 <" + newPassword + "> 입니다."
                 ;
 
         mailSend(setFrom, email, title, content);
