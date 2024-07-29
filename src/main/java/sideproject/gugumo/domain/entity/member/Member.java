@@ -110,7 +110,22 @@ public class Member {
     }
 
     public void deleteMember() {
+
         this.status = MemberStatus.delete;
+
+        this.nickname = null;
+        this.profileImagePath = null;
+        this.role = null;
+        this.isAgreeTermsUse = null;
+        this.isAgreeCollectingUsingPersonalInformation = null;
+        this.isAgreeMarketing = null;
+        this.favoriteSports = null;
+        this.isEmailLogin = null;
+        this.username = null;
+        this.password = null;
+        this.isKakaoLogin = null;
+        this.kakaoId = null;
+        this.kakaoNickname = null;
     }
 
     @Override

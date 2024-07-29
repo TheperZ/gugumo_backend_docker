@@ -45,6 +45,7 @@ public class MemberRepository {
     @Transactional
     public void deleteMember(Long id) {
         Member findMember = em.find(Member.class, id);
-        em.remove(findMember);
+//        em.remove(findMember);
+        findMember.deleteMember();
     }
 }
