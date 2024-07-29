@@ -102,6 +102,40 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
     }
 
     @Override
+    public Page<SimplePostQueryDto> searchMy(Pageable pageable, Member member, String q) {
+        List<SimplePostQueryDto> result = queryFactory.select(new QSimplePostQueryDto(
+                        post.id.as("postId"),
+                        meeting.meetingType,
+                        meeting.status,
+                        meeting.gameType,
+                        meeting.location,
+                        post.title,
+                        meeting.meetingDateTime,
+                        meeting.meetingDays,
+                        meeting.meetingMemberNum,
+                        meeting.meetingDeadline,
+                        bookmark.isNotNull().as("isBookmarked")
+                ))
+                .from(post)
+                .leftJoin(post.meeting, meeting)
+                .leftJoin(bookmark).on(bookmark.post.eq(post), hasMember(member))
+                .where(
+                        queryEq(q), post.isDelete.isFalse()
+                )
+                .orderBy(post.id.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        JPAQuery<Long> count = queryFactory.select(post.count())
+                .from(post)
+                .leftJoin(post.meeting, meeting)
+                .where(queryEq(q), post.isDelete.isFalse());
+
+        return PageableExecutionUtils.getPage(result, pageable, count::fetchOne);
+    }
+
+    @Override
     public List<SimplePostQueryDto> findRecommendPost(Member member) {
 
         List<FavoriteSport> favoriteSports = member!=null?member.getFavoriteSports(): Collections.emptyList();
