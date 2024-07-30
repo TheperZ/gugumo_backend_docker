@@ -120,7 +120,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                 .leftJoin(post.meeting, meeting)
                 .leftJoin(bookmark).on(bookmark.post.eq(post), hasMember(member))
                 .where(
-                        queryEq(q), post.isDelete.isFalse()
+                        queryEq(q), post.member.eq(member), post.isDelete.isFalse()
                 )
                 .orderBy(post.id.desc())
                 .offset(pageable.getOffset())
