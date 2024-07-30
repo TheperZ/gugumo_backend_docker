@@ -301,11 +301,11 @@ public class PostService {
         Member member = checkMemberValid(principal, "내 글 조회 실패: 비로그인 사용자입니다.", "내 글 조회 실패: 접근 권한이 없습니다.");
 
 
-        Page<Post> page = postRepository.findByMemberAndTitleContainingAndIsDeleteFalse(pageable, member, q);
+        Page<SimplePostQueryDto> page = postRepository.searchMy(pageable, member, q);
 
         List<T> result = page.stream()
-                .map(p -> convertToTransDto(p, member))
-                .map(r->(T)r)
+                .map(p -> convertToTransDto(p))
+                .map(r -> (T) r)
                 .collect(Collectors.toList());
 
         return new PageCustom<>(result, page.getPageable(), page.getTotalElements());

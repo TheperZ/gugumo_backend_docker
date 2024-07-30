@@ -13,5 +13,7 @@ import java.util.List;
 public interface PostRepositoryCustom {
     Page<SimplePostQueryDto> search(PostSearchCondition cond, Pageable pageable, Member member);
 
+    Page<SimplePostQueryDto> searchMy(Pageable pageable, Member member, String q);
+
     List<SimplePostQueryDto> findRecommendPost(Member member);
 }

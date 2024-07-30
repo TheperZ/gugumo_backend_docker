@@ -65,7 +65,7 @@ public class BookmarkService {
 
         Member member = checkMemberValid(principal, "북마크 조회 실패: 비로그인 사용자입니다.", "북마크 조회 실패: 권한이 없습니다.");
 
-        Page<Bookmark> page = bookmarkRepository.findByMemberAndPostTitleContains(member, pageable, q);
+        Page<Bookmark> page = bookmarkRepository.findInBookmark(member, q, pageable);
 
 
         List<T> result = page.stream()
