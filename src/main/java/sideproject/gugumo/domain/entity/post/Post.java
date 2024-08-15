@@ -1,6 +1,7 @@
 package sideproject.gugumo.domain.entity.post;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import sideproject.gugumo.domain.entity.member.Member;
@@ -22,20 +23,26 @@ public class Post {
     @Column(name = "post_id")
     private Long id;
 
+    @NotNull
     private String title;
 
+    @NotNull
     @Column(length = 10000)
     private String content;
 
+    @NotNull
     @Builder.Default
     private LocalDateTime createDate = LocalDateTime.now();
+
+    @NotNull
     @Builder.Default
     private long viewCount = 0;
 
-
+    @NotNull
     @Builder.Default
     private boolean isDelete = false;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
@@ -45,9 +52,11 @@ public class Post {
      * 하지만 meeting에서 post를 추출하는 것은 의도 상 맞지 않는 것 같음
      * 따라서 1:1 양방향으로 변경
      */
+    @NotNull
     @OneToOne(mappedBy = "post")
     private Meeting meeting;
 
+    @NotNull
     @Builder.Default
     private long commentCnt = 0L;
 
