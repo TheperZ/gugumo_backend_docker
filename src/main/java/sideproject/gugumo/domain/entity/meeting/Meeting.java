@@ -1,6 +1,7 @@
 package sideproject.gugumo.domain.entity.meeting;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import sideproject.gugumo.domain.entity.member.Member;
 import sideproject.gugumo.domain.entity.post.Post;
@@ -26,28 +27,41 @@ public class Meeting {
 
 
     @Enumerated(EnumType.STRING)
+    @NotNull
     private MeetingType meetingType;
     @Enumerated(EnumType.STRING)
+    @NotNull
     private GameType gameType;
     @Enumerated(EnumType.STRING)
+    @NotNull
     private Location location;
 
+    @NotNull
     private LocalDateTime meetingDateTime;
+
+    
     private String meetingDays;
+    @NotNull
     private LocalDate meetingDeadline;
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
+    @NotNull
     private MeetingStatus status = MeetingStatus.RECRUIT;
 
+    @NotNull
     private int meetingMemberNum;
+
+    @NotNull
     private String openKakao;
 
 
+    @NotNull
     @JoinColumn(name = "member_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
+    @NotNull
     @JoinColumn(name = "post_id")
     @OneToOne(fetch = FetchType.LAZY)
     private Post post;

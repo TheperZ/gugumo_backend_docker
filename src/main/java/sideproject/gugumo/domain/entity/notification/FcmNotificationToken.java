@@ -1,6 +1,7 @@
 package sideproject.gugumo.domain.entity.notification;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,8 +24,10 @@ public class FcmNotificationToken {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
+    @NotNull
     private Member member;
 
+    @NotNull
     private String token;
 
 
