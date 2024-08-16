@@ -38,7 +38,8 @@ public class Meeting {
 
     @NotNull
     private LocalDateTime meetingDateTime;
-    @NotNull
+
+    
     private String meetingDays;
     @NotNull
     private LocalDate meetingDeadline;
