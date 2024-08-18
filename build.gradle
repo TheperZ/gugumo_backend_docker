@@ -80,6 +80,10 @@ dependencies {
 	implementation 'com.google.firebase:firebase-admin:9.1.1'
 	implementation("com.squareup.okhttp3:okhttp:4.10.0")
 
+	//prometheus
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'io.micrometer:micrometer-registry-prometheus'
+
 }
 
 def querydslSrcDir = 'src/main/generated'
