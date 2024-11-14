@@ -1,0 +1,28 @@
+services:
+  postgres:
+    container_name: postgres
+    image: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: gugumo
+  redis:
+    container_name: redis
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+  backend:
+    container_name: backend
+    image: theperz/gugumo-test
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - redis
+
+
