@@ -39,3 +39,6 @@ out/
 /src/main/generated/
 
 /src/main/resources/**
+
+/postgres-data/**
+/redis-data/**
