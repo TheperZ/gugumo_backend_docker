@@ -106,6 +106,6 @@ public class MemberApiController {
 
     @GetMapping("/test")
     public ApiResponse<String> test() {
-        return ApiResponse.createSuccess("docker cicd complete 2");
+        return ApiResponse.createSuccess("docker cicd complete 3");
     }
 }
