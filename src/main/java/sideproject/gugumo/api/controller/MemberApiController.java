@@ -49,7 +49,7 @@ public class MemberApiController {
 
     @PatchMapping("/api/v1/member/updateNickname")
     public ApiResponse<MemberInfoDto> updateMemberNickname(@AuthenticationPrincipal CustomUserDetails principal,
-                                                   @RequestBody UpdateMemberNicknameDto updateMemberNicknameDto) {
+                                                           @RequestBody UpdateMemberNicknameDto updateMemberNicknameDto) {
 
         String updateNickname = updateMemberNicknameDto.getNickname();
         long id = principal.getId();
@@ -73,7 +73,7 @@ public class MemberApiController {
 
     @PatchMapping("/api/v1/member/updatePassword")
     public ApiResponse<Boolean> updateMemberPassword(@AuthenticationPrincipal CustomUserDetails principal,
-                                                    @RequestBody UpdateMemberPasswordDto updateMemberPasswordDto) {
+                                                     @RequestBody UpdateMemberPasswordDto updateMemberPasswordDto) {
 
         long id = principal.getId();
 
@@ -102,5 +102,10 @@ public class MemberApiController {
         mailService.resetPassword(username, newPassword);
 
         return ApiResponse.createSuccess(true);
+    }
+
+    @GetMapping("/test")
+    public ApiResponse<String> test() {
+        return ApiResponse.createSuccess("docker cicd complete");
     }
 }
