@@ -58,6 +58,6 @@ jobs:
           sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           sudo docker rm -f $(sudo docker ps -qa)
           sudo docker pull ${{ secrets.DOCKER_USERNAME }}/gugumo-test:latest
-          sudo docker-compose up -d
+          sudo docker compose up -d
           sudo docker image prune -f
         # 도커에서 사용하지 않는 리소스 삭제
