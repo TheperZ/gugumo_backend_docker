@@ -29,13 +29,13 @@ jobs:
 
 
     ## create firebase-key.json
-    - name: create firebase key
-      run: |
-        cd ./src/main/resources
-        ls -a .
-        touch ./fcm-service-key.json
-        echo "${{ secrets.FIREBASE_KEY }}" > ./fcm-service-key.json
-      shell: bash
+    - name: create-json
+      id: create-json
+      uses: jsdaniell/create-json@v1.2.2
+      with:
+        name: "fcm-service-key.json"
+        json: ${{ secrets.FIREBASE_KEY }}
+        dir: 'src/main/resources/'
         
     - name: 프로젝트 빌드(테스트 코드 제외)
       run: |
